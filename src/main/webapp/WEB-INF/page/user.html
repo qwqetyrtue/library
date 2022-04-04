@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎使用图书馆借阅系统</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="css/user.css">
+    <!--引入vue-->
+    <script src="js/vue/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="js/element-ui@2.15.7/lib/index.js"></script>
+    <!-- 引入jquery -->
+    <script src="js/jquery/jquery@3.6.0.js"></script>
+    <!--页面js-->
+    <script src="js/user.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="m-container" v-cloak>
+    <div class="m-header">
+        <div class="m-title">
+            {{ PageTitle }}
+        </div>
+        <div class="m-user">
+            <el-avatar size="medium"
+                       src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png"></el-avatar>
+
+            <el-badge class="m-user-msg m-type-user_select_none" :value="12">
+                <i class="el-icon-message-solid">收件箱</i>
+            </el-badge>
+
+            <el-dropdown class="m-user-quick_menu m-type-user_select_none" trigger="click" size="medium"
+                         @command="userCommandHandle">
+                <i class="el-icon-user-solid">
+                    用户
+                    <i class="el-icon-caret-bottom"></i>
+                </i>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="changepsw">修改密码</el-dropdown-item>
+                    <el-dropdown-item command="outlogin">注销</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+
+        </div>
+    </div>
+    <el-tabs v-model="tabIndex1" class="m-tab m-type-user_select_none" tab-position="left" type="border-card"
+             @tab-click="tabClickHandle">
+        <el-tab-pane class="m-tabs" label="预约" name="预约">
+            <el-breadcrumb class="m-breadcrumb" separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item>当前位置</el-breadcrumb-item>
+                <el-breadcrumb-item>{{tabIndex1}}</el-breadcrumb-item>
+                <el-breadcrumb-item>{{tabIndex2}}</el-breadcrumb-item>
+            </el-breadcrumb>
+            <el-tabs v-model="tabIndex2" type="border-card" class="m-tab_inline">
+                <el-tab-pane class="m-tabs_inline" name="预约座位" label="预约座位">
+                    <el-collapse v-model="selectedFloor" accordion class="m-seat-reserve">
+                        <el-scrollbar class="m-scrollbar">
+                            <el-collapse-item title="预约记录" name="1">
+                                <div class="m-seat-reserve-cont">
+                                    <el-table
+                                            :data="tableData"
+                                            border
+                                            stripe
+                                            :default-sort="{prop: 'date', order: 'descending'}"
+                                            class="m-seat-reserve-record">
+                                        <el-table-column
+                                                fixed
+                                                prop="date"
+                                                label="日期"
+                                                sortable
+                                                width="150">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="name"
+                                                label="姓名"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="province"
+                                                label="省份"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="city"
+                                                label="市区"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="address"
+                                                label="地址"
+                                                width="300">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="zip"
+                                                label="邮编"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                label="操作"
+                                                width="150">
+                                            <template slot-scope="scope">
+                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
+                                                </el-button>
+                                                <el-button type="text" size="small">编辑</el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </el-collapse-item>
+                            <el-collapse-item title="常用座位" name="2">
+                                <div class="m-seat-reserve-cont">
+                                    <el-table
+                                            :data="tableData"
+                                            border
+                                            stripe
+                                            :default-sort="{prop: 'date', order: 'descending'}"
+                                            class="m-seat-reserve-record">
+                                        <el-table-column
+                                                fixed
+                                                prop="date"
+                                                label="日期"
+                                                sortable
+                                                width="150">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="name"
+                                                label="姓名"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="province"
+                                                label="省份"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="city"
+                                                label="市区"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="address"
+                                                label="地址"
+                                                width="300">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="zip"
+                                                label="邮编"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                label="操作"
+                                                width="150">
+                                            <template slot-scope="scope">
+                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
+                                                </el-button>
+                                                <el-button type="text" size="small">编辑</el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </el-collapse-item>
+                            <el-collapse-item title="座位查询" name="3">
+                                <div class="m-seat-reserve-cont">
+                                    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                                        <el-form-item label="审批人">
+                                            <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="活动区域">
+                                            <el-select v-model="formInline.region" placeholder="活动区域">
+                                                <el-option label="区域一" value="shanghai"></el-option>
+                                                <el-option label="区域二" value="beijing"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button type="primary" @click="onSubmit">查询</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                    <el-table
+                                            :data="tableData"
+                                            border
+                                            stripe
+                                            :default-sort="{prop: 'date', order: 'descending'}"
+                                            class="m-seat-reserve-record">
+                                        <el-table-column
+                                                fixed
+                                                prop="date"
+                                                label="日期"
+                                                sortable
+                                                width="150">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="name"
+                                                label="姓名"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="province"
+                                                label="省份"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="city"
+                                                label="市区"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="address"
+                                                label="地址"
+                                                width="300">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="zip"
+                                                label="邮编"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                label="操作"
+                                                width="150">
+                                            <template slot-scope="scope">
+                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
+                                                </el-button>
+                                                <el-button type="text" size="small">编辑</el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </el-collapse-item>
+                            <el-collapse-item title="违规记录" name="4">
+                                <div class="m-seat-reserve-cont">
+                                    <el-table
+                                            :data="tableData"
+                                            border
+                                            stripe
+                                            :default-sort="{prop: 'date', order: 'descending'}"
+                                            class="m-seat-reserve-record">
+                                        <el-table-column
+                                                fixed
+                                                prop="date"
+                                                label="日期"
+                                                sortable
+                                                width="150">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="name"
+                                                label="姓名"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="province"
+                                                label="省份"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="city"
+                                                label="市区"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="address"
+                                                label="地址"
+                                                width="300">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="zip"
+                                                label="邮编"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                label="操作"
+                                                width="150">
+                                            <template slot-scope="scope">
+                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
+                                                </el-button>
+                                                <el-button type="text" size="small">编辑</el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </el-collapse-item>
+                        </el-scrollbar>
+                    </el-collapse>
+                </el-tab-pane>
+                <el-tab-pane class="m-tabs_inline" name="预约会议厅" label="预约会议厅">
+                    <el-collapse v-model="selectedFloor" accordion class="m-seat-reserve">
+                        <el-scrollbar class="m-scrollbar">
+                            <el-collapse-item title="预约记录" name="1">
+                                <div class="m-seat-reserve-cont">
+                                    <el-table
+                                            :data="tableData"
+                                            border
+                                            stripe
+                                            :default-sort="{prop: 'date', order: 'descending'}"
+                                            class="m-seat-reserve-record">
+                                        <el-table-column
+                                                fixed
+                                                prop="date"
+                                                label="日期"
+                                                sortable
+                                                width="150">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="name"
+                                                label="姓名"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="province"
+                                                label="省份"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="city"
+                                                label="市区"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="address"
+                                                label="地址"
+                                                width="300">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="zip"
+                                                label="邮编"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                label="操作"
+                                                width="150">
+                                            <template slot-scope="scope">
+                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
+                                                </el-button>
+                                                <el-button type="text" size="small">编辑</el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </el-collapse-item>
+                            <el-collapse-item title="厅室查询" name="2">
+                                <div class="m-seat-reserve-cont">
+                                    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                                        <el-form-item label="审批人">
+                                            <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="活动区域">
+                                            <el-select v-model="formInline.region" placeholder="活动区域">
+                                                <el-option label="区域一" value="shanghai"></el-option>
+                                                <el-option label="区域二" value="beijing"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button type="primary" @click="onSubmit">查询</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                    <el-table
+                                            :data="tableData"
+                                            border
+                                            stripe
+                                            :default-sort="{prop: 'date', order: 'descending'}"
+                                            class="m-seat-reserve-record">
+                                        <el-table-column
+                                                fixed
+                                                prop="date"
+                                                label="日期"
+                                                sortable
+                                                width="150">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="name"
+                                                label="姓名"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="province"
+                                                label="省份"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="city"
+                                                label="市区"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="address"
+                                                label="地址"
+                                                width="300">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="zip"
+                                                label="邮编"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                label="操作"
+                                                width="150">
+                                            <template slot-scope="scope">
+                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
+                                                </el-button>
+                                                <el-button type="text" size="small">编辑</el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </el-collapse-item>
+                        </el-scrollbar>
+                    </el-collapse>
+                </el-tab-pane>
+                <el-tab-pane class="m-tabs_inline" name="预约讲座" label="预约讲座">
+                    <el-collapse v-model="selectedFloor" accordion class="m-seat-reserve">
+                        <el-scrollbar class="m-scrollbar">
+                            <el-collapse-item title="预约记录" name="1">
+                                <div class="m-seat-reserve-cont">
+                                    <el-table
+                                            :data="tableData"
+                                            border
+                                            stripe
+                                            :default-sort="{prop: 'date', order: 'descending'}"
+                                            class="m-seat-reserve-record">
+                                        <el-table-column
+                                                fixed
+                                                prop="date"
+                                                label="日期"
+                                                sortable
+                                                width="150">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="name"
+                                                label="姓名"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="province"
+                                                label="省份"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="city"
+                                                label="市区"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="address"
+                                                label="地址"
+                                                width="300">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="zip"
+                                                label="邮编"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                label="操作"
+                                                width="150">
+                                            <template slot-scope="scope">
+                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
+                                                </el-button>
+                                                <el-button type="text" size="small">编辑</el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </el-collapse-item>
+                            <el-collapse-item title="讲座查询" name="2">
+                                <div class="m-seat-reserve-cont">
+                                    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                                        <el-form-item label="审批人">
+                                            <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="活动区域">
+                                            <el-select v-model="formInline.region" placeholder="活动区域">
+                                                <el-option label="区域一" value="shanghai"></el-option>
+                                                <el-option label="区域二" value="beijing"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button type="primary" @click="onSubmit">查询</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                    <el-table
+                                            :data="tableData"
+                                            border
+                                            stripe
+                                            :default-sort="{prop: 'date', order: 'descending'}"
+                                            class="m-seat-reserve-record">
+                                        <el-table-column
+                                                fixed
+                                                prop="date"
+                                                label="日期"
+                                                sortable
+                                                width="150">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="name"
+                                                label="姓名"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="province"
+                                                label="省份"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="city"
+                                                label="市区"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="address"
+                                                label="地址"
+                                                width="300">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="zip"
+                                                label="邮编"
+                                                width="120">
+                                        </el-table-column>
+                                        <el-table-column
+                                                label="操作"
+                                                width="150">
+                                            <template slot-scope="scope">
+                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
+                                                </el-button>
+                                                <el-button type="text" size="small">编辑</el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </el-collapse-item>
+                        </el-scrollbar>
+                    </el-collapse>
+                </el-tab-pane>
+            </el-tabs>
+        </el-tab-pane>
+        <el-tab-pane class="m-tabs" label="借书" name="借书">
+            <el-breadcrumb class="m-breadcrumb" separator-class="el-icon-arrow-right">
+                <el-breadcrumb class="m-breadcrumb" separator-class="el-icon-arrow-right">
+                    <el-breadcrumb-item>当前位置</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{tabIndex1}}</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{tabIndex2}}</el-breadcrumb-item>
+                </el-breadcrumb>
+            </el-breadcrumb>
+            <el-tabs v-model="tabIndex2" type="border-card" class="m-tab_inline">
+                <el-tab-pane class="m-tabs_inline m-tabs_inline_table" name="已借书籍" label="已借书籍">
+                    <el-scrollbar class="m-scrollbar">
+                        <el-table
+                                :data="borrowList"
+                                border
+                                stripe
+                                :default-sort="{prop: 'createtime', order: 'descending'}">
+                            <el-table-column
+                                    fixed="left"
+                                    prop="borrowid"
+                                    label="借阅单号"
+                                    sortable
+                                    width="240">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="state"
+                                    label="借阅状态"
+                                    width="120">
+                                <template slot-scope="scope">
+                                    <el-tag :type="borrowState(scope.row.state).type" disable-transitions>
+                                        {{borrowState(scope.row.state).state}}
+                                    </el-tag>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="bkname"
+                                    label="书籍名称"
+                                    width="150">
+                                <template slot-scope="scope">
+                                    《{{scope.row.bkname}}》
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="bkid"
+                                    label="书籍ID"
+                                    width="120">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="time"
+                                    label="借阅时间"
+                                    width="90">
+                                <template slot-scope="scope">
+                                    {{scope.row.time}}天
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="timeleft"
+                                    label="剩余时间"
+                                    width="90">
+                                <template slot-scope="scope">
+                                    {{scope.row.timeleft}}天
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="createtime"
+                                    label="创建时间"
+                                    width="160">
+                                <template slot-scope="scope">
+                                    <el-input
+                                            readonly
+                                            placeholder="创建时间"
+                                            suffix-icon="el-icon-date"
+                                            :value="scope.row.createtime">
+                                    </el-input>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="limittime"
+                                    label="归还期限"
+                                    width="160">
+                                <template slot-scope="scope">
+                                    <el-input
+                                            readonly
+                                            placeholder="归还期限"
+                                            suffix-icon="el-icon-date"
+                                            :value="scope.row.limittime">
+                                    </el-input>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="remark"
+                                    label="备注"
+                                    width="300">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="returntime"
+                                    label="归还时间"
+                                    width="160">
+                                <template slot-scope="scope">
+                                    <el-input
+                                            readonly
+                                            placeholder="归还时间"
+                                            suffix-icon="el-icon-date"
+                                            :value="scope.row.returntime">
+                                    </el-input>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    width="150"
+                                    fixed="right">
+                                <template slot="header">
+                                    <el-row type="flex" align="middle">
+                                        <el-col :span="6" :offset="6">操作</el-col>
+                                        <el-col :span="6" :offset="6">
+                                            <el-button icon="el-icon-refresh" type="text"
+                                                       @click="refreshBorrowListHandle"></el-button>
+                                        </el-col>
+                                    </el-row>
+                                </template>
+                                <template slot-scope="scope">
+                                    <el-button @click="bookListRowClickHandle(scope.row)" type="text" size="small">查看书籍
+                                    </el-button>
+                                    <el-button type="text" size="small">归还</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </el-scrollbar>
+                </el-tab-pane>
+                <el-tab-pane class="m-tabs_inline m-tabs_inline_table" name="查询书籍" label="查询书籍">
+                    <el-scrollbar class="m-scrollbar">
+                        <el-form :inline="true" :model="formInline" ref="formInline">
+                            <el-form-item label="书籍名称">
+                                <el-input v-model="bookSearch.name" placeholder="请输入书籍名称"></el-input>
+                            </el-form-item>
+                            <el-form-item label="作者">
+                                <el-input v-model="bookSearch.author" placeholder="请输入作者名称"></el-input>
+                            </el-form-item>
+                            <el-form-item label="筛选">
+                                <el-select v-model="bookSearch.filtrate" placeholder="筛选项">
+                                    <el-option label="仅显示有书" value="have"></el-option>
+                                    <el-option label="仅显示在库" value="store"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="onSubmit">查询书籍</el-button>
+                            </el-form-item>
+                        </el-form>
+                        <el-table
+                                :data="bookList"
+                                border
+                                stripe
+                                :default-sort="{prop: 'bkname', order: 'descending'}">
+                            <el-table-column
+                                    fixed="left"
+                                    prop="bkid"
+                                    label="书籍id"
+                                    sortable
+                                    width="150">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="bkname"
+                                    label="书名"
+                                    width="240">
+                                <template slot-scope="scope">
+                                    《{{scope.row.bkname}}》
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="atname"
+                                    label="作者"
+                                    width="120">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="state"
+                                    label="状态"
+                                    width="120">
+                                <template slot-scope="scope">
+                                    <el-tag :type="bookState(scope.row.state).type" disable-transitions>
+                                        {{bookState(scope.row.state).state}}
+                                    </el-tag>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="publisher"
+                                    label="出版社"
+                                    width="210">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="storedate"
+                                    label="入库时间"
+                                    width="150">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="binding"
+                                    label="装订"
+                                    width="90">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="language"
+                                    label="语言"
+                                    width="90">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="category"
+                                    label="分类"
+                                    width="120">
+                            </el-table-column>
+                            <el-table-column
+                                    fixed="right"
+                                    align="center"
+                                    width="210">
+                                <template slot="header">
+                                    <el-row type="flex" align="middle">
+                                        <el-col :span="6" :offset="6">操作</el-col>
+                                        <el-col :span="6" :offset="6">
+                                            <el-button icon="el-icon-refresh" type="text"
+                                                       @click="refreshBookListHandle"></el-button>
+                                        </el-col>
+                                    </el-row>
+                                </template>
+                                <template slot-scope="scope">
+                                    <el-button @click="bookListRowClickHandle(scope.row)" type="text" size="small">
+                                        查看详情
+                                    </el-button>
+                                    <el-button v-if="scope.row.state == 'STORE'" @click="createBorrowHandle(scope.row)"
+                                               type="text" size="small">
+                                        登记借阅
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </el-scrollbar>
+                </el-tab-pane>
+                <el-tab-pane class="m-tabs_inline" name="预约书籍" label="预约书籍">
+                    <div class="m-book-reserve">
+                        <el-scrollbar class="m-scrollbar">
+                            <el-form ref="bookReserveForm" :model="bookReserveForm" label-width="80px">
+                                <el-form-item label="ISBN">
+                                    <el-input v-model="bookReserveForm.isbn"></el-input>
+                                    <el-button type="text" @click="isbnCheckHandle()">查询</el-button>
+                                </el-form-item>
+                                <el-form-item label="备注">
+                                    <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 6}" maxlength="300" show-word-limit resize="none"
+                                              v-model="bookReserveForm.remark"></el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="text" @click="formResetHandle('bookReserveForm')">重置</el-button>
+                                    <el-button type="primary" @click="bookReserveFormSubmitHandle">提交预约</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </el-scrollbar>
+                    </div>
+                </el-tab-pane>
+            </el-tabs>
+        </el-tab-pane>
+        <el-tab-pane class="m-tabs" label="个人信息" name="个人信息">
+            <el-breadcrumb class="m-breadcrumb" separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item>当前位置</el-breadcrumb-item>
+                <el-breadcrumb-item>{{tabIndex1}}</el-breadcrumb-item>
+                <el-breadcrumb-item>{{tabIndex2}}</el-breadcrumb-item>
+            </el-breadcrumb>
+            <el-tabs v-model="tabIndex2" type="border-card" class="m-tab_inline">
+                <el-tab-pane class="m-tabs_inline" name="基本信息" label="基本信息">
+                    <div class="m-base-msg">
+                        <el-scrollbar class="m-scrollbar">
+                            <el-descriptions class="margin-top" v-if="user.load" title="基本资料" :column="2" border>
+                                <template slot="extra">
+                                    <el-button type="primary" size="small" @click="userUpdateDialogShowHandle">修改
+                                    </el-button>
+                                </template>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-user"></i>
+                                        用户名
+                                    </template>
+                                    {{user.uid}}
+                                </el-descriptions-item>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-male"></i>
+                                        性别
+                                    </template>
+                                    {{genderState(user.gender).state}}
+                                </el-descriptions-item>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-document"></i>
+                                        昵称
+                                    </template>
+                                    {{user.name}}
+                                </el-descriptions-item>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-mobile-phone"></i>
+                                        手机号
+                                    </template>
+                                    {{user.call}}
+                                </el-descriptions-item>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-house"></i>
+                                        故乡
+                                    </template>
+                                    {{user.homeadd}}
+                                </el-descriptions-item>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-office-building"></i>
+                                        联系地址
+                                    </template>
+                                    {{user.presentadd}}
+                                </el-descriptions-item>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-time"></i>
+                                        创建时间
+                                    </template>
+                                    {{user.createdate}}
+                                </el-descriptions-item>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-date"></i>
+                                        出生年月
+                                    </template>
+                                    {{user.birth}}
+                                </el-descriptions-item>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-view"></i>
+                                        血型
+                                    </template>
+                                    {{user.bloodtype}}型
+                                </el-descriptions-item>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-postcard"></i>
+                                        邮政编码
+                                    </template>
+                                    {{user.postcode}}
+                                </el-descriptions-item>
+                                <el-descriptions-item>
+                                    <template slot="label">
+                                        <i class="el-icon-message"></i>
+                                        邮箱
+                                    </template>
+                                    {{user.email}}
+                                </el-descriptions-item>
+                            </el-descriptions>
+                            <el-divider class="m-divider"></el-divider>
+                        </el-scrollbar>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane class="m-tabs_inline" name="修改头像" label="修改头像">
+
+                </el-tab-pane>
+                <el-tab-pane class="m-tabs_inline" name="修改密码" label="修改密码">
+                    <div class="m-passwd-update">
+                        <el-form :model="updateForm" status-icon size="medium" :rules="rules" ref="updateForm"
+                                 label-width="80px"
+                        >
+                            <el-form-item label="旧密码" prop="oldPass">
+                                <el-input type="oldPassword" v-model="updateForm.oldPass" autocomplete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item label="新密码" prop="pass">
+                                <el-input type="oldPassword" v-model="updateForm.pass" autocomplete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item label="确认密码" prop="checkPass">
+                                <el-input type="oldPassword" v-model="updateForm.checkPass"
+                                          autocomplete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item label="验证码" prop="age">
+                                <el-col :span="11">
+                                    <el-input v-model.number="updateForm.age"></el-input>
+                                </el-col>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-col :span="11">
+                                    <el-button type="primary" @click="submitForm('updateForm')">提交</el-button>
+                                </el-col>
+                                <el-col :span="11">
+                                    <el-button @click="formResetHandle('updateForm')">重置</el-button>
+                                </el-col>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane class="m-tabs_inline" name="站内信息" label="站内信息">站内信息</el-tab-pane>
+            </el-tabs>
+        </el-tab-pane>
+    </el-tabs>
+    <el-dialog width="40%" title="修改个人信息" custom-class="m-dialog-radius" center :visible.sync="userUpdateDialogVisible">
+        <el-form :model="userUpdateForm" :rules="rules_userUpdateForm" ref="userUpdateForm" label-position="left"
+                 label-width="90px">
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="性别">
+                        <el-select v-model="userUpdateForm.gender" placeholder="请选择性别">
+                            <el-option label="男" value="MALE"></el-option>
+                            <el-option label="女" value="FEMALE"></el-option>
+                            <el-option label="隐藏" value="HIDE"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="出生年月">
+                        <el-date-picker
+                                v-model="userUpdateForm.birth"
+                                value-format="yyyy-MM-dd"
+                                format="yyyy-MM-dd"
+                                type="date"
+                                placeholder="选择日期">
+                        </el-date-picker>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="居住地">
+                        <el-input type="textarea" resize="none" :rows="2" placeholder="请输入居住地"
+                                  v-model="userUpdateForm.presentadd"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="联系地址">
+                        <el-input type="textarea" resize="none" :rows="2" placeholder="请输入联系地址"
+                                  v-model="userUpdateForm.homeadd"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="邮箱" prop="email">
+                        <el-input placeholder="请输入邮箱地址" v-model="userUpdateForm.email"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="电话号码" prop="call">
+                        <el-input placeholder="请输入电话号码" v-model="userUpdateForm.call"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="昵称" prop="name">
+                        <el-input placeholder="请输入昵称" v-model="userUpdateForm.name"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="邮政编码">
+                        <el-input placeholder="请输入邮政编码" v-model="userUpdateForm.postcode"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="血型">
+                        <el-select v-model="userUpdateForm.bloodtype" placeholder="请选择血型">
+                            <el-option label="A型" value="A"></el-option>
+                            <el-option label="B型" value="B"></el-option>
+                            <el-option label="AB型" value="AB"></el-option>
+                            <el-option label="O型" value="O"></el-option>
+                            <el-option label="RH型" value="RH"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="reloadUserUpdate" type="text">重置</el-button>
+            <el-button @click="userUpdateDialogHideHandle">取 消</el-button>
+            <el-button type="primary" @click="userUpdateFormSubmitHandle">提交修改</el-button>
+        </div>
+    </el-dialog>
+    <el-dialog top="5vh" width="50%" custom-class="m-dialog-radius" title="书籍详情" center
+               :visible.sync="bookDetailsDialogVisible">
+        <div class="m-book-details" v-if="bookDetails.load">
+            <el-scrollbar class="m-scrollbar">
+                <el-row :gutter="30">
+                    <el-col :span="8">
+                        <el-image class="m-book-details-img" fit="fill" v-if="bookDetails.imgs"
+                                  :src="bookDetails.imgs[0]"
+                                  :preview-src-list="bookDetails.imgs">
+                            <div slot="error" class="image-slot">
+                                <i class="el-icon-picture-outline">error</i>
+                            </div>
+                        </el-image>
+                    </el-col>
+                    <el-col :span="9">
+                        <el-descriptions :column="1">
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="书名">
+                                {{bookDetails.name}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="作者">
+                                {{bookDetails.author}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="装订">
+                                {{bookDetails.binding}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="页数">
+                                {{bookDetails.page + '页'}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="分类">
+                                {{bookDetails.category}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="语言">
+                                {{bookDetails.language}}
+                            </el-descriptions-item>
+                        </el-descriptions>
+                    </el-col>
+                    <el-col :span="7">
+                        <el-descriptions :column="1" title="入库信息">
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="ID">
+                                {{bookDetails.bkid}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="入库时间">
+                                {{bookDetails.storedate}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="状态">
+                                <el-tag size="small">{{bookDetails.state}}</el-tag>
+                            </el-descriptions-item>
+                        </el-descriptions>
+                    </el-col>
+                </el-row>
+                <el-divider></el-divider>
+                <el-row :gutter="10">
+                    <el-col :span="24">
+                        <el-descriptions :column="2" title="出版信息">
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="ISBN">
+                                {{bookDetails.isbn}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="ISBN(10)">
+                                {{bookDetails.isbn10}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="价格">
+                                {{bookDetails.price + '元'}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="出版社">
+                                {{bookDetails.publisher}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="出版地">
+                                {{bookDetails.publishadd}}
+                            </el-descriptions-item>
+                            <el-descriptions-item label-class-name="m-book-details-label"
+                                                  content-class-name="m-book-details-content" label="出版时间">
+                                {{bookDetails.publishdate}}
+                            </el-descriptions-item>
+                        </el-descriptions>
+                    </el-col>
+                </el-row>
+                <el-divider></el-divider>
+                <el-descriptions :colon="false" :column="1" title="图书介绍">
+                    <el-descriptions-item>
+                        {{bookDetails.introduce}}
+                    </el-descriptions-item>
+                </el-descriptions>
+            </el-scrollbar>
+        </div>
+    </el-dialog>
+    <el-dialog top="5vh" width="50%" custom-class="m-dialog-radius" title="借阅书籍" center
+               :visible.sync="borrowCreateDialogVisible">
+        <div class="m-borrow-form">
+            <el-scrollbar class="m-scrollbar">
+                <el-form ref="borrowForm" :model="borrowForm" label-width="80px" label-position="top">
+                    <el-form-item>
+                        <el-tag slot="label">借阅人</el-tag>
+                        <el-input
+                                placeholder="请输入内容"
+                                :value="user.name"
+                                :disabled="true">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item prop="time" :rules="[{ required: true, message: '请选择借阅时长'}]">
+                        <el-tag slot="label">借阅时长</el-tag>
+                        <el-select v-model="borrowForm.time" placeholder="请选择借阅时长">
+                            <el-option label="7天" :value="7"></el-option>
+                            <el-option label="14天" :value="14"></el-option>
+                            <el-option label="30天" :value="30"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-tag slot="label">借阅日期</el-tag>
+                        <el-date-picker
+                                :value="borrowForm.createdate"
+                                format="yyyy-MM-dd"
+                                type="date"
+                                disabled="true"
+                                placeholder="借阅日期">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-tag slot="label">书籍信息</el-tag>
+                        <el-descriptions border>
+                            <el-descriptions-item label="书名">{{borrowForm.bkname}}</el-descriptions-item>
+                            <el-descriptions-item label="作者">{{borrowForm.atname}}</el-descriptions-item>
+                            <el-descriptions-item label="装订">{{borrowForm.binding}}</el-descriptions-item>
+                            <el-descriptions-item label="ID">{{borrowForm.bkid}}</el-descriptions-item>
+                            <el-descriptions-item label="备注">{{borrowForm.bkremark}}</el-descriptions-item>
+                        </el-descriptions>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-tag slot="label">备注</el-tag>
+                        <el-input type="textarea" resize="none" :rows="4" maxlength="150" show-word-limit
+                                  placeholder="在此输入备注" v-model="borrowForm.remark"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-tag slot="label">注意事项</el-tag>
+                        <div class="m-tip-warning">
+                            <p>1、请爱护图书，严禁乱涂乱画，保证图书完整。</p>
+                            <p>2、借阅后请及时归还，防止丢失。</p>
+                            <p>3、图书如有损坏丢失，照价赔偿。</p>
+                        </div>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="createBorrowFormSubmitHandle">提交借阅</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-scrollbar>
+        </div>
+    </el-dialog>
+</div>
+</body>
+</html>

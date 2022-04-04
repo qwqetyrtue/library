@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <!--数据库对应pojo-->
+        <typeAlias alias="Admin" type="cn.hnist.sharo.model.Admin"/>
+        <typeAlias alias="Author" type="cn.hnist.sharo.model.Author"/>
+        <typeAlias alias="Book" type="cn.hnist.sharo.model.Book"/>
+        <typeAlias alias="Borrowrecord" type="cn.hnist.sharo.model.Borrowrecord"/>
+        <typeAlias alias="User" type="cn.hnist.sharo.model.User"/>
+
+        <!--拓展-->
+        <typeAlias alias="Update_pwd" type="cn.hnist.sharo.model.mexpand.Update_pwd"/>
+        <typeAlias alias="Update_bkid" type="cn.hnist.sharo.model.mexpand.Update_bkid"/>
+        <typeAlias alias="Filtrate" type="cn.hnist.sharo.model.mexpand.Filtrate"/>
+        <typeAlias alias="Book_filtrate" type="cn.hnist.sharo.model.mexpand.Book_filtrate"/>
+        <typeAlias alias="Borrow_create" type="cn.hnist.sharo.model.mexpand.Borrow_create"/>
+
+        <!--json-->
+        <typeAlias alias="JSONObject" type="com.alibaba.fastjson.JSONObject"/>
+    </typeAliases>
+    <mappers>
+        <mapper resource="cn/hnist/sharo/dao/UserMapper.xml" />
+    </mappers>
+</configuration>

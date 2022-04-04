@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hnist.sharo.dao.BookMapper">
+    <!-- 查询书籍 -->
+    <select id="select" parameterType="Book_filtrate" resultType="JSONObject">
+        SELECT *
+        FROM Book_Author
+        WHERE
+        <if test="bkname != null  and bkname != ''">
+            Bkname LIKE concat('%', #{bkname}, '%')
+        </if>
+        <if test="state != null">
+            AND State LIKE concat('%', #{state}, '%')
+        </if>
+        <if test="publisher != null  and publisher != ''">
+            AND Publisher LIKE concat('%', #{publisher}, '%')
+        </if>
+        <if test="atname != null  and atname != ''">
+            AND Atname like concat('%', #{atname}, '%')
+        </if>
+        <choose>
+            <when test="order !=null and order!= ''">
+                ORDER BY #{order};
+            </when>
+            <otherwise>
+                ORDER BY Bkname
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="limit !=null and limit &gt; 0 ">
+                LIMIT #{limit}
+            </when>
+            <otherwise>
+                LIMIT 10
+            </otherwise>
+        </choose>
+        <if test="offset !=null and offset &gt;= 0">
+            OFFSET #{offset};
+        </if>
+    </select>
+
+    <!-- 显示书籍列表 -->
+    <select id="all" parameterType="Filtrate" resultType="JSONObject">
+        SELECT *
+        FROM Book_Author
+        <choose>
+            <when test="order !=null and order!= ''">
+                ORDER BY #{order}
+            </when>
+            <otherwise>
+                ORDER BY Bkname
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="limit !=null and limit &gt; 0 ">
+                LIMIT #{limit}
+            </when>
+            <otherwise>
+                LIMIT 10
+            </otherwise>
+        </choose>
+        <if test="offset !=null and offset &gt;= 0">
+            OFFSET #{offset}
+        </if>
+    </select>
+
+    <!--添加书籍-->
+    <insert id="store" parameterType="Book">
+        INSERT INTO book (bkid, name, atid, price, state, introduce, remark, publisher, storedate, isbn, isbn10, imgs,
+                          publishadd, publishdate, page, category, language, chinaclass, binding)
+        VALUES (#{bkid}, #{name}, #{atid}, #{price}, #{state}, #{introduce}, #{remark}, #{publisher}, #{storedate},
+                #{isbn}, #{isbn10}, #{imgs}, #{publishadd}, #{publishdate}, #{page}, #{category}, #{language},
+                #{chinaclass}, #{binding})
+    </insert>
+
+    <!--修改书籍信息-->
+    <update id="update" parameterType="Book">
+        UPDATE Book
+        <set>
+            <if test="name != null and name != ''">name=#{name},</if>
+            <if test="atid != null and atid != ''">atid=#{atid},</if>
+            <if test="price != null and price &gt; 0">price=#{price},</if>
+            <if test="state !=null">state=#{state},</if>
+            <if test="introduce != null and introduce != ''">introduce=#{introduce},</if>
+            <if test="remark != null and remark != ''">remark=#{remark},</if>
+            <if test="publisher != null and publisher != ''">publisher=#{publisher}</if>
+        </set>
+        WHERE bkid=#{bkid}
+    </update>
+
+    <!--修改bkid和入库时间-->
+    <update id="updatebkid" parameterType="Update_bkid">
+        UPDATE Book
+        <set>
+            <if test="bkid != null and bkid != ''">Bkid=#{bkid}</if>
+            <if test="storedate != null and storedate != ''">storedate</if>
+            <if test="ISBN != null and ISBN != ''">ISBN=#{ISBN}</if>
+        </set>
+        WHERE Bkid=#{old_bkid}
+    </update>
+
+    <!--移除书籍记录-->
+    <delete id="delete" parameterType="Book">
+        DELETE
+        FROM book
+        WHERE bkid = #{bkid}
+    </delete>
+
+    <!--查询书籍信息-->
+    <select id="details" parameterType="Book" resultType="JSONObject">
+        SELECT book.*, author.name AS author
+        FROM book,
+             author
+        WHERE bkid = #{bkid}
+          AND book.atid = author.atid
+    </select>
+</mapper>

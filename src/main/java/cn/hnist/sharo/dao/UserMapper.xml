@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hnist.sharo.dao.UserMapper">
+
+    <!-- 用户登录查询 -->
+    <select id="login" parameterType="User" resultType="User">
+        SELECT *
+        FROM user
+        WHERE uid = #{uid}
+          AND password = #{password}
+    </select>
+
+    <select id="check" parameterType="User" resultType="User">
+        SELECT *
+        FROM user
+        WHERE uid = #{uid}
+    </select>
+
+    <!-- 修改密码 -->
+    <update id="updatepwd" parameterType="Update_pwd">
+        UPDATE user
+        SET password=#{password}
+        WHERE uid = #{uid}
+          AND password = #{old_password}
+    </update>
+
+    <!-- 修改个人信息 -->
+    <update id="update" parameterType="User">
+        UPDATE User
+        <set>
+            <if test="gender != null">gender=#{gender},</if>
+            <if test="birth != null and birth != ''">birth=#{birth},</if>
+            <if test="homeadd != null and homeadd != ''">homeadd=#{homeadd},</if>
+            <if test="presentadd != null and presentadd != ''">presentadd=#{presentadd},</if>
+            <if test="email != null and email != ''">email=#{email},</if>
+            <if test="call != null and call != ''">`call`=#{call},</if>
+            <if test="name != null and name != ''">`name`=#{name},</if>
+            <if test="postcode != null and postcode != ''">postcode=#{postcode},</if>
+            <if test="bloodtype != null">bloodtype=#{bloodtype}</if>
+        </set>
+        WHERE uid=#{uid}
+    </update>
+
+    <!-- 注册新用户 -->
+    <insert id="register" parameterType="User">
+        INSERT INTO user (uid, name, createdate, password)
+        VALUES (#{uid}, #{name}, #{createdate}, #{password})
+    </insert>
+
+    <!-- 查询所有用户 -->
+    <select id="all" resultType="JSONObject" parameterType="Filtrate">
+        SELECT *
+        FROM User
+        <choose>
+            <when test="order !=null and order!= ''">
+                ORDER BY #{order};
+            </when>
+            <otherwise>
+                ORDER BY name
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="limit !=null and limit &gt; 0 ">
+                LIMIT #{limit}
+            </when>
+            <otherwise>
+                LIMIT 10
+            </otherwise>
+        </choose>
+        <if test="offset !=null and offset &gt;= 0">
+            OFFSET #{offset};
+        </if>
+    </select>
+
+    <!--注销用户账号-->
+    <delete id="delete" parameterType="User">
+        DELETE
+        FROM user
+        WHERE uid = #{uid}
+    </delete>
+</mapper>

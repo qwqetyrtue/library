@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="css/login.css">
+    <!--引入vue-->
+    <script src="js/vue/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="js/element-ui@2.15.7/lib/index.js"></script>
+    <!-- 引入jquery -->
+    <script src="js/jquery/jquery@3.6.0.js"></script>
+    <!--页面js-->
+    <script src="js/login.js"></script>
+</head>
+<body>
+<div class="m-container">
+    <div class="cont" id="cont">
+        <div class="form-container sign-up-container">
+            <div>
+                <h1>注册</h1>
+                <el-form :model="registerForm" ref="registerForm" label-width="0px" :rules="ruleRegister">
+                    <el-form-item>
+                        <div class="social-container">
+                            <a href="#" class="social"><i class="fa fa-camera-retro"></i></a>
+                            <a href="#" class="social"><i class="fa fa-camera-retro"></i></a>
+                            <a href="#" class="social"><i class="fa fa-camera-retro"></i></a>
+                        </div>
+                    </el-form-item>
+                    <el-form-item prop="name">
+                        <el-input type="text" v-model="registerForm.name" placeholder="昵称"  maxlength="10" show-word-limit></el-input>
+                    </el-form-item>
+                    <el-form-item prop="user">
+                        <el-input type="text" v-model="registerForm.user" placeholder="账号"   maxlength="10" show-word-limit></el-input>
+                    </el-form-item>
+                    <el-form-item prop="password">
+                        <el-input type="password" v-model="registerForm.password" placeholder="密码"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="checkPassword">
+                        <el-input type="password" v-model="registerForm.checkPassword"  placeholder="重复密码"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="text">重置</el-button>
+                        <el-button round type="primary" @click="handleRegisterButton">注 册</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+        <div class="form-container sign-in-container">
+            <div>
+                <h1>登录</h1>
+                <el-form :model="loginForm" ref="loginForm" :rules="ruleLogin" label-width="0px">
+                    <el-form-item>
+                        <div class="social-container">
+                            <a href="#" class="social"><i class="fa fa-camera-retro"></i></a>
+                            <a href="#" class="social"><i class="fa fa-camera-retro"></i></a>
+                            <a href="#" class="social"><i class="fa fa-camera-retro"></i></a>
+                        </div>
+                    </el-form-item>
+                    <el-form-item prop="user">
+                        <el-input placeholder="请输入uid" v-model="loginForm.user" clearable></el-input>
+                    </el-form-item>
+                    <el-form-item prop="password">
+                        <el-input placeholder="请输入密码" v-model="loginForm.password" show-password></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="text">忘记密码？</el-button>
+                        <el-button round type="primary" @click="handleLoginButton">登 录</el-button>
+                    </el-form-item>
+                </el-form>
+
+            </div>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>已有帐号？</h1>
+                    <p>请使用您的帐号进行登录</p>
+                    <button class="ghost" id="signIn" type="button" @click="handleSignInButton">登录</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>没有帐号？</h1>
+                    <p>立即注册加入我们，和我们一起开始旅程吧</p>
+                    <button class="ghost" id="signUp" type="button" @click="handleSignUpButton">注册</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

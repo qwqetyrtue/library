@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+	http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"	id="WebApp_ID" version="3.1">
+
+  <!-- 监听程序 关闭时断开mysql连接 -->
+  <listener>
+    <listener-class>cn.hnist.sharo.unit.CustomContextListener</listener-class>
+  </listener>
+
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>spring.profiles.active</param-name>
+    <param-value>dev</param-value>
+  </context-param>
+  <context-param>
+    <param-name>spring.profiles.default</param-name>
+    <param-value>dev</param-value>
+  </context-param>
+  <context-param>
+    <param-name>spring.liveBeansView.mbeanDomain</param-name>
+    <param-value>dev</param-value>
+  </context-param>
+
+  <!-- 配置SpringMVC的前端控制器，对浏览器发送的请求统一进行处理 -->
+  <servlet>
+    <servlet-name>springMVC</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!-- 通过初始化参数指定SpringMVC配置文件的位置和名称 -->
+    <init-param>
+      <!-- contextConfigLocation为固定值 -->
+      <param-name>contextConfigLocation</param-name>
+      <!-- 使用classpath:表示从类路径查找配置文件，例如maven工程中的src/main/resources -->
+      <param-value>classpath:springMVC.xml</param-value>
+    </init-param>
+    <!--
+         作为框架的核心组件，在启动过程中有大量的初始化操作要做
+        而这些操作放在第一次请求时才执行会严重影响访问速度
+        因此需要通过此标签将启动控制DispatcherServlet的初始化时间提前到服务器启动时
+    -->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>springMVC</servlet-name>
+    <!--
+        设置springMVC的核心控制器所能处理的请求的请求路径
+        /所匹配的请求可以是/login或.html或.js或.css方式的请求路径
+        但是/不能匹配.jsp请求路径的请求
+    -->
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+</web-app>
+

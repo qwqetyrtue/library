@@ -1,0 +1,107 @@
+:root {
+    /*基础蓝色*/
+    --blue: #0391DB;
+    /*选中蓝色*/
+    --blue_ac: #035F91;
+    /*灰色边框*/
+    --gray: #909399;
+    /*淡灰色背景*/
+    --gray_bg: #EBEEF5;
+    /*基础白色*/
+    --white: #FFFFFF;
+
+    /*字体大小*/
+    --ex_small: 12px;
+    --small: 13px;
+    --base: 14px;
+    --medium: 16px;
+    --large: 18px;
+    --ex_large: 20px;
+
+}
+
+html body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+div {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.m-container {
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: flex-start;
+
+}
+.m-container * {
+    box-sizing: border-box;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+
+.m-header {
+    width: 100%;
+    height: auto;
+}
+
+.m-header-bg {
+    width: 100%;
+    height: 150px;
+    background-image: url("/images/head_logo.png");
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    border-bottom: 1px solid var(--gray);
+}
+
+.m-header-nav {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--blue);
+    border-bottom: 1px solid var(--gray);
+}
+
+.m-body {
+    width: 100%;
+    min-height: 700px;
+}
+
+
+/*脚部样式*/
+.m-foot {
+    width: 100%;
+    height: 120px;
+    background-size: 100% 100%;
+    background-image: url("../images/foot.png");
+    background-repeat: no-repeat;
+}
+
+.m-foot_main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: var(--small);
+}
+
+.m-foot_main span {
+    color: var(--white);
+    line-height: var(--small);
+    margin: 5px 0;
+}
+
+.m-foot_main span a, .m-foot_main p span {
+    color: var(--white);
+    line-height: var(--small);
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hnist.sharo.dao.BorrowMapper">
+    <insert id="create" parameterType="Borrowrecord">
+        INSERT INTO borrowrecord (borrowid, uid, createtime, state, bkid, limittime, remark)
+        VALUES (#{borrowid}, #{uid}, #{createtime}, #{state}, #{bkid}, #{limittime}, #{remark})
+    </insert>
+
+    <select id="all" parameterType="User" resultType="JSONObject">
+        SELECT *
+        FROM borrow_book
+        WHERE uid = #{uid}
+    </select>
+</mapper>
