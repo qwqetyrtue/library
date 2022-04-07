@@ -29,17 +29,15 @@
                             <a href="#" class="social"><i class="fa fa-camera-retro"></i></a>
                         </div>
                     </el-form-item>
-                    <el-form-item prop="name">
-                        <el-input type="text" v-model="registerForm.name" placeholder="昵称"  maxlength="10" show-word-limit></el-input>
-                    </el-form-item>
                     <el-form-item prop="user">
-                        <el-input type="text" v-model="registerForm.user" placeholder="账号"   maxlength="10" show-word-limit></el-input>
+                        <el-input type="text" v-model="registerForm.user" placeholder="账号" maxlength="10"
+                                  show-word-limit></el-input>
                     </el-form-item>
                     <el-form-item prop="password">
                         <el-input type="password" v-model="registerForm.password" placeholder="密码"></el-input>
                     </el-form-item>
                     <el-form-item prop="checkPassword">
-                        <el-input type="password" v-model="registerForm.checkPassword"  placeholder="重复密码"></el-input>
+                        <el-input type="password" v-model="registerForm.checkPassword" placeholder="重复密码"></el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="text">重置</el-button>
@@ -88,6 +86,45 @@
             </div>
         </div>
     </div>
+    <el-dialog title="用户注册" :visible.sync="verifyEmailFormDialogVisible"
+               width="30%" center :show-close="false"
+               :close-on-click-modal="false"
+               :close-on-press-escape="false">
+        <el-row>
+            <el-steps :active="registerStep" align-center finish-status="success">
+                <el-step title="填写注册表单"></el-step>
+                <el-step title="填写注册邮箱"></el-step>
+                <el-step title="完成注册"></el-step>
+            </el-steps>
+        </el-row>
+        <el-row>
+            <el-form label-position="right" :model="verifyEmailForm" label-width="80px" ref="verifyEmailForm"
+                     :rules="ruleVerifyEmailForm">
+                <el-form-item label="邮箱" prop="email">
+                    <el-row>
+                        <el-col :span="16">
+                            <el-input v-model="verifyEmailForm.email"></el-input>
+                        </el-col>
+                    </el-row>
+                </el-form-item>
+                <el-form-item label="验证码" prop="verifyCode">
+                    <el-row>
+                        <el-col :span="12">
+                            <el-input v-model="verifyEmailForm.verifyCode"></el-input>
+                        </el-col>
+                        <el-col :offset="1" :span="4">
+                            <el-button v-if="showSendButton" type="text" @click="sendVerifyCodeHandle">发送验证码</el-button>
+                            <el-button v-if="!showSendButton" type="text">{{count}}s后重新获取</el-button>
+                        </el-col>
+                    </el-row>
+                </el-form-item>
+            </el-form>
+        </el-row>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="verifyEmailFormHideHandle">返回上一步</el-button>
+            <el-button type="primary" @click="verifyEmailFormSubmitHandle">完成注册</el-button>
+        </div>
+    </el-dialog>
 </div>
 </body>
 </html>

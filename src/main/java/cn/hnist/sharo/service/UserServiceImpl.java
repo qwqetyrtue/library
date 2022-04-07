@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     public UserMapper userMapper;
 
     @Override
-    public User login(User user, HttpSession session) {
+    public User login(User user) {
         List<User> login = userMapper.login(user);
         if (login != null && login.size() > 0) {
             return (User)login.toArray()[0];
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User checkMsg(User user, HttpSession session) {
+    public User checkMsg(User user) {
         List<User> login = userMapper.check(user);
         if (login != null && login.size() > 0) {
             return (User) login.toArray()[0];
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updatepwd(Update_pwd update_pwd, HttpSession session) {
+    public boolean updatepwd(Update_pwd update_pwd) {
         int affect = userMapper.updatepwd(update_pwd);
         if (affect == 1) {
             return true;
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(User user, HttpSession session) {
+    public User update(User user) {
         int affect = userMapper.update(user);
         if (affect == 1) {
             return (User) userMapper.check(user).toArray()[0];
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(User user, HttpSession session) {
+    public User register(User user) {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         user.setCreatedate(sf.format(new Date()));
         int affect;

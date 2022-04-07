@@ -23,10 +23,11 @@ public class BookController {
         this.bookService = bookService;
     }
 
-//    @CrossOrigin(origins = "*", maxAge = 3600)
-    @RequestMapping(value = "/isbn",method = RequestMethod.GET)
+    @RequestMapping(value = "/isbn",method = RequestMethod.POST)
     public @ResponseBody
-    String isbnCheckHandle(@RequestParam String isbn){
+    String isbnCheckHandle(@RequestBody JSONObject params){
+        String isbn = params.getString("isbn");
+        isbn = isbn==null?"":isbn;
         String res = BackEndHttpRequest.sendGet("https://api.jike.xyz/situ/book/isbn/"+isbn, "apikey="+ISBN_API,"application/json;charset=UTF-8");
         if(res == null) res = "{}";
         return res;

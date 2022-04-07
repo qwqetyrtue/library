@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service("BorrowService")
@@ -26,20 +28,22 @@ public class BorrowServiceImpl implements BorrowService {
     BookMapper bookMapper;
 
 
+    @Transactional
     @Override
-    public boolean create(Borrow_create borrow_create) {
-        Calendar create = Calendar.getInstance();
-
+    public boolean create(Borrow_create borrow_create) throws RuntimeException{
+        LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
+        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
         Borrowrecord borrowrecord = new Borrowrecord();
         borrowrecord.setBkid(borrow_create.getBkid());
         borrowrecord.setUid(borrow_create.getUid());
-        borrowrecord.setBorrowid(borrow_create.getUid() + '_' + String.valueOf(create.getTimeInMillis()));
-        borrowrecord.setCreatetime(new Timestamp(create.getTimeInMillis()));
+        borrowrecord.setBorrowid(borrow_create.getUid() + '_' + creatTimestamp);
+        borrowrecord.setCreatetime(new Timestamp(creatTimestamp));
         borrowrecord.setState(BorrowState.BORROW);
         borrowrecord.setRemark(borrow_create.getRemark());
 
-        create.add(Calendar.DATE, borrow_create.getTime());
-        borrowrecord.setLimittime(new Timestamp(create.getTimeInMillis()));
+        LocalDateTime limit = create.plusDays(borrow_create.getTime());
+        Long limitTimestamp = limit.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        borrowrecord.setLimittime(new Timestamp(limitTimestamp));
 
         if (borrowMapper.create(borrowrecord) == 1) {
             Book book = new Book();
@@ -47,12 +51,32 @@ public class BorrowServiceImpl implements BorrowService {
             book.setState(BookState.LEND);
             if (bookMapper.update(book) == 1)
                 return true;
-        }
-        return false;
+            else throw new RuntimeException("修改书籍状态失败");
+        }else throw new RuntimeException("提交借阅单失败");
     }
 
     @Override
     public List<JSONObject> all(User user) {
         return borrowMapper.all(user);
     }
+
+    @Transactional
+    @Override
+    public boolean finish(Borrowrecord borrowrecord) throws RuntimeException{
+        LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
+        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        // 转换为 Timestamp 类型对象
+        Timestamp timestamp = new Timestamp(creatTimestamp);
+        borrowrecord.setReturntime(timestamp);
+        borrowrecord.setState(BorrowState.RETURN);
+        if(borrowMapper.update(borrowrecord) == 1){
+            Book book = new Book();
+            book.setState(BookState.STORE);
+            book.setBkid(borrowrecord.getBkid());
+            if(bookMapper.update(book) == 1)
+                return true;
+            else throw new RuntimeException("修改书籍状态失败");
+        }else throw new RuntimeException("修改借阅单失败");
+    }
+
 }

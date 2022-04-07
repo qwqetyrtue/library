@@ -11,6 +11,10 @@ import java.util.List;
 @Repository("borrowMapper")
 @Mapper
 public interface BorrowMapper {
+
     int create(Borrowrecord borrowrecord);
+
     List<JSONObject> all(User user);
+
+    int update(Borrowrecord borrowrecord);
 }

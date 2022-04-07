@@ -9,8 +9,12 @@ import java.util.List;
 
 @Repository("bookService")
 public interface BookService {
+
     List<JSONObject> all(Filtrate filtrate);
+
     int store(Book book);
+
     int delete(Book book);
+
     JSONObject details(Book book);
 }

@@ -149,7 +149,12 @@
             <artifactId>spring-aspects</artifactId>
             <version>5.3.17</version>
         </dependency>
-
+        <!--邮件验证码-->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+        </dependency>
     </dependencies>
 
     <build>

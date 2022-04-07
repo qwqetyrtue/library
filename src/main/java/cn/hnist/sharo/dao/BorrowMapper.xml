@@ -11,4 +11,16 @@
         FROM borrow_book
         WHERE uid = #{uid}
     </select>
+
+    <update id="update" parameterType="Borrowrecord">
+        UPDATE borrowrecord
+        <set>
+            <if test="returntime!=null">
+                returntime=#{returntime},
+            </if>
+            state=#{state},
+            remark=#{remark}
+        </set>
+        WHERE borrowid = #{borrowid}
+    </update>
 </mapper>

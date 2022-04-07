@@ -1,18 +1,10 @@
 package cn.hnist.sharo.model.mexpand;
 
-import cn.hnist.sharo.model.User;
-
-public class Update_pwd {
+public class User_register {
     private String uid;
     private String password;
-    private String oldPassword;
+    private String email;
     private String verifyCode;
-
-    public User getUser() {
-        User user = new User();
-        user.setUid(this.getUid());
-        return user;
-    }
 
     public String getUid() {
         return uid;
@@ -30,12 +22,12 @@ public class Update_pwd {
         this.password = password;
     }
 
-    public String getOldPassword() {
-        return oldPassword;
+    public String getEmail() {
+        return email;
     }
 
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getVerifyCode() {

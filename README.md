@@ -252,14 +252,38 @@ jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true
 
 >+ Calender 如何转 Timestamp
 >
->  ```java
->  // 创建 Calendar 对象，也同时获取了当前时间
->  Calendar calendar = Calendar.getInstance();
->   
->  // 转换为 Timestamp 类型对象
->  Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
->  System.out.println(timestamp);
->  ```
+> ```java
+> // 创建 Calendar 对象，也同时获取了当前时间
+> Calendar calendar = Calendar.getInstance();
+>
+> // 转换为 Timestamp 类型对象
+> Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
+>
+> ```
+
+**由于calender不是线程安全的推荐使用下面的`java8` 提供的新时间api `LocalDataTime`**
+
+[calendar.getinstance()获取的是什么时间_为什么建议使用 LocalDateTime 而不是 Date](https://blog.csdn.net/weixin_33682804/article/details/113050640)
+
+>+ 新写法
+>
+>```java
+>// 当前时间 上海时间 (= 北京时间,在一个时区)
+>LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT")));
+>// 去掉毫秒
+>create.withNano(0);
+>// 获取时间戳
+>Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+>
+>Instant instant = Instant.now();
+>// 获取秒级时间戳
+>long currentSecond = instant.getEpochSecond();
+>// 获取毫秒级时间戳
+>long currentMilli = instant.toEpochMilli();
+>Timestamp timestamp = new Timestamp(currentMilli);
+>```
+>
+>
 
 ### 14. 偷懒不想写实体类,用`fastjson中的JSONObject`序列化,结果数据库类型为`datetime`的数据返回的时间中间带了个`t`
 
@@ -306,4 +330,92 @@ jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true
 > </dependency>
 > ```
 >
-> 
+
+
+
+### 15. git 提交记录的规范写法
+
+[关于Git提交规范 ](https://www.cnblogs.com/youcong/p/9470585.html)
+
+[Git提交信息规范化](https://zhuanlan.zhihu.com/p/114001464)
+
+>## Git版本规范
+>
+>### 分支
+>
+>- master分支为主分支(保护分支)，不能直接在master上进行修改代码和提交；
+>- develop分支为测试分支，所以开发完成需要提交测试的功能合并到该分支；
+>- feature分支为开发分支，大家根据不同需求创建独立的功能分支，开发完成后合并到develop分支；
+>- fix分支为bug修复分支，需要根据实际情况对已发布的版本进行漏洞修复；
+>
+>### Tag
+>
+>采用三段式，v版本.里程碑.序号，如`v1.2.1`
+>
+>- 架构升级或架构重大调整，修改第2位
+>- 新功能上线或者模块大的调整，修改第2位
+>- bug修复上线，修改第3位
+>
+>具体操作，可参见：[Git标签](https://link.zhihu.com/?target=https%3A//blog.csdn.net/ligang2585116/article/details/46468709)、[Git基础-打标签](https://link.zhihu.com/?target=https%3A//git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E6%89%93%E6%A0%87%E7%AD%BE)
+>
+>### changelog
+>
+>版本正式发布后，需要生产changelog文档，便于后续问题追溯。
+>
+>## Git提交信息
+>
+>### commit message格式说明
+>
+>Commit message一般包括三部分：Header、Body 和 Footer。
+>
+>### Header
+>
+>```
+>type(scope):subject
+>```
+>
+>- type：用于说明commit的类别，规定为如下几种
+>
+>- - feat：新增功能；
+>  - fix：修复bug；
+>  - docs：修改文档；
+>  - refactor：代码重构，未新增任何功能和修复任何bug；
+>  - build：改变构建流程，新增依赖库、工具等（例如webpack修改）；
+>  - style：仅仅修改了空格、缩进等，不改变代码逻辑；
+>  - perf：改善性能和体现的修改；
+>  - chore：非src和test的修改；
+>  - test：测试用例的修改；
+>  - ci：自动化流程配置修改；
+>  - revert：回滚到上一个版本；
+>
+>- scope：【可选】用于说明commit的影响范围
+>
+>- subject：commit的简要说明，尽量简短
+>
+>### Body
+>
+>对本次commit的详细描述，可分多行
+>
+>### Footer
+>
+>- 不兼容变动：需要描述相关信息
+>- 关闭指定Issue：输入Issue信息
+
+
+
+### `elmentUI` 中的`el-button`当类型为`text`时不能通过获取点击目标并`disabled`来实现防止重复点击
+
+> + 一般防止重复点击
+>
+> ```js
+> let el = ev.target;
+> if (!el.disabled) {
+>     el.disabled = true
+> }
+> ```
+>
+> + 当`el-button` `type='text'`时
+>
+>   根据`console`才知道 `el` 为`span`标签而不是`button`标签
+>
+> + 建议使用 `:disable` 绑定的方式来禁止按键点击

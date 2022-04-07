@@ -2,22 +2,21 @@ package cn.hnist.sharo.aop;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import static cn.hnist.sharo.unit.ColorLog.*;
+
 
 @Component
 @Aspect
+@Order(3)
 public class ControllerAspect {
-
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_BLUE = "\u001B[34m";
 
     @Pointcut("execution(* cn.hnist.sharo.controller.*.*(..))")
     private void execute() {
@@ -61,8 +60,11 @@ public class ControllerAspect {
         //这里可以获取到get请求的参数和其他信息
         System.out.format(ANSI_GREEN + "%s" + ANSI_RESET + ANSI_BLUE + " ==> Url: %s, Uri: %s,\n Params: %s \n" + ANSI_RESET, method, url, uri, queryString );
         //重点 这里就是获取@RequestBody参数的关键  调试的情况下 可以看到o变量已经获取到了请求的参数
-        System.out.println(ANSI_GREEN + "around 后" + ANSI_RESET);
+
         Object result = pjp.proceed();
+
+        System.out.println(ANSI_GREEN + "around 后" + ANSI_RESET);
+
         return result;
     }
 }

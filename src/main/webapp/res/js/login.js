@@ -6,15 +6,25 @@ window.onload = function () {
             this.BASE_URL = paths.length == 3 ? paths[1] : '';
         },
         data() {
+            let validateEmail = (rule, value, callback) => {
+                let pattern = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+                if (value === '') {
+                    callback(new Error('请输入邮箱'));
+                } else if (!pattern.test(value)) {
+                    return callback(new Error('请输入正确的邮箱'));
+                } else {
+                    callback();
+                }
+            };
             let validatePass = (rule, value, callback) => {
                 let pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,10}$/;
                 if (value === '') {
                     callback(new Error('请输入密码'));
                 } else if (!pattern.test(value)) {
-                    callback(new Error('须包含大小写字母和数字，可以使用特殊字符，长度在8-10之间'));
+                    callback(new Error('须含大小写字母,数字，可使用特殊字符，长度:8-10'));
                 } else {
                     if (this.registerForm.checkPassword !== '') {
-                        this.$refs.registerForm.validateField('checkPass');
+                        this.$refs.registerForm.validateField('checkPassword');
                     }
                     callback();
                 }
@@ -32,31 +42,32 @@ window.onload = function () {
                 let pattern = /^[a-zA-Z][a-zA-Z0-9_]{8,10}$/
                 if (value === '') {
                     callback(new Error("请输入uid"))
+                } else if(this.illegality.indexOf(value) !== -1){
+                  callback(new Error('当前账号已经被注册了'));
                 } else if (!pattern.test(value)) {
-                    callback(new Error('须字母开头,可包含字母数字下划线,长度在8-10之间'));
+                    callback(new Error('须字母开头,可含字母,数字,_,长度:8-10'));
                 } else {
                     callback();
                 }
             }
             return {
                 BASE_URL: '',
+                timer: null,
+                count: 0,
                 loginForm: {
                     user: "1213564573",
-                    password: "qwqe"
+                    password: "qQ123456"
                 },
                 registerForm: {
                     user: "",
-                    name: "",
                     password: "",
                     checkPassword: ""
                 },
+                illegality: [],
+                registerStep: 0,
                 ruleRegister: {
                     user: [
                         {validator: validateUser, trigger: 'blur'},
-                    ],
-                    name: [
-                        {required: true, message: '请输入昵称', trigger: 'blur'},
-                        {max: 10, message: '昵称最大长度为10位', trigger: 'blur'}
                     ],
                     password: [
                         {validator: validatePass, trigger: 'blur'}
@@ -64,6 +75,20 @@ window.onload = function () {
                     checkPassword: [
                         {validator: validatePass2, trigger: 'blur'}
                     ],
+                },
+                verifyEmailFormDialogVisible: false,
+                showSendButton: true,
+                verifyEmailForm: {
+                    email: "",
+                    verifyCode: ""
+                },
+                ruleVerifyEmailForm: {
+                    email: [
+                        {validator: validateEmail, trigger: 'blur'}
+                    ],
+                    verifyCode: [
+                        {required: true, message: '请输入验证码', trigger: 'blur'}
+                    ]
                 },
                 ruleLogin: {
                     user: [
@@ -105,6 +130,7 @@ window.onload = function () {
                         })
                             .then(result => {
                                 let res = JSON.parse(result)
+                                console.log(res)
                                 if (res.res == "success") {
                                     el.disabled = true;
                                     v.$message({
@@ -136,41 +162,144 @@ window.onload = function () {
                 }
                 this.$refs.registerForm.validate((valid) => {
                     if (valid) {
-                        let v = this;
+                        this.checkUidLegalReq()
+                            .then(r => {
+                                let res = JSON.parse(r);
+                                if(res.res == "success"){
+                                    this.verifyEmailFormShowHandle()
+                                }else {
+                                    this.illegality.push(this.registerForm.user);
+                                    this.$refs.registerForm.validateField('user')
+                                }
+                                el.disabled = false;
+                            })
+                    }
+                    return false;
+                });
+            },
+            // 检测uid是否合法
+            checkUidLegalReq(){
+                return $.ajax({
+                    url: '/' + this.BASE_URL + '/user/checkuid',
+                    type: "post",
+                    contentType: "application/json;charset=UTF-8",
+                    data: JSON.stringify({
+                        'uid': this.registerForm.user,
+                    }),
+                })
+            },
+            // 发送验证码
+            sendVerifyCodeHandle(ev){
+                let el = ev.target;
+                if (!el.disabled) {
+                    el.disabled = true
+                }
+                this.$refs.verifyEmailForm.validateField('email',(err)=>{
+                    if(err != '请输入正确的邮箱' && err!= '请输入邮箱'){
                         $.ajax({
-                            url: '/' + this.BASE_URL + '/user/register',
+                            url: '/' + this.BASE_URL + '/user/sendverifycode',
                             type: "post",
                             contentType: "application/json;charset=UTF-8",
                             data: JSON.stringify({
-                                'uid': v.registerForm.user,
-                                'password': v.registerForm.password,
-                                'name': v.registerForm.name
+                                'email': this.verifyEmailForm.email,
                             }),
                         })
-                            .then(result => {
-                                let res = JSON.parse(result)
-                                if (res.res == "success") {
-                                    el.disabled = true;
-                                    v.$message({
-                                        message: '注册成功',
+                            .then(r=>{
+                                let res = JSON.parse(r);
+                                if(res.res == "success"){
+                                    this.registerStep = 2;
+                                    this.$message({
+                                        message: '验证码发送成功',
                                         type: 'success',
                                         duration: 1500,
-                                        onClose: () => {
-                                            location.href = '/' + this.BASE_URL + '/user'
-                                        }
                                     })
-                                } else {
                                     el.disabled = false;
-                                    v.$message({
-                                        message: '注册失败',
-                                        type: 'warning'
-                                    });
+                                    const TIME_COUNT = 60;
+                                    if (!this.timer) {
+                                        this.count = TIME_COUNT;
+                                        this.showSendButton = false;
+                                        this.timer = setInterval(() => {
+                                            if (this.count > 0 && this.count <= TIME_COUNT) {
+                                                this.count--;
+                                            } else {
+                                                this.showSendButton = true;
+                                                clearInterval(this.timer);
+                                                this.timer = null;
+                                            }
+                                        }, 1000)
+                                    }
+                                }else{
+                                    el.disabled = false;
+                                    this.$message({
+                                        message: '验证码发送失败',
+                                        type: 'error',
+                                        duration: 0,
+                                        showClose: true,
+                                    })
                                 }
                             })
-                    }
+                            .catch(err=>{
+                                console.log(err);
+                            })
 
-                    return false;
-                });
+                    }
+                })
+            },
+            // 完成注册
+            verifyEmailFormSubmitHandle(ev){
+                let el = ev.target;
+                if (!el.disabled) {
+                    el.disabled = true
+                }
+               this.$refs.verifyEmailForm.validateField('verifyCode',(err)=>{
+                   if(err != '请输入验证码'){
+                       $.ajax({
+                           url: '/' + this.BASE_URL + '/user/register',
+                           type: "post",
+                           contentType: "application/json;charset=UTF-8",
+                           data: JSON.stringify({
+                               'uid': this.registerForm.user,
+                               'password': this.registerForm.password,
+                               'email': this.verifyEmailForm.email,
+                               'verifyCode':this.verifyEmailForm.verifyCode
+                           }),
+                       })
+                           .then(result => {
+                               let res = JSON.parse(result)
+                               if (res.res == "success") {
+                                   this.registerStep = 3;
+                                   this.$message({
+                                       message: '注册成功',
+                                       type: 'success',
+                                       duration: 1500,
+                                       onClose: () => {
+                                           location.href = '/' + this.BASE_URL + '/user'
+                                       }
+                                   })
+                               } else {
+                                   this.$message({
+                                       message: '注册失败',
+                                       type: 'warning',
+                                       duration: 0,
+                                       showClose: true,
+                                   });
+                                   el.disabled = false;
+                               }
+                           })
+                           .catch(err => {
+                               console.log(err);
+                               el.disabled = false;
+                           })
+                   }
+               })
+            },
+            verifyEmailFormHideHandle(){
+                this.registerStep = 0;
+                this.verifyEmailFormDialogVisible = false;
+            },
+            verifyEmailFormShowHandle(){
+                this.registerStep = 1;
+                this.verifyEmailFormDialogVisible = true;
             }
         }
     })

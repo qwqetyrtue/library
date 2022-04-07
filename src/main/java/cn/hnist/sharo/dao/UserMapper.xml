@@ -21,7 +21,7 @@
         UPDATE user
         SET password=#{password}
         WHERE uid = #{uid}
-          AND password = #{old_password}
+          AND password = #{oldPassword}
     </update>
 
     <!-- 修改个人信息 -->
@@ -43,8 +43,8 @@
 
     <!-- 注册新用户 -->
     <insert id="register" parameterType="User">
-        INSERT INTO user (uid, name, createdate, password)
-        VALUES (#{uid}, #{name}, #{createdate}, #{password})
+        INSERT INTO user (uid, email, createdate, password)
+        VALUES (#{uid}, #{email}, #{createdate}, #{password})
     </insert>
 
     <!-- 查询所有用户 -->
@@ -78,4 +78,5 @@
         FROM user
         WHERE uid = #{uid}
     </delete>
+
 </mapper>

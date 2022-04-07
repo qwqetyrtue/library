@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -25,19 +26,34 @@ public class BorrowController {
     }
 
 
-    @RequestMapping("/create")
+    @RequestMapping(value = "/create",method = RequestMethod.POST)
     public @ResponseBody
     Res<String> borrowCreateHandle(@RequestBody Borrow_create borrow_create){
-        boolean res = borrowService.create(borrow_create);
-        if(res){
-            return new Res<>("success","借阅成功");
+        try{
+            if(borrowService.create(borrow_create)){
+                return new Res<>("success","借阅成功");
+            }
+        }catch (Exception e){
+            return new Res<>("fail",e.getMessage());
         }
         return new Res<>("fail","借阅失败");
     }
 
-    @RequestMapping("/all")
+    @RequestMapping(value = "/all",method = RequestMethod.POST)
     public @ResponseBody
     Res<List<JSONObject>> borrowAllHandle(@RequestBody User user){
         return new Res<>("success",borrowService.all(user));
+    }
+
+    @RequestMapping(value = "/finish",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> borrowReturnHandle(@RequestBody Borrowrecord borrowrecord){
+        try {
+            if(borrowService.finish(borrowrecord))
+                return new Res<>("success","归还成功");
+        }catch (Exception e){
+            return new Res<>("fail",e.getMessage());
+        }
+        return new Res<>("fail","归还失败");
     }
 }

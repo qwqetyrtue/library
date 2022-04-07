@@ -123,6 +123,13 @@ a {
     background-color: #eee;
 }
 
+h1,.social-container,th,button,input{
+    user-select: none !important;
+}
+.el-row {
+    margin: 10px 0;
+}
+
 .ghost {
     border-radius: 20px;
     border: 1px solid #ff4b2b;
@@ -182,8 +189,8 @@ a {
 }
 
 .overlay {
-    background: #ff416c;
-    background: linear-gradient(to right, #ff4b2b, #ff416c) no-repeat 0 0 / cover;
+    background: var(--blue);
+    background: linear-gradient(to right, var(--blue_ac), var(--blue)) no-repeat 0 0 / cover;
     color: #fff;
     position: relative;
     left: -100%;
