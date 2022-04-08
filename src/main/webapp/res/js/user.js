@@ -153,12 +153,12 @@ window.onload = function () {
                 borrowListPageHideWhenSingle: true,
                 borrowListTotalSize: 400,
                 // 防止按键连击
-                isbnCheckDisabled: false,
-                refreshBorrowDisabled: false,
-                refreshBookDisabled: false,
-                refreshUserDisabled: false,
-                verifySendDisabled: false,
-                passwordUpdateDisabled: false,
+                isbnCheckBTLoading: false,
+                refreshBorrowBTLoading: false,
+                refreshBookBTLoading: false,
+                refreshUserBTLoading: false,
+                verifySendBTLoading: false,
+                passwordUpdateBTLoading: false,
                 // ------------------------------
                 tableData: [],
                 formInline: {
@@ -354,7 +354,7 @@ window.onload = function () {
 
             },
             passwordUpdateFormSubmitHandle() {
-                this.passwordUpdateDisabled = true;
+                this.passwordUpdateBTLoading = true;
                 let v = this;
                 this.$refs.passwordUpdateForm.validate((valid) => {
                     if (valid) {
@@ -371,9 +371,8 @@ window.onload = function () {
                         })
                             .then(r => {
                                 let res = JSON.parse(r)
-                                this.passwordUpdateDisabled = true;
+                                this.passwordUpdateBTLoading = false;
                                 if (res.res == "success") {
-
                                     v.user = res.data;
                                     v.user.load = true;
                                     this.$message({
@@ -412,13 +411,15 @@ window.onload = function () {
                                     duration: 0,
                                 });
                             })
-                    } else {
+                    }
+                    else {
+                        this.passwordUpdateBTLoading = false;
                         return false
                     }
                 });
             },
             passwordVerifyCodeSendHandle(ev) {
-                this.verifySendDisabled = true;
+                this.verifySendBTLoading = true;
                 $.ajax({
                     url: '/' + this.BASE_URL + '/user/sendverifycode',
                     type: "post",
@@ -428,6 +429,7 @@ window.onload = function () {
                     }),
                 })
                     .then(r=> {
+                        this.verifySendBTLoading = false;
                         let res = JSON.parse(r);
                         if (res.res == "success") {
                             this.$message({
@@ -435,7 +437,7 @@ window.onload = function () {
                                 type: 'success',
                                 duration: 1500,
                             })
-                            this.verifySendDisabled = false;
+
                             const TIME_COUNT = 60;
                             if (!this.timer) {
                                 this.count = TIME_COUNT;
@@ -451,7 +453,6 @@ window.onload = function () {
                                 }, 1000)
                             }
                         }else{
-                            this.verifySendDisabled = false;
                             this.$message({
                                 message:  res.data,
                                 type: 'error',
@@ -470,9 +471,9 @@ window.onload = function () {
                     })
             },
             isbnCheckHandle() {
-                this.isbnCheckDisabled = true;
+                this.isbnCheckBTLoading = true;
                 setTimeout(() => {
-                    this.isbnCheckDisabled = false;
+                    this.isbnCheckBTLoading = false;
                 }, 3000)
                 $.ajax({
                     type: 'post',
@@ -656,6 +657,61 @@ window.onload = function () {
             backupHandle(name) {
                 this.$refs[name].wrap.scrollTop = 0
             },
+            // 刷新数据
+            refreshBookListHandle(ev) {
+                // 防止按键连点
+                this.refreshBookBTLoading = true;
+                console.log(this);
+                setTimeout(() => {
+                    this.refreshBookBTLoading = false;
+                }, 3000);
+
+                this.reqBookList()
+                    .then((res)=>{
+                        if(res){
+                            this.$message({
+                                message: '刷新成功',
+                                type: 'success',
+                                duration: 1000,
+                            });
+                        }
+                    })
+
+            },
+            refreshUserMsgHandle(ev) {
+                // 防止按键连点
+                this.refreshUserBTLoading = true;
+                setTimeout(() => {
+                    this.refreshUserBTLoading = false;
+                }, 1500)
+                this.reqUserMsg()
+                    .then((res)=>{
+                        if(res){
+                            this.$message({
+                                message: '刷新成功',
+                                type: 'success',
+                                duration: 1000,
+                            });
+                        }
+                    })
+            },
+            refreshBorrowListHandle() {
+                // 防止按键连点
+                this.refreshBorrowBTLoading = true;
+                setTimeout(() => {
+                    this.refreshBorrowBTLoading = false;
+                }, 1500)
+                this.reqBorrowList()
+                    .then((res)=>{
+                        if(res){
+                            this.$message({
+                                message: '刷新成功',
+                                type: 'success',
+                                duration: 1000,
+                            });
+                        }
+                    })
+            },
             // 请求数据
             reqUserMsg() {
                 return $.ajax({
@@ -666,6 +722,7 @@ window.onload = function () {
                         this.user = JSON.parse(res).data
                         this.user.load = true;
                         this.reloadUserUpdate();
+                        return true;
                     })
                     .catch(err => {
                         console.log(err)
@@ -694,6 +751,7 @@ window.onload = function () {
                         if (res.res == "success") {
                             this.bookList = res.data;
                             this.bookListLoading = false;
+                            return true
                         } else throw new Error();
 
                     })
@@ -723,6 +781,7 @@ window.onload = function () {
                         if (res.res == "success") {
                             this.borrowList = res.data;
                             this.borrowListLoading = false;
+                            return true;
                         } else throw new Error();
                     })
                     .catch(err => {
@@ -735,47 +794,6 @@ window.onload = function () {
                             duration: 0,
                         });
                     })
-            },
-            // 刷新数据
-            async refreshBookListHandle(ev) {
-                // 防止按键连点
-                this.refreshBookDisabled = true;
-                    setTimeout(() => {
-                        this.refreshBookDisabled = false;
-                    }, 1500)
-
-                await this.reqBookList();
-                this.$message({
-                    message: '刷新成功',
-                    type: 'success',
-                    duration: 1000,
-                });
-            },
-            async refreshUserMsgHandle(ev) {
-                // 防止按键连点
-                this.refreshUserDisabled = true;
-                setTimeout(() => {
-                    this.refreshUserDisabled = false;
-                }, 1500)
-                await this.reqUserMsg();
-                this.$message({
-                    message: '刷新成功',
-                    type: 'success',
-                    duration: 1000,
-                });
-            },
-            async refreshBorrowListHandle() {
-                // 防止按键连点
-                this.refreshBorrowDisabled = true;
-                setTimeout(() => {
-                    this.refreshBorrowDisabled = false;
-                }, 1500)
-                await this.reqBorrowList();
-                this.$message({
-                    message: '刷新成功',
-                    type: 'success',
-                    duration: 1000,
-                });
             },
             onSubmit() {
                 console.log('submit!');

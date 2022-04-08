@@ -644,14 +644,11 @@
                                 </el-table-column>
                                 <el-table-column
                                         width="150"
-                                        fixed="right">
+                                        fixed="right"
+                                        align="center">
                                     <template slot="header">
                                         <el-row type="flex" align="middle">
-                                            <el-col :span="6" :offset="6">操作</el-col>
-                                            <el-col :span="6" :offset="6">
-                                                <el-button :disabled="refreshBorrowDisabled" icon="el-icon-refresh" type="text"
-                                                           @click="refreshBorrowListHandle"></el-button>
-                                            </el-col>
+                                            <el-col :span="24">操作</el-col>
                                         </el-row>
                                     </template>
                                     <template slot-scope="scope">
@@ -679,7 +676,10 @@
                                         :total="bookListTotalSize">
                                 </el-pagination>
                             </el-col>
-                            <el-col :span="1">
+                            <el-col :span="2">
+                                <el-button :loading="refreshBorrowBTLoading" size="medium"
+                                           icon="el-icon-refresh" type="text"
+                                           @click="refreshBorrowListHandle"></el-button>
                                 <el-button size="small" circle icon="el-icon-caret-top"
                                            style="color: var(--blue)"
                                            @click="backupHandle('borrowListScrollbar')"></el-button>
@@ -773,12 +773,7 @@
                                         width="210">
                                     <template slot="header">
                                         <el-row type="flex" align="middle">
-                                            <el-col :span="6" :offset="6">操作</el-col>
-                                            <el-col :span="6" :offset="6">
-                                                <el-button icon="el-icon-refresh" type="text"
-                                                           :disabled="refreshBookDisabled"
-                                                           @click="refreshBookListHandle"></el-button>
-                                            </el-col>
+                                            <el-col :span="24">操作</el-col>
                                         </el-row>
                                     </template>
                                     <template slot-scope="scope">
@@ -808,7 +803,10 @@
                                         :total="borrowListTotalSize">
                                 </el-pagination>
                             </el-col>
-                            <el-col :span="1">
+                            <el-col :span="2">
+                                <el-button icon="el-icon-refresh" size="medium" type="text"
+                                           :loading="refreshBookBTLoading"
+                                           @click="refreshBookListHandle"></el-button>
                                 <el-button size="small" circle icon="el-icon-caret-top"
                                            style="color: var(--blue)"
                                            @click="backupHandle('bookListScrollbar')"></el-button>
@@ -823,7 +821,7 @@
                                 <el-form ref="bookReserveForm" :model="bookReserveForm" label-width="80px">
                                     <el-form-item label="ISBN">
                                         <el-input v-model="bookReserveForm.isbn"></el-input>
-                                        <el-button :disabled="isbnCheckDisabled" type="text" @click="isbnCheckHandle">查询</el-button>
+                                        <el-button :loading="isbnCheckBTLoading" type="text" @click="isbnCheckHandle">查询</el-button>
                                     </el-form-item>
                                     <el-form-item label="备注">
                                         <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 6}"
@@ -867,7 +865,7 @@
                             <el-descriptions class="margin-top" v-if="user.load" title="基本资料" :column="2" border>
                                 <template slot="extra">
                                     <el-button icon="el-icon-refresh" type="text"
-                                               :disabled="refreshUserDisabled"
+                                               :loading="refreshUserBTLoading"
                                                @click="refreshUserMsgHandle"></el-button>
                                     <el-button type="text" size="small" @click="userUpdateDialogShowHandle">修改
                                     </el-button>
@@ -979,7 +977,7 @@
                                     <el-input v-model.number="passwordUpdateForm.verifyCode"></el-input>
                                 </el-col>
                                 <el-col :offset="4" :span="8">
-                                    <el-button :disabled="verifySendDisabled" v-if="showSendButton" type="text" @click="passwordVerifyCodeSendHandle">发送验证码</el-button>
+                                    <el-button :Loading="verifySendBTLoading" v-if="showSendButton" type="text" @click="passwordVerifyCodeSendHandle">发送验证码</el-button>
                                     <el-button v-if="!showSendButton" type="text">{{count}}s后重新获取</el-button>
                                 </el-col>
                             </el-form-item>
@@ -988,7 +986,7 @@
                                     <el-button @click="formResetHandle('passwordUpdateForm')">重置</el-button>
                                 </el-col>
                                 <el-col :span="11">
-                                    <el-button :disabled="passwordUpdateDisabled" type="primary" @click="passwordUpdateFormSubmitHandle">修改密码</el-button>
+                                    <el-button :loading="passwordUpdateBTLoading" type="primary" @click="passwordUpdateFormSubmitHandle">修改密码</el-button>
                                 </el-col>
                             </el-form-item>
                         </el-form>

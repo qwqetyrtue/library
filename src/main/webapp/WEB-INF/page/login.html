@@ -41,7 +41,7 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button type="text">重置</el-button>
-                        <el-button round type="primary" @click="handleRegisterButton">注 册</el-button>
+                        <el-button round type="primary" :loading="registerBTLoading" @click="handleRegisterButton">注 册</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -65,7 +65,7 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button type="text">忘记密码？</el-button>
-                        <el-button round type="primary" @click="handleLoginButton">登 录</el-button>
+                        <el-button round type="primary" :loading="loginBTLoading" @click="handleLoginButton">登 录</el-button>
                     </el-form-item>
                 </el-form>
 
@@ -113,7 +113,7 @@
                             <el-input v-model="verifyEmailForm.verifyCode"></el-input>
                         </el-col>
                         <el-col :offset="1" :span="4">
-                            <el-button v-if="showSendButton" type="text" @click="sendVerifyCodeHandle">发送验证码</el-button>
+                            <el-button v-if="showSendButton" :loading="sendVerifyBTLoading" type="text" @click="sendVerifyCodeHandle">发送验证码</el-button>
                             <el-button v-if="!showSendButton" type="text">{{count}}s后重新获取</el-button>
                         </el-col>
                     </el-row>
@@ -121,8 +121,8 @@
             </el-form>
         </el-row>
         <div slot="footer" class="dialog-footer">
-            <el-button @click="verifyEmailFormHideHandle">返回上一步</el-button>
-            <el-button type="primary" @click="verifyEmailFormSubmitHandle">完成注册</el-button>
+            <el-button  @click="verifyEmailFormHideHandle">返回上一步</el-button>
+            <el-button type="primary" :loading="verifyEmailBTLoading"  @click="verifyEmailFormSubmitHandle">完成注册</el-button>
         </div>
     </el-dialog>
 </div>

@@ -375,8 +375,7 @@ jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true
 >```
 >
 >- type：用于说明commit的类别，规定为如下几种
->
->- - feat：新增功能；
+>  - feat：新增功能；
 >  - fix：修复bug；
 >  - docs：修改文档；
 >  - refactor：代码重构，未新增任何功能和修复任何bug；
@@ -389,8 +388,8 @@ jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true
 >  - revert：回滚到上一个版本；
 >
 >- scope：【可选】用于说明commit的影响范围
->
 >- subject：commit的简要说明，尽量简短
+>
 >
 >### Body
 >

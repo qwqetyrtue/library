@@ -99,7 +99,11 @@ window.onload = function () {
                         {required: true, message: '请输入密码', trigger: 'blur'},
                         {max: 10, message: '密码最大长度为10位', trigger: 'blur'}
                     ]
-                }
+                },
+                verifyEmailBTLoading: false,
+                loginBTLoading: false,
+                registerBTLoading: false,
+                sendVerifyBTLoading: false
             }
         },
         methods: {
@@ -115,10 +119,10 @@ window.onload = function () {
             // 登录
             handleLoginButton(ev) {
                 // 防止按键连点
-                let el = ev.target;
-                if (!el.disabled) {
-                    el.disabled = true
-                }
+                this.loginBTLoading = true
+                setTimeout(()=>{
+                    this.loginBTLoading = false;
+                },2000)
                 this.$refs.loginForm.validate((valid) => {
                     if (valid) {
                         let v = this;
@@ -132,7 +136,6 @@ window.onload = function () {
                                 let res = JSON.parse(result)
                                 console.log(res)
                                 if (res.res == "success") {
-                                    el.disabled = true;
                                     v.$message({
                                         message: '登录成功',
                                         type: 'success',
@@ -142,7 +145,6 @@ window.onload = function () {
                                         }
                                     })
                                 } else {
-                                    el.disabled = false;
                                     v.$message({
                                         message: '账号或密码错误',
                                         type: 'warning'
@@ -156,10 +158,10 @@ window.onload = function () {
             // 注册
             handleRegisterButton(ev) {
                 // 防止按键连点
-                let el = ev.target;
-                if (!el.disabled) {
-                    el.disabled = true
-                }
+                this.registerBTLoading = true;
+                setTimeout(()=>{
+                    this.registerBTLoading = false;
+                },2000)
                 this.$refs.registerForm.validate((valid) => {
                     if (valid) {
                         this.checkUidLegalReq()
@@ -171,7 +173,6 @@ window.onload = function () {
                                     this.illegality.push(this.registerForm.user);
                                     this.$refs.registerForm.validateField('user')
                                 }
-                                el.disabled = false;
                             })
                     }
                     return false;
@@ -190,10 +191,11 @@ window.onload = function () {
             },
             // 发送验证码
             sendVerifyCodeHandle(ev){
-                let el = ev.target;
-                if (!el.disabled) {
-                    el.disabled = true
-                }
+                this.sendVerifyBTLoading = true;
+                setTimeout(()=>{
+                    this.sendVerifyBTLoading = false;
+                },2000)
+
                 this.$refs.verifyEmailForm.validateField('email',(err)=>{
                     if(err != '请输入正确的邮箱' && err!= '请输入邮箱'){
                         $.ajax({
@@ -213,7 +215,6 @@ window.onload = function () {
                                         type: 'success',
                                         duration: 1500,
                                     })
-                                    el.disabled = false;
                                     const TIME_COUNT = 60;
                                     if (!this.timer) {
                                         this.count = TIME_COUNT;
@@ -229,7 +230,6 @@ window.onload = function () {
                                         }, 1000)
                                     }
                                 }else{
-                                    el.disabled = false;
                                     this.$message({
                                         message: '验证码发送失败',
                                         type: 'error',
@@ -247,10 +247,10 @@ window.onload = function () {
             },
             // 完成注册
             verifyEmailFormSubmitHandle(ev){
-                let el = ev.target;
-                if (!el.disabled) {
-                    el.disabled = true
-                }
+                this.verifyEmailBTLoading = true;
+                setTimeout(()=>{
+                    this.verifyEmailBTLoading = false;
+                },2000)
                this.$refs.verifyEmailForm.validateField('verifyCode',(err)=>{
                    if(err != '请输入验证码'){
                        $.ajax({
@@ -283,12 +283,10 @@ window.onload = function () {
                                        duration: 0,
                                        showClose: true,
                                    });
-                                   el.disabled = false;
                                }
                            })
                            .catch(err => {
                                console.log(err);
-                               el.disabled = false;
                            })
                    }
                })
