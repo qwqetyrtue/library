@@ -471,6 +471,13 @@ window.onload = function () {
                     })
             },
             isbnCheckHandle() {
+                if(this.bookReserveForm.isbn ==null || this.bookReserveForm.isbn.length != 13) {
+                    this.$message({
+                        type: 'warn',
+                        message: '请输入13位的ISBN码!',
+                        duration: 1500,
+                    });
+                }
                 this.isbnCheckBTLoading = true;
                 setTimeout(() => {
                     this.isbnCheckBTLoading = false;

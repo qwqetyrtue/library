@@ -42,8 +42,8 @@ window.onload = function () {
                 let pattern = /^[a-zA-Z][a-zA-Z0-9_]{8,10}$/
                 if (value === '') {
                     callback(new Error("请输入uid"))
-                } else if(this.illegality.indexOf(value) !== -1){
-                  callback(new Error('当前账号已经被注册了'));
+                } else if (this.illegality.indexOf(value) !== -1) {
+                    callback(new Error('当前账号已经被注册了'));
                 } else if (!pattern.test(value)) {
                     callback(new Error('须字母开头,可含字母,数字,_,长度:8-10'));
                 } else {
@@ -120,9 +120,6 @@ window.onload = function () {
             handleLoginButton(ev) {
                 // 防止按键连点
                 this.loginBTLoading = true
-                setTimeout(()=>{
-                    this.loginBTLoading = false;
-                },2000)
                 this.$refs.loginForm.validate((valid) => {
                     if (valid) {
                         let v = this;
@@ -145,31 +142,34 @@ window.onload = function () {
                                         }
                                     })
                                 } else {
+                                    this.loginBTLoading = false;
                                     v.$message({
                                         message: '账号或密码错误',
                                         type: 'warning'
                                     });
                                 }
                             })
+                    } else {
+                        this.loginBTLoading = false;
+                        return false;
                     }
-                    return false;
                 });
             },
             // 注册
             handleRegisterButton(ev) {
                 // 防止按键连点
                 this.registerBTLoading = true;
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.registerBTLoading = false;
-                },2000)
+                }, 2000)
                 this.$refs.registerForm.validate((valid) => {
                     if (valid) {
                         this.checkUidLegalReq()
                             .then(r => {
                                 let res = JSON.parse(r);
-                                if(res.res == "success"){
+                                if (res.res == "success") {
                                     this.verifyEmailFormShowHandle()
-                                }else {
+                                } else {
                                     this.illegality.push(this.registerForm.user);
                                     this.$refs.registerForm.validateField('user')
                                 }
@@ -179,7 +179,7 @@ window.onload = function () {
                 });
             },
             // 检测uid是否合法
-            checkUidLegalReq(){
+            checkUidLegalReq() {
                 return $.ajax({
                     url: '/' + this.BASE_URL + '/user/checkuid',
                     type: "post",
@@ -190,14 +190,10 @@ window.onload = function () {
                 })
             },
             // 发送验证码
-            sendVerifyCodeHandle(ev){
+            sendVerifyCodeHandle(ev) {
                 this.sendVerifyBTLoading = true;
-                setTimeout(()=>{
-                    this.sendVerifyBTLoading = false;
-                },2000)
-
-                this.$refs.verifyEmailForm.validateField('email',(err)=>{
-                    if(err != '请输入正确的邮箱' && err!= '请输入邮箱'){
+                this.$refs.verifyEmailForm.validateField('email', (err) => {
+                    if (err != '请输入正确的邮箱' && err != '请输入邮箱') {
                         $.ajax({
                             url: '/' + this.BASE_URL + '/user/sendverifycode',
                             type: "post",
@@ -206,9 +202,9 @@ window.onload = function () {
                                 'email': this.verifyEmailForm.email,
                             }),
                         })
-                            .then(r=>{
+                            .then(r => {
                                 let res = JSON.parse(r);
-                                if(res.res == "success"){
+                                if (res.res == "success") {
                                     this.registerStep = 2;
                                     this.$message({
                                         message: '验证码发送成功',
@@ -219,6 +215,7 @@ window.onload = function () {
                                     if (!this.timer) {
                                         this.count = TIME_COUNT;
                                         this.showSendButton = false;
+                                        this.sendVerifyBTLoading = false;
                                         this.timer = setInterval(() => {
                                             if (this.count > 0 && this.count <= TIME_COUNT) {
                                                 this.count--;
@@ -229,7 +226,7 @@ window.onload = function () {
                                             }
                                         }, 1000)
                                     }
-                                }else{
+                                } else {
                                     this.$message({
                                         message: '验证码发送失败',
                                         type: 'error',
@@ -238,64 +235,67 @@ window.onload = function () {
                                     })
                                 }
                             })
-                            .catch(err=>{
+                            .catch(err => {
                                 console.log(err);
                             })
 
                     }
+                    else{
+                        this.sendVerifyBTLoading = false;
+                    }
                 })
             },
             // 完成注册
-            verifyEmailFormSubmitHandle(ev){
+            verifyEmailFormSubmitHandle(ev) {
                 this.verifyEmailBTLoading = true;
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.verifyEmailBTLoading = false;
-                },2000)
-               this.$refs.verifyEmailForm.validateField('verifyCode',(err)=>{
-                   if(err != '请输入验证码'){
-                       $.ajax({
-                           url: '/' + this.BASE_URL + '/user/register',
-                           type: "post",
-                           contentType: "application/json;charset=UTF-8",
-                           data: JSON.stringify({
-                               'uid': this.registerForm.user,
-                               'password': this.registerForm.password,
-                               'email': this.verifyEmailForm.email,
-                               'verifyCode':this.verifyEmailForm.verifyCode
-                           }),
-                       })
-                           .then(result => {
-                               let res = JSON.parse(result)
-                               if (res.res == "success") {
-                                   this.registerStep = 3;
-                                   this.$message({
-                                       message: '注册成功',
-                                       type: 'success',
-                                       duration: 1500,
-                                       onClose: () => {
-                                           location.href = '/' + this.BASE_URL + '/user'
-                                       }
-                                   })
-                               } else {
-                                   this.$message({
-                                       message: '注册失败',
-                                       type: 'warning',
-                                       duration: 0,
-                                       showClose: true,
-                                   });
-                               }
-                           })
-                           .catch(err => {
-                               console.log(err);
-                           })
-                   }
-               })
+                }, 2000)
+                this.$refs.verifyEmailForm.validateField('verifyCode', (err) => {
+                    if (err != '请输入验证码') {
+                        $.ajax({
+                            url: '/' + this.BASE_URL + '/user/register',
+                            type: "post",
+                            contentType: "application/json;charset=UTF-8",
+                            data: JSON.stringify({
+                                'uid': this.registerForm.user,
+                                'password': this.registerForm.password,
+                                'email': this.verifyEmailForm.email,
+                                'verifyCode': this.verifyEmailForm.verifyCode
+                            }),
+                        })
+                            .then(result => {
+                                let res = JSON.parse(result)
+                                if (res.res == "success") {
+                                    this.registerStep = 3;
+                                    this.$message({
+                                        message: '注册成功',
+                                        type: 'success',
+                                        duration: 1500,
+                                        onClose: () => {
+                                            location.href = '/' + this.BASE_URL + '/user'
+                                        }
+                                    })
+                                } else {
+                                    this.$message({
+                                        message: '注册失败',
+                                        type: 'warning',
+                                        duration: 0,
+                                        showClose: true,
+                                    });
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
+                    }
+                })
             },
-            verifyEmailFormHideHandle(){
+            verifyEmailFormHideHandle() {
                 this.registerStep = 0;
                 this.verifyEmailFormDialogVisible = false;
             },
-            verifyEmailFormShowHandle(){
+            verifyEmailFormShowHandle() {
                 this.registerStep = 1;
                 this.verifyEmailFormDialogVisible = true;
             }

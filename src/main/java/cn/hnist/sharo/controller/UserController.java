@@ -42,9 +42,7 @@ public class UserController {
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public @ResponseBody
     Res<User> userCheckHandle(HttpSession session) {
-        if (session.getAttribute("user") != null)
-            return new Res<User>("success", (User) session.getAttribute("user"));
-        else return new Res<User>("fail", null);
+        return new Res<User>("success", (User) session.getAttribute("user"));
     }
 
     // 修改密码
@@ -126,8 +124,7 @@ public class UserController {
     @RequestMapping(value = "/outlogin", method = RequestMethod.POST)
     public @ResponseBody
     Res<String> userOutLoginHandle(HttpSession session) {
-        if (session.getAttribute("user") != null)
-            session.removeAttribute("user");
+        session.removeAttribute("user");
         return new Res<>("success", "退出登录");
     }
 

@@ -820,7 +820,7 @@
                             <el-col :span="12">
                                 <el-form ref="bookReserveForm" :model="bookReserveForm" label-width="80px">
                                     <el-form-item label="ISBN">
-                                        <el-input v-model="bookReserveForm.isbn"></el-input>
+                                        <el-input v-model="bookReserveForm.isbn"  maxlength="13" show-word-limit></el-input>
                                         <el-button :loading="isbnCheckBTLoading" type="text" @click="isbnCheckHandle">查询</el-button>
                                     </el-form-item>
                                     <el-form-item label="备注">
@@ -839,10 +839,11 @@
                             <el-col :span="12">
                                 <div class="m-book-reserve-msg">
                                     <el-scrollbar class="m-scrollbar">
-                                        <el-descriptions :column="1" border v-if="isbnCheckForm.load" title="书籍信息">
+                                        <el-descriptions :column="1" border v-if="isbnCheckForm.load"  title="书籍信息">
                                             <el-descriptions-item v-if="v" v-for="(v,k,i) in isbnCheckForm.data"
                                                                   :key="'isbnf'+ i" :label="k">{{v}}
                                             </el-descriptions-item>
+                                            <el-empty v-if="isbnCheckForm.data" description="错误的isbn或未收录"></el-empty>
                                         </el-descriptions>
                                     </el-scrollbar>
                                 </div>

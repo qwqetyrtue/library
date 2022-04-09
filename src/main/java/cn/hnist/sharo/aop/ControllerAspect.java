@@ -1,70 +1,93 @@
 package cn.hnist.sharo.aop;
 
+import cn.hnist.sharo.unit.Res;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.time.Instant;
+
 
 import static cn.hnist.sharo.unit.ColorLog.*;
 
-
 @Component
 @Aspect
-@Order(3)
+@Order(1)
 public class ControllerAspect {
 
-    @Pointcut("execution(* cn.hnist.sharo.controller.*.*(..))")
-    private void execute() {
+    // 验证码路径限制连续访问
+    @Pointcut("execution(* cn.hnist.sharo.controller.UserController.userSendVerifyCodeHandle(..))")
+    private void executeEmailSend() {
     }
-
-
-    @Before("execute()")
-    public void doBefore() {
-//        System.out.println(ANSI_GREEN + "执行前" + ANSI_RESET);
-    }
-
-    @After("execute()")
-    public void doAfter() {
-//        System.out.println(ANSI_GREEN + "执行后" + ANSI_RESET);
-    }
-
-    @AfterReturning("execute()")
-    public void doAfterReturn() {
-//        System.out.println(ANSI_GREEN + "返回后" + ANSI_RESET);
-    }
-
-    @AfterThrowing("execute()")
-    public void doAfterThrowing() {
-//        System.out.println(ANSI_GREEN + "抛出" + ANSI_RESET);
-    }
-
-    @Around("execute()")
-    public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
-        // result的值就是被拦截方法的返回值
-
-        System.out.println(ANSI_GREEN + "around 前" + ANSI_RESET);
+    @Around("executeEmailSend()")
+    public Object doEmailSencAround(ProceedingJoinPoint pjp) throws Throwable {
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;
-        HttpServletRequest request = sra.getRequest();
+        HttpSession session= sra.getRequest().getSession(true);
+        if(session.getAttribute("lastTime") == null){
+            Instant instant = Instant.now();
+            long currentMilli = instant.getEpochSecond();
+            session.setAttribute("lastTime",currentMilli);
+        }else{
+            Long last = (Long)session.getAttribute("lastTime");
+            Instant instant = Instant.now();
+            long now = instant.getEpochSecond();;
+            if(now - last < 60){
+                System.out.println(ANSI_RED + "禁止频繁访问当前路径" + ANSI_RESET);
+                return new Res<String>("fail","禁止频繁访问当前路径");
+            }else{
+                session.setAttribute("lastTime",now);
+            }
+        }
+        Object res = pjp.proceed();
+        return res;
+    }
 
-        String url = request.getRequestURL().toString();
-        String method = request.getMethod();
-        String uri = request.getRequestURI();
-        String queryString = request.getQueryString();
+    // 登录用户禁止访问
+    // userLoginHandle
+    @Pointcut("execution(* cn.hnist.sharo.controller.UserController.userLoginHandle(..))")
+    private void executeLogin() {
+    }
+    @Around("executeLogin()")
+    public Object doLoginAround(ProceedingJoinPoint pjp) throws Throwable {
+        RequestAttributes ra = RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes sra = (ServletRequestAttributes) ra;
+        HttpSession session= sra.getRequest().getSession(true);
+        if(session.getAttribute("user")!=null) {
+            System.out.println(ANSI_RED + "用户已经登录了" + ANSI_RESET);
+            return new Res<String>("fail","禁止已登录用户访问该路径");
+        }
+        Object res = pjp.proceed();
+        return res;
+    }
 
-        //这里可以获取到get请求的参数和其他信息
-        System.out.format(ANSI_GREEN + "%s" + ANSI_RESET + ANSI_BLUE + " ==> Url: %s, Uri: %s,\n Params: %s \n" + ANSI_RESET, method, url, uri, queryString );
-        //重点 这里就是获取@RequestBody参数的关键  调试的情况下 可以看到o变量已经获取到了请求的参数
-
-        Object result = pjp.proceed();
-
-        System.out.println(ANSI_GREEN + "around 后" + ANSI_RESET);
-
-        return result;
+    // 需要登录才能访问
+    // userOutLoginHandle
+    // userUpdateHandle
+    // userUpdatePasswordHandle
+    // userCheckHandle
+    @Pointcut("execution(* cn.hnist.sharo.controller.UserController.userOutLoginHandle(..)) " +
+            "|| execution(* cn.hnist.sharo.controller.UserController.userUpdateHandle(..)) " +
+            "|| execution(* cn.hnist.sharo.controller.UserController.userUpdatePasswordHandle(..)) " +
+            "|| execution(* cn.hnist.sharo.controller.UserController.userCheckHandle(..))")
+    private void executeNeedLogin() {
+    }
+    @Around("executeNeedLogin()")
+    public Object doNeedLoginAround(ProceedingJoinPoint pjp) throws Throwable {
+        RequestAttributes ra = RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes sra = (ServletRequestAttributes) ra;
+        HttpSession session= sra.getRequest().getSession(true);
+        if (session.getAttribute("user") == null)
+            return new Res<String>("fail","禁止未登录用户访问该路径");
+        Object res = pjp.proceed();
+        return res;
     }
 }

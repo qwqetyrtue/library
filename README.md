@@ -374,22 +374,20 @@ jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true
 >type(scope):subject
 >```
 >
->- type：用于说明commit的类别，规定为如下几种
->  - feat：新增功能；
->  - fix：修复bug；
->  - docs：修改文档；
->  - refactor：代码重构，未新增任何功能和修复任何bug；
->  - build：改变构建流程，新增依赖库、工具等（例如webpack修改）；
->  - style：仅仅修改了空格、缩进等，不改变代码逻辑；
->  - perf：改善性能和体现的修改；
->  - chore：非src和test的修改；
->  - test：测试用例的修改；
->  - ci：自动化流程配置修改；
->  - revert：回滚到上一个版本；
->
->- scope：【可选】用于说明commit的影响范围
->- subject：commit的简要说明，尽量简短
->
+>+ type：用于说明commit的类别，规定为如下几种
+>	+ feat：新增功能；
+>	+ fix：修复bug；
+>	+ docs：修改文档；
+>	+ refactor：代码重构，未新增任何功能和修复任何bug；
+>	+ build：改变构建流程，新增依赖库、工具等（例如webpack修改）；
+>	+ style：仅仅修改了空格、缩进等，不改变代码逻辑；
+>	+ perf：改善性能和体现的修改；
+>	+ chore：非src和test的修改；
+>	+ test：测试用例的修改；
+>	+ ci：自动化流程配置修改；
+>	+ revert：回滚到上一个版本；
+>+ scope：【可选】用于说明commit的影响范围
+>+ subject：commit的简要说明，尽量简短
 >
 >### Body
 >
@@ -397,24 +395,12 @@ jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true
 >
 >### Footer
 >
->- 不兼容变动：需要描述相关信息
->- 关闭指定Issue：输入Issue信息
+>+ 不兼容变动：需要描述相关信息
+>
+>+ 关闭指定Issue：输入Issue信息
 
 
 
-### `elmentUI` 中的`el-button`当类型为`text`时不能通过获取点击目标并`disabled`来实现防止重复点击
+### ~~`elmentUI` 中的`el-button`当类型为`text`时不能通过获取点击目标并`disabled`来实现防止重复点击~~`elemntUI`中在`el-table`自定义表头中使用`el-table`无法disabled
 
-> + 一般防止重复点击
->
-> ```js
-> let el = ev.target;
-> if (!el.disabled) {
->     el.disabled = true
-> }
-> ```
->
-> + 当`el-button` `type='text'`时
->
->   根据`console`才知道 `el` 为`span`标签而不是`button`标签
->
-> + 建议使用 `:disable` 绑定的方式来禁止按键点击
+[csdn上我的记录](https://blog.csdn.net/reol44/article/details/124053518)
