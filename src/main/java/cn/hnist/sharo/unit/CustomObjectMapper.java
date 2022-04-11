@@ -3,11 +3,13 @@ package cn.hnist.sharo.unit;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import org.springframework.format.datetime.DateFormatter;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -17,7 +19,7 @@ public class CustomObjectMapper extends ObjectMapper {
     public CustomObjectMapper() {
         super();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         setDateFormat(sdf);
         setTimeZone(TimeZone.getTimeZone("GMT+8"));
         JavaTimeModule javaTimeModule = new JavaTimeModule();

@@ -48,7 +48,6 @@ public class LogAspect {
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
         // result的值就是被拦截方法的返回值
 
-        System.out.println(ANSI_GREEN + "around 前" + ANSI_RESET);
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;
         HttpServletRequest request = sra.getRequest();
@@ -63,8 +62,6 @@ public class LogAspect {
         //重点 这里就是获取@RequestBody参数的关键  调试的情况下 可以看到o变量已经获取到了请求的参数
 
         Object result = pjp.proceed();
-
-        System.out.println(ANSI_GREEN + "around 后" + ANSI_RESET);
 
         return result;
     }

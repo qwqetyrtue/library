@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>用户登录</title>
     <!-- 引入样式 -->
     <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="css/login.css">
@@ -14,9 +14,14 @@
     <script src="js/jquery/jquery@3.6.0.js"></script>
     <!--页面js-->
     <script src="js/login.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<div class="m-container">
+<div class="m-container" v-cloak>
     <div class="cont" id="cont">
         <div class="form-container sign-up-container">
             <div>

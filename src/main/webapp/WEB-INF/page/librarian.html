@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>管理员登录</title>
+    <!--图标库-->
+    <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="css/librarian.css" type="text/css"/>
+    <!-- 先引入 Vue -->
+    <script type="text/javascript" src="js/vue/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="js/element-ui@2.15.7/lib/index.js"></script>
+    <!-- 引入jquery -->
+    <script type="text/javascript" src="js/jquery/jquery@3.6.0.js"></script>
+    <script type="text/javascript" src="js/librarian.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="m-container" v-cloak>
+    <div class="content">
+        <el-form :model="adminForm" status-icon :rules="adminFormRules" ref="adminForm" label-width="0px">
+            <el-form-item>
+                <h1>管理员登录</h1>
+            </el-form-item>
+            <el-form-item prop="user">
+                <el-input v-model="adminForm.user" clearable placeholder="用户名"></el-input>
+            </el-form-item>
+            <el-form-item prop="password">
+                <el-input v-model="adminForm.password" clearable show-password placeholder="密码"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="text" @click="resetForm('adminForm')">重置</el-button>
+                <el-button type="primary" :loading="loginBTLoading" @click="adminLoginHandle">登录</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</div>
+<!--飘带-->
+<script type="text/javascript" id="_ribbon" z-index="1" src="js/ribbon/ribbon.js"></script>
+</body>
+</html>

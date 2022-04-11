@@ -14,12 +14,12 @@ public class Book {
   private String introduce;
   private String remark;
   private String publisher;
-  private String storedate;
+  private java.sql.Date storedate;
   private String isbn;
   private String isbn10;
   private String imgs;
   private String publishadd;
-  private String publishdate;
+  private java.sql.Date publishdate;
   private long page;
   private String category;
   private String language;
@@ -71,16 +71,6 @@ public class Book {
     this.price = price;
   }
 
-
-  public BookState getState() {
-    return state;
-  }
-
-  public void setState(BookState state) {
-    this.state = state;
-  }
-
-
   public String getIntroduce() {
     return introduce;
   }
@@ -108,11 +98,11 @@ public class Book {
   }
 
 
-  public String getStoredate() {
+  public java.sql.Date getStoredate() {
     return storedate;
   }
 
-  public void setStoredate(String storedate) {
+  public void setStoredate(java.sql.Date storedate) {
     this.storedate = storedate;
   }
 
@@ -153,11 +143,11 @@ public class Book {
   }
 
 
-  public String getPublishdate() {
+  public java.sql.Date getPublishdate() {
     return publishdate;
   }
 
-  public void setPublishdate(String publishdate) {
+  public void setPublishdate(java.sql.Date publishdate) {
     this.publishdate = publishdate;
   }
 
@@ -206,4 +196,11 @@ public class Book {
     this.binding = binding;
   }
 
+  public BookState getState() {
+    return state;
+  }
+
+  public void setState(BookState state) {
+    this.state = state;
+  }
 }

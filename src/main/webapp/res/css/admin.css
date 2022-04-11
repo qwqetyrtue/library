@@ -1,0 +1,171 @@
+:root {
+    /*基础蓝色*/
+    --blue: #0391DB;
+    /*选中蓝色*/
+    --blue_ac: #035F91;
+    /*灰色边框*/
+    --gray: #909399;
+    /*淡灰色背景*/
+    --gray_bg: #F0F0F0;
+    /*基础白色*/
+    --white: #FFFFFF;
+    /*基础黑色*/
+    --black: #000000;
+    /*字体大小*/
+    --ex_small: 12px;
+    --small: 13px;
+    --base: 14px;
+    --medium: 16px;
+    --large: 18px;
+    --ex_large: 20px;
+
+}
+
+html body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+div {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.m-container * {
+    box-sizing: border-box;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+
+i {
+    color: var(--blue);
+    font-size: 1rem;
+}
+
+.el-tabs__content {
+    height: 100%;
+}
+
+.m-scrollbar > .el-scrollbar__wrap {
+    overflow-x: hidden;
+}
+
+.m-dialog-radius {
+    border-radius: 10px;
+}
+
+.el-scrollbar__view {
+    margin-right: 15px;
+}
+
+
+.el-breadcrumb, th, button, input, .el-tabs__nav, .el-collapse-item__header, .el-backtop, .el-massage {
+    user-select: none !important;
+}
+
+.m-container {
+    width: 100vw;
+    height: 100vh;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid red;
+}
+
+.m-menu .el-tabs__item {
+    height: auto;
+    padding: 0;
+    font-size: var(--medium);
+    text-align: center !important;
+}
+
+/*菜单栏第二个选中时不显示上边框,因为已经菜单栏第一个下边框是一直显示的*/
+.m-menu .el-tabs__item:nth-child(2) {
+    border-top: none !important;
+}
+
+.m-adminMsg {
+    width: 250px;
+    height: 250px;
+    overflow: hidden;
+    font-size: var(--base);
+    border-bottom: 1px solid #D1DBE5;
+}
+
+.m-adminMsg-avatar {
+    width: 80px;
+    height: 80px;
+}
+
+.m-tab {
+    width: 100%;
+    height: 100%;
+    border-radius: 0 0 10px 10px;
+}
+
+.m-menu {
+    width: 80%;
+    height: 95%;
+    border-radius: 10px;
+}
+
+.m-tabs {
+    width: 100%;
+    height: 100%;
+}
+
+.m-tabs-label {
+    width: 250px;
+    height: 45px;
+}
+
+.m-tabs-label-setting {
+    margin-top: 300px;
+}
+
+.m-manage-user {
+    width: 100%;
+    height: 100%;
+}
+.m-search {
+    height: 50px;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-flow: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+.m-search-pop {
+    width: 100%;
+}
+.m-search-pop .el-input {
+    width: 250px !important;
+}
+.m-search .el-form--inline>.el-form-item{
+    margin-bottom: 0;
+}
+.m-scrollbar-form-paging{
+    height: calc(100% - 50px);
+    width: 100%;
+}
+
+.m-scrollbar-form-paging>.m-scrollbar {
+    width: 100%;
+    height: calc(100% - 50px);
+}
+.m-scrollbar-form-paging>.el-pagination{
+    width: auto;
+    height: 100%;
+}
+.m-paging {
+    width: 100%;
+    height: 50px;
+}

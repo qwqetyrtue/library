@@ -1,7 +1,6 @@
 package cn.hnist.sharo.model;
 
 
-import cn.hnist.sharo.model.menum.BloodType;
 import cn.hnist.sharo.model.menum.Gender;
 
 public class User {
@@ -9,16 +8,16 @@ public class User {
   private long id;
   private String uid;
   private Gender gender;
-  private String birth;
+  private java.sql.Date birth;
   private String homeadd;
   private String presentadd;
   private String email;
   private String call;
   private String name;
-  private String createdate;
+  private java.sql.Date createdate;
   private String password;
   private String postcode;
-  private BloodType bloodtype;
+  private String bloodtype;
 
 
   public long getId() {
@@ -39,20 +38,11 @@ public class User {
   }
 
 
-  public Gender getGender() {
-    return gender;
-  }
-
-  public void setGender(Gender gender) {
-    this.gender = gender;
-  }
-
-
-  public String getBirth() {
+  public java.sql.Date getBirth() {
     return birth;
   }
 
-  public void setBirth(String birth) {
+  public void setBirth(java.sql.Date birth) {
     this.birth = birth;
   }
 
@@ -102,11 +92,11 @@ public class User {
   }
 
 
-  public String getCreatedate() {
+  public java.sql.Date getCreatedate() {
     return createdate;
   }
 
-  public void setCreatedate(String createdate) {
+  public void setCreatedate(java.sql.Date createdate) {
     this.createdate = createdate;
   }
 
@@ -129,12 +119,19 @@ public class User {
   }
 
 
-  public BloodType getBloodtype() {
+  public String getBloodtype() {
     return bloodtype;
   }
 
-  public void setBloodtype(BloodType bloodtype) {
+  public void setBloodtype(String bloodtype) {
     this.bloodtype = bloodtype;
   }
 
+  public Gender getGender() {
+    return gender;
+  }
+
+  public void setGender(Gender gender) {
+    this.gender = gender;
+  }
 }

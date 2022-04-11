@@ -11,6 +11,7 @@ public class Admin {
   private String name;
   private String email;
   private Gender gender;
+  private String call;
 
 
   public long getId() {
@@ -66,4 +67,11 @@ public class Admin {
     this.gender = gender;
   }
 
+  public String getCall() {
+    return call;
+  }
+
+  public void setCall(String call) {
+    this.call = call;
+  }
 }

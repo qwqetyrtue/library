@@ -404,3 +404,49 @@ jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true
 ### ~~`elmentUI` 中的`el-button`当类型为`text`时不能通过获取点击目标并`disabled`来实现防止重复点击~~`elemntUI`中在`el-table`自定义表头中使用`el-table`无法disabled
 
 [csdn上我的记录](https://blog.csdn.net/reol44/article/details/124053518)
+
+
+### mysql筛选查询时,分页后如何获取总查询条数
+
+[SQL_CALC_FOUND_ROWS的使用](https://blog.csdn.net/qq_37171353/article/details/107824749)
+
+[mybatis的mapper文件中的一个标签是否可以写多条SQL语句？是否存在事物？](https://www.jianshu.com/p/37fc30bcec8a)
+
++ mysql
+
+```sql
+select SQL_CALC_FOUND_ROWS 
+    *
+from student 
+WHERE id < 1000
+LIMIT 10,10;
+SELECT FOUND_ROWS() as total_count;
+```
+
++ mybatis
+
+```sql
+<select id="getStudentInfo2" resultMap="BaseResultMap,ExtCountResultMap">
+        select
+        SQL_CALC_FOUND_ROWS
+        * from student where id in
+        <foreach collection="ids" item="id" index="i" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        <if test="limit != null">
+            <if test="offset != null">
+                limit ${offset}, ${limit}
+            </if>
+        </if>
+        ;SELECT FOUND_ROWS() as total_count;
+</select>
+```
+
++ **记得修改连接配置配置** `allowMultiQueries=true`
+
+```java
+ <property name="url"
+                  value="jdbc:mysql://localhost:3306/library_database?characterEncoding=utf8&amp;useAffectedRows=true&amp;useSSL=false&amp;allowMultiQueries=true
+"/>
+```
+

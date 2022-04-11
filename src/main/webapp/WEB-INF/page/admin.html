@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员页面</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <!--引入vue-->
+    <script src="js/vue/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="js/element-ui@2.15.7/lib/index.js"></script>
+    <!-- 引入jquery -->
+    <script src="js/jquery/jquery@3.6.0.js"></script>
+    <!--页面js-->
+    <script src="js/admin.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="m-container" v-cloak>
+    <el-tabs type="border-card" class="m-menu" v-model="menuValue" :before-leave="tabsMsgHandle" :stretch="true"
+             tab-position="left">
+        <el-tab-pane name="0">
+            <div slot="label" @click.stop class="m-adminMsg">
+                <el-row type="flex" align="middle" justify="center">
+                    <h1>图书馆管理系统</h1>
+                </el-row>
+                <el-row type="flex" align="middle" justify="center">
+                    <el-avatar class="m-adminMsg-avatar" fit="fill"
+                               src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png">
+                    </el-avatar>
+                </el-row>
+                <el-row type="flex" align="middle" justify="center">MID: mid</el-row>
+                <el-row type="flex" align="middle" justify="center">admin name</el-row>
+            </div>
+        </el-tab-pane>
+        <el-tab-pane class="m-tabs" name="1">
+            <div slot="label" class="m-tabs-label">
+                <!--用户管理-->
+                <el-row type="flex" align="middle" justify="start">
+                    <el-col :span="4">
+                        <i class="el-icon-user"></i>
+                    </el-col>
+                    <el-col :span="16">
+                        用户管理
+                    </el-col>
+                    <el-col :span="4">
+                        <i class="el-icon-arrow-right"></i>
+                    </el-col>
+                </el-row>
+            </div>
+            <div class="m-manage-user">
+                <el-row type="flex" justify="space-between" align="middle">
+                    <el-col class="m-search" :span="20">
+                        <el-form :inline="true">
+                            <el-form-item>
+                                <el-checkbox v-model="searchConfigChecked.base"></el-checkbox>
+                            </el-form-item>
+                            <el-form-item label="UID">
+                                <el-input placeholder="uid" v-model="searchConfigForm.uid"></el-input>
+                            </el-form-item>
+                            <el-form-item label="姓名">
+                                <el-input placeholder="姓名" v-model="searchConfigForm.name"></el-input>
+                            </el-form-item>
+                            <el-form-item label="电话">
+                                <el-input placeholder="uid" v-model="searchConfigForm.call"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" :loading="submitUserSearchBTLoading" @click="submitUserSearchHandle">查询</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+                    <el-row :span="4">
+                        <el-popover
+                                placement="bottom"
+                                width="400"
+                                trigger="click">
+                            <div class="m-search-pop">
+                                <el-form :inline="true" label-width="80px">
+                                    <el-form-item>
+                                        <el-checkbox v-model="searchConfigChecked.gender"></el-checkbox>
+                                    </el-form-item>
+                                    <el-form-item label="性别">
+                                        <el-select v-model="searchConfigForm.gender" placeholder="请选择">
+                                            <el-option label="男" value="MALE"></el-option>
+                                            <el-option label="女" value="FEMALE"></el-option>
+                                            <el-option label="隐藏" value="HIDE"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                                <el-form :inline="true" label-width="80px">
+                                    <el-form-item>
+                                        <el-checkbox v-model="searchConfigChecked.homeadd"></el-checkbox>
+                                    </el-form-item>
+                                    <el-form-item label="家乡" label-width="80px">
+                                        <el-input placeholder="家乡" v-model="searchConfigForm.homeadd"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                                <el-form :inline="true" label-width="80px">
+                                    <el-form-item>
+                                        <el-checkbox v-model="searchConfigChecked.email"></el-checkbox>
+                                    </el-form-item>
+                                    <el-form-item label="邮箱" label-width="80px">
+                                        <el-input placeholder="邮箱" v-model="searchConfigForm.email"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                                <el-form :inline="true" label-width="80px">
+                                    <el-form-item>
+                                        <el-checkbox v-model="searchConfigChecked.postcode"></el-checkbox>
+                                    </el-form-item>
+                                    <el-form-item label="邮政编码" label-width="80px">
+                                        <el-input placeholder="邮政编码" v-model="searchConfigForm.postcode"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                                <el-form :inline="true" label-width="80px">
+                                    <el-form-item>
+                                        <el-checkbox v-model="searchConfigChecked.bloodtype"></el-checkbox>
+                                    </el-form-item>
+                                    <el-form-item label="血型" label-width="80px">
+                                        <el-select v-model="searchConfigForm.bloodtype" placeholder="请选择">
+                                            <el-option label="A型" value="A"></el-option>
+                                            <el-option label="B型" value="B"></el-option>
+                                            <el-option label="AB型" value="AB"></el-option>
+                                            <el-option label="O型" value="O"></el-option>
+                                            <el-option label="RH型" value="RH"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                            </div>
+                            <el-button type="text" slot="reference">更多筛选</el-button>
+                        </el-popover>
+                    </el-row>
+                </el-row>
+                <div class="m-scrollbar-form-paging">
+                    <el-scrollbar ref="userListScrollbar" class="m-scrollbar">
+                        <el-table
+                                v-loading="userListLoading"
+                                :data="userListPaging"
+                                border
+                                stripe
+                                :default-sort="{prop: 'createdate', order: 'descending'}">
+                            <el-table-column
+                                    type="selection"
+                                    width="55">
+                            </el-table-column>
+                            <el-table-column
+                                    fixed="left"
+                                    prop="uid"
+                                    label="UID"
+                                    width="120">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="name"
+                                    label="昵称"
+                                    width="120">
+                            </el-table-column>
+                            <el-table-column
+                                    label="性别"
+                                    width="150">
+                                <template slot-scope="scope">
+                                    {{genderState(scope.row.gender).state}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    label="创建时间"
+                                    width="160">
+                                <template slot-scope="scope">
+                                    <el-input
+                                            readonly
+                                            placeholder="创建时间"
+                                            suffix-icon="el-icon-date"
+                                            :value="scope.row.createdate">
+                                    </el-input>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    label="出生年月"
+                                    width="160">
+                                <template slot-scope="scope">
+                                    <el-input
+                                            readonly
+                                            placeholder="创建时间"
+                                            suffix-icon="el-icon-date"
+                                            :value="scope.row.birth">
+                                    </el-input>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="email"
+                                    label="邮箱"
+                                    width="160">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="call"
+                                    label="电话"
+                                    width="120">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="postcode"
+                                    label="邮政编码"
+                                    width="80">
+                            </el-table-column>
+                            <el-table-column
+                                    label="血型"
+                                    width="80">
+                                <template v-if="scope.row.bloodtype" slot-scope="scope">
+                                    {{scope.row.bloodtype}}型
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="homeadd"
+                                    label="家乡"
+                                    width="220">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="presentadd"
+                                    label="现居地"
+                                    width="220">
+                            </el-table-column>
+                            <el-table-column
+                                    width="150"
+                                    fixed="right"
+                                    align="center">
+                                <template slot="header">
+                                    <el-row type="flex" align="middle">
+                                        <el-col :span="24">操作</el-col>
+                                    </el-row>
+                                </template>
+                                <template slot-scope="scope">
+                                    <el-button type="text" size="small">
+                                        详细资料
+                                    </el-button>
+                                    <el-button type="text" size="small">
+                                        删除
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </el-scrollbar>
+                    <el-row class="m-paging" type="flex" align="middle" justify="space-between">
+                        <el-col :span="12">
+                            <el-pagination
+                                    @size-change="userListSizeChangeHandle"
+                                    @current-change="userListCurrentChangeHandle"
+                                    :current-page="userListCurrentPage"
+                                    :page-sizes="userListPageSizes"
+                                    :page-size="userListPageSize"
+                                    :hide-on-single-page="userListPageHideWhenSingle"
+                                    layout="total, sizes, prev, pager, next, jumper"
+                                    :total="userListTotalSize">
+                            </el-pagination>
+                        </el-col>
+                        <el-col :span="2">
+                            <el-button :loading="refreshUserBTLoading" size="medium"
+                                       icon="el-icon-refresh" type="text"
+                                       @click="refreshUserListHandle"></el-button>
+                            <el-button size="small" circle icon="el-icon-caret-top"
+                                       @click="backupHandle('userListScrollbar')"></el-button>
+                        </el-col>
+                    </el-row>
+                </div>
+            </div>
+        </el-tab-pane>
+        <el-tab-pane class="m-tabs" name="2">
+            <div slot="label" class="m-tabs-label">
+                <el-row type="flex" align="middle" justify="start">
+                    <el-col :span="4">
+                        <i class="el-icon-reading"></i>
+                    </el-col>
+                    <el-col :span="16">
+                        书籍管理
+                    </el-col>
+                    <el-col :span="4">
+                        <i class="el-icon-arrow-right"></i>
+                    </el-col>
+                </el-row>
+            </div>
+            书籍
+        </el-tab-pane>
+        <el-tab-pane class="m-tabs" name="3">
+            <div slot="label" class="m-tabs-label">
+                <el-row type="flex" align="middle" justify="start">
+                    <el-col :span="4">
+                        <i class="el-icon-user"></i>
+                    </el-col>
+                    <el-col :span="16">
+                        借阅管理
+                    </el-col>
+                    <el-col :span="4">
+                        <i class="el-icon-arrow-right"></i>
+                    </el-col>
+                </el-row>
+            </div>
+            借阅管理
+        </el-tab-pane>
+        <el-tab-pane class="m-tabs" name="4">
+            <div slot="label" class="m-tabs-label">
+                <el-row type="flex" align="middle" justify="start">
+                    <el-col :span="4">
+                        <i class="el-icon-time"></i>
+                    </el-col>
+                    <el-col :span="16">
+                        预约管理
+                    </el-col>
+                    <el-col :span="4">
+                        <i class="el-icon-arrow-right"></i>
+                    </el-col>
+                </el-row>
+            </div>
+            预约管理
+        </el-tab-pane>
+    </el-tabs>
+</div>
+</body>
+</html>

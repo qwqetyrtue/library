@@ -1,11 +1,11 @@
 package cn.hnist.sharo.dao;
 
-import cn.hnist.sharo.model.mexpand.Filtrate;
 import cn.hnist.sharo.model.mexpand.Update_pwd;
 import cn.hnist.sharo.model.User;
-import com.alibaba.fastjson.JSONObject;
+import cn.hnist.sharo.model.mexpand.User_filtrate;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
 
 import java.util.List;
 
@@ -17,5 +17,6 @@ public interface UserMapper {
     int update(User user);
     List<User> check(User user);
     int register(User user);
-    List<JSONObject> all(Filtrate filtrate);
+    List<?> filter(User_filtrate user_filtrate);
+
 }

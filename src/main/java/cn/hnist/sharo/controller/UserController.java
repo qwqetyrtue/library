@@ -128,10 +128,4 @@ public class UserController {
         return new Res<>("success", "退出登录");
     }
 
-    // 查询所有用户
-    @RequestMapping(value = "/all", method = RequestMethod.POST)
-    public @ResponseBody
-    Res<List<JSONObject>> userAllHandle(@RequestBody Filtrate filtrate) {
-        return userService.all(filtrate);
-    }
 }

@@ -4,6 +4,7 @@ import cn.hnist.sharo.dao.UserMapper;
 import cn.hnist.sharo.model.mexpand.Filtrate;
 import cn.hnist.sharo.model.mexpand.Update_pwd;
 import cn.hnist.sharo.model.User;
+import cn.hnist.sharo.model.mexpand.User_filtrate;
 import cn.hnist.sharo.unit.Res;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(User user) {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        user.setCreatedate(sf.format(new Date()));
+        user.setCreatedate(java.sql.Date.valueOf(sf.format(new Date())));
         int affect;
         affect  = userMapper.register(user);
         if (affect == 1) {
@@ -70,8 +71,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Res<List<JSONObject>> all(Filtrate filtrate) {
-        return new Res<List<JSONObject>>("success",userMapper.all(filtrate));
+    public List<?> filter(User_filtrate user_filtrate) {
+        try {
+            return userMapper.filter(user_filtrate);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
 

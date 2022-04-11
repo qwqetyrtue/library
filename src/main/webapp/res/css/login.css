@@ -53,7 +53,7 @@ div {
     overflow: hidden;
     font-family: 'Montserrat', sans-serif;
     display: flex;
-    flex-direction: column;
+    flex-flow: column;
     justify-content: center;
     align-items: center;
 }

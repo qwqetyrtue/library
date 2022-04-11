@@ -41,7 +41,7 @@ public class ControllerAspect {
             Instant instant = Instant.now();
             long now = instant.getEpochSecond();;
             if(now - last < 60){
-                System.out.println(ANSI_RED + "禁止频繁访问当前路径" + ANSI_RESET);
+                System.out.println(ANSI_RED + "[" + this.getClass().getName() + "]" + "禁止频繁访问当前路径" + ANSI_RESET);
                 return new Res<String>("fail","禁止频繁访问当前路径");
             }else{
                 session.setAttribute("lastTime",now);
@@ -54,15 +54,15 @@ public class ControllerAspect {
     // 登录用户禁止访问
     // userLoginHandle
     @Pointcut("execution(* cn.hnist.sharo.controller.UserController.userLoginHandle(..))")
-    private void executeLogin() {
+    private void executeNotLogin() {
     }
-    @Around("executeLogin()")
+    @Around("executeNotLogin()")
     public Object doLoginAround(ProceedingJoinPoint pjp) throws Throwable {
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;
         HttpSession session= sra.getRequest().getSession(true);
         if(session.getAttribute("user")!=null) {
-            System.out.println(ANSI_RED + "用户已经登录了" + ANSI_RESET);
+            System.out.println(ANSI_RED + "[" + this.getClass().getName() + "]" + "用户已经登录了" + ANSI_RESET);
             return new Res<String>("fail","禁止已登录用户访问该路径");
         }
         Object res = pjp.proceed();
@@ -77,7 +77,8 @@ public class ControllerAspect {
     @Pointcut("execution(* cn.hnist.sharo.controller.UserController.userOutLoginHandle(..)) " +
             "|| execution(* cn.hnist.sharo.controller.UserController.userUpdateHandle(..)) " +
             "|| execution(* cn.hnist.sharo.controller.UserController.userUpdatePasswordHandle(..)) " +
-            "|| execution(* cn.hnist.sharo.controller.UserController.userCheckHandle(..))")
+            "|| execution(* cn.hnist.sharo.controller.UserController.userCheckHandle(..))" +
+            "|| execution(* cn.hnist.sharo.controller.BorrowController.*(..))")
     private void executeNeedLogin() {
     }
     @Around("executeNeedLogin()")
@@ -85,8 +86,10 @@ public class ControllerAspect {
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) ra;
         HttpSession session= sra.getRequest().getSession(true);
-        if (session.getAttribute("user") == null)
-            return new Res<String>("fail","禁止未登录用户访问该路径");
+        if (session.getAttribute("user") == null) {
+            System.out.println(ANSI_RED + "[" + this.getClass().getName() + "]" + "禁止未登录用户访问该路径" + ANSI_RESET);
+            return new Res<String>("fail", "禁止未登录用户访问该路径");
+        }
         Object res = pjp.proceed();
         return res;
     }

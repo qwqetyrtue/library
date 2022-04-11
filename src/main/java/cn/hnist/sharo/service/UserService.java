@@ -3,6 +3,7 @@ package cn.hnist.sharo.service;
 import cn.hnist.sharo.model.mexpand.Filtrate;
 import cn.hnist.sharo.model.mexpand.Update_pwd;
 import cn.hnist.sharo.model.User;
+import cn.hnist.sharo.model.mexpand.User_filtrate;
 import cn.hnist.sharo.unit.Res;
 import com.alibaba.fastjson.JSONObject;
 
@@ -21,5 +22,5 @@ public interface UserService {
     // 注册
     User register(User user);
     // 查询所有用户
-    Res<List<JSONObject>> all(Filtrate filtrate);
+    List<?> filter(User_filtrate user_filtrate);
 }

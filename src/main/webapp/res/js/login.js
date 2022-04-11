@@ -238,7 +238,6 @@ window.onload = function () {
                             .catch(err => {
                                 console.log(err);
                             })
-
                     }
                     else{
                         this.sendVerifyBTLoading = false;
