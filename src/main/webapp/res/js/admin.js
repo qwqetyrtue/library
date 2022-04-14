@@ -9,9 +9,27 @@ window.onload = function () {
             await this.reqUserList({
                 limit: this.userListPageSize,
                 offset: this.userListPageSize * (this.userListCurrentPage - 1)
-            });
+            }, true);
         },
         data() {
+            let validateEmail = (rule, value, callback) => {
+                let pattern = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+                if (!pattern.test(value)) {
+                    return callback(new Error('请输入正确的邮箱'));
+                } else {
+                    callback();
+                }
+            };
+            let validateCall = (rule, value, callback) => {
+                if (value == '')
+                    callback();
+                let pattern = /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+                if (!pattern.test(value)) {
+                    return callback(new Error('请输入正确的手机号码'));
+                } else {
+                    callback();
+                }
+            }
             return {
                 BASE_URL: "",
                 admin: {},
@@ -50,8 +68,23 @@ window.onload = function () {
                 userListTotalSize: 0,
                 // 按键防止连点
                 refreshUserBTLoading: false,
-                submitUserSearchBTLoading: false
-
+                submitUserSearchBTLoading: false,
+                // drawer显示
+                userMsgDrawerVisible: false,
+                // 修改用户表单
+                userUpdateForm: {},
+                userUpdateForm_cp: {},
+                rules_userUpdateForm: {
+                    name: [
+                        {required: true, message: '昵称不能为空'},
+                    ],
+                    email: [
+                        {validator: validateEmail, trigger: 'blur'}
+                    ],
+                    call: [
+                        {validator: validateCall, trigger: 'blur'}
+                    ],
+                },
             }
         },
         methods: {
@@ -80,21 +113,30 @@ window.onload = function () {
                 }
                 return res;
             },
-            // 请求数据
-            reqUserList(pagging) {
-                this.userListBg = pagging.offset;
-                this.userListEnd = pagging.offset + pagging.limit;
-                let filtrate = {}
-                for(let each in this.searchConfigChecked){
-                    if(this.searchConfigChecked[each]){
-                        filtrate[each] = this.searchConfigForm[each];
+            // 请求数据 flag为真不启用筛选
+            reqUserList(paging, flag) {
+                this.userListBg = paging.offset;
+                this.userListEnd = paging.offset + paging.limit;
+                let filtrate = null
+                if (!flag) {
+                    filtrate = {}
+                    for (let each in this.searchConfigChecked) {
+                        if (each === "base") {
+                            if (this.searchConfigChecked[each]) {
+                                filtrate.uid = this.searchConfigForm.uid;
+                                filtrate.name = this.searchConfigForm.name;
+                            }
+                        } else if (this.searchConfigChecked[each]) {
+                            filtrate[each] = this.searchConfigForm[each];
+                        }
                     }
+                    console.log(filtrate)
                 }
                 this.userListLoading = true;
                 return $.ajax({
                     type: 'post',
                     url: '/' + this.BASE_URL + '/admin/users',
-                    data: JSON.stringify({...pagging,...filtrate}),
+                    data: JSON.stringify({...paging, ...filtrate}),
                     contentType: "application/json;charset=UTF-8",
                 })
                     .then(r => {
@@ -137,7 +179,7 @@ window.onload = function () {
                     })
             },
             // 提交查询
-            submitUserSearchHandle(){
+            submitUserSearchHandle() {
                 this.submitUserSearchBTLoading = true;
                 setTimeout(() => {
                     this.submitUserSearchBTLoading = false;
@@ -160,6 +202,7 @@ window.onload = function () {
             backupHandle(name) {
                 this.$refs[name].wrap.scrollTop = 0
             },
+            // 分页修改
             userListSizeChangeHandle(val) {
                 // 单页数减小
                 if (this.userListPageSize > val) {
@@ -196,11 +239,150 @@ window.onload = function () {
                         limit: this.userListPageSize,
                         offset: bg
                     }).then(() => {
-                        console.log("2:page=>",val)
+                        console.log("2:page=>", val)
                         this.userListCurrentPage = val;
                     })
                 } else this.userListCurrentPage = val;
             },
+            userMsgUpdateHandle(row) {
+                this.userUpdateForm = JSON.parse(JSON.stringify(row));
+                this.userUpdateForm_cp = row;
+                this.userMsgDrawerShowHandle();
+            },
+            // drawer显示/隐藏
+            userMsgDrawerHideHandle() {
+                this.userMsgDrawerVisible = false;
+            },
+            userMsgDrawerShowHandle() {
+                this.userMsgDrawerVisible = true;
+            },
+            // drawer关闭前触发
+            userMsgBeforeCloseHandle(done) {
+                done();
+            },
+            // 表单提交
+            userUpdateFormSubmitHandle() {
+                this.$confirm('是否提交修改信息?', '提示', {
+                    confirmButtonText: '提交',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    console.log("修改")
+                    this.reqUserUpdateSubmit()
+                        .then(res => {
+                            if (res) {
+                                this.$message({
+                                    type: 'success',
+                                    message: '修改成功!'
+                                });
+                            } else {
+                                this.$message({
+                                    message: '修改失败',
+                                    type: 'error',
+                                    duration: 1500,
+                                });
+                            }
+                        })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '操作取消'
+                    });
+                });
+            },
+            // 删除提交
+            userMsgDeleteHandle(row) {
+                this.$confirm('是否确认删除选中用户的信息?', '提示', {
+                    confirmButtonText: '删除',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.reqUserDeleteSubmit(row)
+                        .then(res => {
+                            if (res) {
+                                this.$message({
+                                    type: 'success',
+                                    message: '删除成功!'
+                                });
+                            } else {
+                                this.$message({
+                                    message: '修改失败',
+                                    type: 'error',
+                                    duration: 1500,
+                                });
+                            }
+                        })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '操作取消'
+                    });
+                });
+            },
+            // 刷新用户更新表单
+            userUpdateFormResetHandle() {
+                this.userUpdateForm = JSON.parse(JSON.stringify(this.userUpdateForm_cp))
+            },
+            // 刷新表单
+            formResetHandle(formName) {
+                this.$refs[formName].resetFields();
+                this.$refs[formName].clearValidate();
+            },
+            // 提交修改请求
+            reqUserUpdateSubmit() {
+                return $.ajax({
+                    type: 'post',
+                    url: '/' + this.BASE_URL + '/admin/users/update',
+                    data: JSON.stringify(this.userUpdateForm),
+                    contentType: "application/json;charset=UTF-8",
+                })
+                    .then(r => {
+                        let res = JSON.parse(r);
+                        if (res.res == "success") {
+                            let i = this.userList.indexOf(this.userUpdateForm_cp)
+                            for (let each in this.userUpdateForm) {
+                                this.userList[i][each] = this.userUpdateForm[each];
+                            }
+                            return true;
+                        } else throw new Error();
+                    })
+                    .catch(err => {
+                        this.userListLoading = false;
+                        console.log(err)
+                        this.$message({
+                            message: '出现未知错误',
+                            type: 'error',
+                            showClose: true,
+                            duration: 0,
+                        });
+                    })
+            },
+            reqUserDeleteSubmit(row) {
+                return $.ajax({
+                    type: 'post',
+                    url: '/' + this.BASE_URL + '/admin/users/delete',
+                    data: JSON.stringify(row),
+                    contentType: "application/json;charset=UTF-8",
+                })
+                    .then(r => {
+                        let res = JSON.parse(r);
+                        if (res.res == "success") {
+                            let i = this.userList.indexOf(this.userUpdateForm_cp)
+                            this.userList[i].logout = res.data;
+                            return true;
+                        } else throw new Error();
+                    })
+                    .catch(err => {
+                        this.userListLoading = false;
+                        console.log(err)
+                        this.$message({
+                            message: '出现未知错误',
+                            type: 'error',
+                            showClose: true,
+                            duration: 0,
+                        });
+                    })
+            }
         },
         computed: {
             // 渲染在节目中的分页数据
@@ -208,7 +390,7 @@ window.onload = function () {
                 let bg = (this.userListCurrentPage - 1) * this.userListPageSize;
                 let end = bg + this.userListPageSize;
                 return this.userList.slice(bg - this.userListBg, bg - this.userListBg + this.userListPageSize);
-            }
+            },
         }
     })
 }

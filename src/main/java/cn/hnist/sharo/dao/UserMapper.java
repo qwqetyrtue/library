@@ -17,6 +17,4 @@ public interface UserMapper {
     int update(User user);
     List<User> check(User user);
     int register(User user);
-    List<?> filter(User_filtrate user_filtrate);
-
 }

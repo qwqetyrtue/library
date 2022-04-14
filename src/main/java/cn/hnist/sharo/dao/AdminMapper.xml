@@ -1,10 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.hnist.sharo.dao.AdminMapper">
+
+    <resultMap id="UserMap" type="JSONObject">
+    </resultMap>
+
+    <resultMap id="CountResultMap" type="Integer">
+        <result column="total" jdbcType="INTEGER" javaType="Integer"/>
+    </resultMap>
+
     <select id="login" parameterType="Admin" resultType="Admin">
         SELECT *
         FROM admin
         WHERE mid = #{mid}
           AND password = #{password}
     </select>
+
+    <!-- 筛选查询用户 -->
+    <select id="usersfilter" resultMap="UserMap,CountResultMap" parameterType="User_filtrate">
+        SELECT SQL_CALC_FOUND_ROWS uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, password, postcode, bloodtype,logout
+        FROM User
+        WHERE
+        <choose>
+            <when test="uid !=null and uid !=''">
+                uid LIKE CONCAT('%',#{uid},'%')
+            </when>
+            <otherwise>
+                uid LIKE '%%'
+            </otherwise>
+        </choose>
+        <if test="gender !=null">
+            AND gender=#{gender}
+        </if>
+        <if test="birth !=null">
+            AND birth=#{birth}
+        </if>
+        <if test="homeadd !=null and homeadd !=''">
+            AND homeadd LIKE CONCAT('%',#{homeadd},'%')
+        </if>
+        <if test="presentadd !=null and presentadd !=''">
+            AND presentadd LIKE CONCAT('%',#{presentadd},'%')
+        </if>
+        <if test="email !=null and email !=''">
+            AND email LIKE CONCAT('%',#{email},'%')
+        </if>
+        <if test="call !=null and call !=''">
+            AND call LIKE CONCAT('%',#{call},'%')
+        </if>
+        <if test="name !=null and name !=''">
+            AND name LIKE CONCAT('%',#{name},'%')
+        </if>
+        <if test="postcode !=null and postcode !=''">
+            AND postcode LIKE CONCAT('%',#{postcode},'%')
+        </if>
+        <if test="bloodtype !=null">
+            AND bloodtype=#{bloodtype}
+        </if>
+        <choose>
+            <when test="order !=null and order!= ''">
+                ORDER BY #{order}
+            </when>
+            <otherwise>
+                ORDER BY _id
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="limit !=null and limit &gt; 0 ">
+                LIMIT #{limit}
+            </when>
+            <otherwise>
+                LIMIT 10
+            </otherwise>
+        </choose>
+        <if test="offset !=null and offset &gt;= 0">
+            OFFSET #{offset}
+        </if>;
+        SELECT FOUND_ROWS() as total;
+    </select>
+
+    <!-- 修改个人信息 -->
+    <update id="usersupdate" parameterType="User">
+        UPDATE User
+        <set>
+            <if test="uid != null and uid != ''">uid=#{uid},</if>
+            <if test="password != null and password != ''">password=#{password},</if>
+            <if test="gender != null">gender=#{gender},</if>
+            <if test="birth != null">birth=#{birth},</if>
+            <if test="homeadd != null and homeadd != ''">homeadd=#{homeadd},</if>
+            <if test="presentadd != null and presentadd != ''">presentadd=#{presentadd},</if>
+            <if test="email != null and email != ''">email=#{email},</if>
+            <if test="call != null and call != ''">`call`=#{call},</if>
+            <if test="name != null and name != ''">`name`=#{name},</if>
+            <if test="postcode != null and postcode != ''">postcode=#{postcode},</if>
+            <if test="bloodtype != null">bloodtype=#{bloodtype}</if>
+        </set>
+        WHERE uid=#{uid}
+    </update>
+
+    <!--注销用户账号-->
+    <update id="usersdelete" parameterType="User">
+        UPDATE user
+        SET logout=#{logout}
+        WHERE uid = #{uid}
+    </update>
 </mapper>

@@ -70,15 +70,4 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    @Override
-    public List<?> filter(User_filtrate user_filtrate) {
-        try {
-            return userMapper.filter(user_filtrate);
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
 }

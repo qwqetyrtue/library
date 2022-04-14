@@ -131,7 +131,6 @@ window.onload = function () {
                         })
                             .then(result => {
                                 let res = JSON.parse(result)
-                                console.log(res)
                                 if (res.res == "success") {
                                     v.$message({
                                         message: '登录成功',
@@ -144,7 +143,7 @@ window.onload = function () {
                                 } else {
                                     this.loginBTLoading = false;
                                     v.$message({
-                                        message: '账号或密码错误',
+                                        message: res.data,
                                         type: 'warning'
                                     });
                                 }

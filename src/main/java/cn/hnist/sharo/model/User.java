@@ -3,6 +3,8 @@ package cn.hnist.sharo.model;
 
 import cn.hnist.sharo.model.menum.Gender;
 
+import java.sql.Date;
+
 public class User {
 
   private long id;
@@ -18,6 +20,7 @@ public class User {
   private String password;
   private String postcode;
   private String bloodtype;
+  private java.sql.Date logout;
 
 
   public long getId() {
@@ -133,5 +136,13 @@ public class User {
 
   public void setGender(Gender gender) {
     this.gender = gender;
+  }
+
+  public Date getLogout() {
+    return logout;
+  }
+
+  public void setLogout(Date logout) {
+    this.logout = logout;
   }
 }

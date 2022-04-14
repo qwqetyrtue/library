@@ -2,24 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.hnist.sharo.dao.UserMapper">
 
-    <resultMap id="UserMap" type="User">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-    </resultMap>
-
-    <resultMap id="CountResultMap" type="Integer">
-        <result column="total" jdbcType="INTEGER" javaType="Integer"/>
-    </resultMap>
-
     <!-- 用户登录查询 -->
     <select id="login" parameterType="User" resultType="User">
-        SELECT *
+        SELECT uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, postcode, bloodtype,logout
         FROM user
         WHERE uid = #{uid}
           AND password = #{password}
     </select>
 
     <select id="check" parameterType="User" resultType="User">
-        SELECT *
+        SELECT uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, postcode, bloodtype
         FROM user
         WHERE uid = #{uid}
     </select>
@@ -55,73 +47,5 @@
         VALUES (#{uid}, #{email}, #{createdate}, #{password})
     </insert>
 
-    <!-- 筛选查询用户 -->
-    <select id="filter" resultMap="UserMap,CountResultMap" parameterType="User_filtrate">
-        SELECT SQL_CALC_FOUND_ROWS *
-        FROM User
-        WHERE
-        <choose>
-            <when test="uid !=null and uid !=''">
-                uid LIKE CONCAT('%',#{uid},'%')
-            </when>
-            <otherwise>
-                uid LIKE '%%'
-            </otherwise>
-        </choose>
-        <if test="gender !=null">
-            AND gender=#{gender}
-        </if>
-        <if test="birth !=null">
-            AND birth=#{birth}
-        </if>
-        <if test="homeadd !=null and homeadd !=''">
-            AND homeadd LIKE CONCAT('%',#{homeadd},'%')
-        </if>
-        <if test="presentadd !=null and presentadd !=''">
-            AND presentadd LIKE CONCAT('%',#{presentadd},'%')
-        </if>
-        <if test="email !=null and email !=''">
-            AND email LIKE CONCAT('%',#{email},'%')
-        </if>
-        <if test="call !=null and call !=''">
-            AND call LIKE CONCAT('%',#{call},'%')
-        </if>
-        <if test="name !=null and name !=''">
-            AND name LIKE CONCAT('%',#{name},'%')
-        </if>
-        <if test="postcode !=null and postcode !=''">
-            AND postcode LIKE CONCAT('%',#{postcode},'%')
-        </if>
-        <if test="bloodtype !=null">
-            AND bloodtype=#{bloodtype}
-        </if>
-        <choose>
-            <when test="order !=null and order!= ''">
-                ORDER BY #{order}
-            </when>
-            <otherwise>
-                ORDER BY _id
-            </otherwise>
-        </choose>
-        <choose>
-            <when test="limit !=null and limit &gt; 0 ">
-                LIMIT #{limit}
-            </when>
-            <otherwise>
-                LIMIT 10
-            </otherwise>
-        </choose>
-        <if test="offset !=null and offset &gt;= 0">
-            OFFSET #{offset}
-        </if>;
-        SELECT FOUND_ROWS() as total;
-    </select>
-
-    <!--注销用户账号-->
-    <delete id="delete" parameterType="User">
-        DELETE
-        FROM user
-        WHERE uid = #{uid}
-    </delete>
 
 </mapper>

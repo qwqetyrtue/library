@@ -70,7 +70,9 @@
                                 <el-input placeholder="uid" v-model="searchConfigForm.call"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button type="primary" :loading="submitUserSearchBTLoading" @click="submitUserSearchHandle">查询</el-button>
+                                <el-button type="primary" :loading="submitUserSearchBTLoading"
+                                           @click="submitUserSearchHandle">查询
+                                </el-button>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -154,6 +156,16 @@
                                     width="120">
                             </el-table-column>
                             <el-table-column
+                                    label="账号状态"
+                                    width="90">
+                                <template slot-scope="scope">
+                                    <el-tooltip v-if="scope.row.logout" effect="dark" :content="scope.row.logout" placement="top-start">
+                                        <el-tag type="danger" disable-transitions>已注销</el-tag>
+                                    </el-tooltip>
+                                    <el-tag v-else disable-transitions>在线</el-tag>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
                                     prop="name"
                                     label="昵称"
                                     width="120">
@@ -231,11 +243,11 @@
                                     </el-row>
                                 </template>
                                 <template slot-scope="scope">
-                                    <el-button type="text" size="small">
+                                    <el-button type="text" @click="userMsgUpdateHandle(scope.row)" size="small">
                                         详细资料
                                     </el-button>
-                                    <el-button type="text" size="small">
-                                        删除
+                                    <el-button type="text" @click="userMsgDeleteHandle(scope.row)" size="small">
+                                        注销
                                     </el-button>
                                 </template>
                             </el-table-column>
@@ -263,6 +275,81 @@
                         </el-col>
                     </el-row>
                 </div>
+                <el-drawer
+                        title="用户信息"
+                        :visible.sync="userMsgDrawerVisible"
+                        direction="rtl"
+                        :before-close="userMsgBeforeCloseHandle">
+                   <div class="m-user-msg-drawer" >
+                       <el-scrollbar ref="userUpdateScrollbar" class="m-scrollbar">
+                           <el-form :model="userUpdateForm" :rules="rules_userUpdateForm"
+                                    ref="userUpdateForm" label-position="left"
+                                    label-width="90px">
+                               <el-form-item label="账号" prop="name">
+                                   <el-input placeholder="请输入账号" v-model="userUpdateForm.uid"></el-input>
+                               </el-form-item>
+                               <el-form-item label="密码" prop="email">
+                                   <el-input placeholder="请输入密码" v-model="userUpdateForm.password"></el-input>
+                               </el-form-item>
+                               <el-form-item label="昵称" prop="name">
+                                   <el-input placeholder="请输入昵称" v-model="userUpdateForm.name"></el-input>
+                               </el-form-item>
+                               <el-form-item label="邮箱" prop="email">
+                                   <el-input placeholder="请输入邮箱地址" v-model="userUpdateForm.email"></el-input>
+                               </el-form-item>
+                           </el-form>
+                           <el-form :model="userUpdateForm" :rules="rules_userUpdateForm"
+                                    ref="userUpdateForm" label-position="left"
+                                    label-width="90px">
+                               <el-form-item label="性别">
+                                   <el-select v-model="userUpdateForm.gender" placeholder="请选择性别">
+                                       <el-option label="男" value="MALE"></el-option>
+                                       <el-option label="女" value="FEMALE"></el-option>
+                                       <el-option label="隐藏" value="HIDE"></el-option>
+                                   </el-select>
+                               </el-form-item>
+                               <el-form-item label="出生年月">
+                                   <el-date-picker
+                                           v-model="userUpdateForm.birth"
+                                           value-format="yyyy-MM-dd"
+                                           format="yyyy-MM-dd"
+                                           type="date"
+                                           placeholder="选择日期">
+                                   </el-date-picker>
+                               </el-form-item>
+                               <el-form-item label="居住地">
+                                   <el-input type="textarea" resize="none" :rows="2" placeholder="请输入居住地"
+                                             v-model="userUpdateForm.presentadd"></el-input>
+                               </el-form-item>
+                               <el-form-item label="联系地址">
+                                   <el-input type="textarea" resize="none" :rows="2" placeholder="请输入联系地址"
+                                             v-model="userUpdateForm.homeadd"></el-input>
+                               </el-form-item>
+                               <el-form-item label="电话号码" prop="call">
+                                   <el-input placeholder="请输入电话号码" v-model="userUpdateForm.call"></el-input>
+                               </el-form-item>
+                               <el-form-item label="邮政编码">
+                                   <el-input placeholder="请输入邮政编码" v-model="userUpdateForm.postcode"></el-input>
+                               </el-form-item>
+                               <el-form-item label="血型">
+                                   <el-select v-model="userUpdateForm.bloodtype" placeholder="请选择血型">
+                                       <el-option label="A型" value="A"></el-option>
+                                       <el-option label="B型" value="B"></el-option>
+                                       <el-option label="AB型" value="AB"></el-option>
+                                       <el-option label="O型" value="O"></el-option>
+                                       <el-option label="RH型" value="RH"></el-option>
+                                   </el-select>
+                               </el-form-item>
+                           </el-form>
+                           <el-row type="flex" justify="end" align="middle">
+                               <el-col :span="8">
+                                   <el-button type="text" @click="userUpdateFormResetHandle">重置</el-button>
+                                   <el-button type="primary" @click="userUpdateFormSubmitHandle">提交修改</el-button>
+                               </el-col>
+                           </el-row>
+                       </el-scrollbar>
+                   </div>
+                </el-drawer>
             </div>
         </el-tab-pane>
         <el-tab-pane class="m-tabs" name="2">

@@ -21,6 +21,4 @@ public interface UserService {
     User update(User user);
     // 注册
     User register(User user);
-    // 查询所有用户
-    List<?> filter(User_filtrate user_filtrate);
 }

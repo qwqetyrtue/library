@@ -31,11 +31,15 @@ public class UserController {
     Res<String> userLoginHandle(@RequestBody User user, HttpSession session) {
         User login = userService.login(user);
         if (login != null) {
+            System.out.println(login.getLogout());
+            if(login.getLogout() != null){
+                return new Res<>("fail", "账号已经注销");
+            }
             // 保存到session
             session.setAttribute("user", login);
             return new Res<>("success", "登陆成功");
         }
-        return new Res<>("fail", "登录失败");
+        return new Res<>("fail", "账号或密码错误");
     }
 
     // 查询用户信息

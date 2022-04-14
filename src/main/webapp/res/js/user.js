@@ -73,7 +73,7 @@ window.onload = function () {
             return {
                 BASE_URL: '',
                 UserPageLoading: true,
-                user: {},
+                user: {load:false},
                 activeIndex: '1',
                 PageTitle: '图书馆,欢迎您!',
                 tabIndex1: "预约",
@@ -322,7 +322,6 @@ window.onload = function () {
                                         type: 'success',
                                         duration: 1000,
                                         onClose: () => {
-
                                             v.reloadUserUpdate();
                                             v.userUpdateDialogHideHandle();
                                         }
@@ -363,8 +362,8 @@ window.onload = function () {
                             url: '/' + this.BASE_URL + '/user/updatepwd',
                             data: JSON.stringify({
                                 uid: this.user.uid,
-                                password:this.passwordUpdateForm.password,
-                                oldPassword:this.passwordUpdateForm.oldPassword,
+                                password: this.passwordUpdateForm.password,
+                                oldPassword: this.passwordUpdateForm.oldPassword,
                                 verifyCode: this.passwordUpdateForm.verifyCode
                             }),
                             contentType: "application/json;charset=UTF-8",
@@ -411,8 +410,7 @@ window.onload = function () {
                                     duration: 0,
                                 });
                             })
-                    }
-                    else {
+                    } else {
                         this.passwordUpdateBTLoading = false;
                         return false
                     }
@@ -428,7 +426,7 @@ window.onload = function () {
                         'email': this.user.email,
                     }),
                 })
-                    .then(r=> {
+                    .then(r => {
                         this.verifySendBTLoading = false;
                         let res = JSON.parse(r);
                         if (res.res == "success") {
@@ -452,15 +450,15 @@ window.onload = function () {
                                     }
                                 }, 1000)
                             }
-                        }else{
+                        } else {
                             this.$message({
-                                message:  res.data,
+                                message: res.data,
                                 type: 'error',
                                 duration: 1500,
                             })
                         }
                     })
-                    .catch(err=>{
+                    .catch(err => {
                         console.log(err);
                         this.$message({
                             message: '验证码发送失败',
@@ -471,7 +469,7 @@ window.onload = function () {
                     })
             },
             isbnCheckHandle() {
-                if(this.bookReserveForm.isbn ==null || this.bookReserveForm.isbn.length != 13) {
+                if (this.bookReserveForm.isbn == null || this.bookReserveForm.isbn.length != 13) {
                     this.$message({
                         type: 'warn',
                         message: '请输入13位的ISBN码!',
@@ -674,8 +672,8 @@ window.onload = function () {
                 }, 3000);
 
                 this.reqBookList()
-                    .then((res)=>{
-                        if(res){
+                    .then((res) => {
+                        if (res) {
                             this.$message({
                                 message: '刷新成功',
                                 type: 'success',
@@ -692,8 +690,8 @@ window.onload = function () {
                     this.refreshUserBTLoading = false;
                 }, 1500)
                 this.reqUserMsg()
-                    .then((res)=>{
-                        if(res){
+                    .then((res) => {
+                        if (res) {
                             this.$message({
                                 message: '刷新成功',
                                 type: 'success',
@@ -709,14 +707,24 @@ window.onload = function () {
                     this.refreshBorrowBTLoading = false;
                 }, 1500)
                 this.reqBorrowList()
-                    .then((res)=>{
-                        if(res){
+                    .then((r) => {
+                        let res = JSON.parse(r);
+                        if (res.res == "success") {
                             this.$message({
                                 message: '刷新成功',
                                 type: 'success',
                                 duration: 1000,
                             });
-                        }
+                        }else throw new Error(res.data)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        this.$message({
+                            message: err,
+                            type: 'error',
+                            showClose: true,
+                            duration: 0,
+                        });
                     })
             },
             // 请求数据
@@ -725,16 +733,19 @@ window.onload = function () {
                     type: 'post',
                     url: '/' + this.BASE_URL + '/user/user',
                 })
-                    .then(res => {
-                        this.user = JSON.parse(res).data
-                        this.user.load = true;
-                        this.reloadUserUpdate();
-                        return true;
+                    .then(r => {
+                        let res = JSON.parse(r);
+                        if (res.res == "success") {
+                            this.user = res.data;
+                            this.reloadUserUpdate()
+                            this.user.load = true;
+                            return true
+                        } else throw new Error(res.data);
                     })
                     .catch(err => {
                         console.log(err)
                         this.$message({
-                            message: '出现未知错误',
+                            message: err,
                             type: 'error',
                             showClose: true,
                             duration: 0,
@@ -759,7 +770,7 @@ window.onload = function () {
                             this.bookList = res.data;
                             this.bookListLoading = false;
                             return true
-                        } else throw new Error();
+                        } else throw new Error(res.data);
 
                     })
                     .catch(err => {

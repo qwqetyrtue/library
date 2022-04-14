@@ -47,8 +47,8 @@ public class AdminController {
     // 筛选查询用户
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public @ResponseBody
-    ListRes<User> adminUserListHandle(@RequestBody User_filtrate user_filtrate) {
-        List<?> res = userService.filter(user_filtrate);
+    ListRes<User> adminUsersListHandle(@RequestBody User_filtrate user_filtrate) {
+        List<?> res = adminService.usersFilter(user_filtrate);
         if(res != null){
             List<User> users = (List<User>)res.get(0);
             int total = ((List<Integer>)res.get(1)).get(0);
@@ -56,5 +56,29 @@ public class AdminController {
         }
         else return new ListRes<>(null,-1,"fail");
     }
+
+    // 更新用户信息
+    @RequestMapping(value = "/users/update", method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminUsersUpdateHandle(@RequestBody User user){
+        if(adminService.usersUpdate(user)){
+            return new Res<>("success","修改成功");
+        }else{
+            return new Res<>("fail","修改失败");
+        }
+    }
+
+    // 更新用户信息
+    @RequestMapping(value = "/users/delete", method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminUsersDeleteHandle(@RequestBody User user){
+        String res = adminService.usersDelete(user);
+        if(res != null){
+            return new Res<>("success","res");
+        }else{
+            return new Res<>("fail",null);
+        }
+    }
+
 
 }

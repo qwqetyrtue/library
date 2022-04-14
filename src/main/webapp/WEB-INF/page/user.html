@@ -62,224 +62,19 @@
                         <el-scrollbar class="m-scrollbar">
                             <el-collapse-item title="预约记录" name="1">
                                 <div class="m-seat-reserve-cont">
-                                    <el-table
-                                            :data="tableData"
-                                            border
-                                            stripe
-                                            :default-sort="{prop: 'date', order: 'descending'}"
-                                            class="m-seat-reserve-record">
-                                        <el-table-column
-                                                fixed
-                                                prop="date"
-                                                label="日期"
-                                                sortable
-                                                width="150">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="name"
-                                                label="姓名"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="province"
-                                                label="省份"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="city"
-                                                label="市区"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="address"
-                                                label="地址"
-                                                width="300">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="zip"
-                                                label="邮编"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                label="操作"
-                                                width="150">
-                                            <template slot-scope="scope">
-                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
-                                                </el-button>
-                                                <el-button type="text" size="small">编辑</el-button>
-                                            </template>
-                                        </el-table-column>
-                                    </el-table>
+
                                 </div>
                             </el-collapse-item>
                             <el-collapse-item title="常用座位" name="2">
                                 <div class="m-seat-reserve-cont">
-                                    <el-table
-                                            :data="tableData"
-                                            border
-                                            stripe
-                                            :default-sort="{prop: 'date', order: 'descending'}"
-                                            class="m-seat-reserve-record">
-                                        <el-table-column
-                                                fixed
-                                                prop="date"
-                                                label="日期"
-                                                sortable
-                                                width="150">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="name"
-                                                label="姓名"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="province"
-                                                label="省份"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="city"
-                                                label="市区"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="address"
-                                                label="地址"
-                                                width="300">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="zip"
-                                                label="邮编"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                label="操作"
-                                                width="150">
-                                            <template slot-scope="scope">
-                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
-                                                </el-button>
-                                                <el-button type="text" size="small">编辑</el-button>
-                                            </template>
-                                        </el-table-column>
-                                    </el-table>
                                 </div>
                             </el-collapse-item>
                             <el-collapse-item title="座位查询" name="3">
                                 <div class="m-seat-reserve-cont">
-                                    <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                                        <el-form-item label="审批人">
-                                            <el-input v-model="formInline.user" placeholder="审批人"></el-input>
-                                        </el-form-item>
-                                        <el-form-item label="活动区域">
-                                            <el-select v-model="formInline.region" placeholder="活动区域">
-                                                <el-option label="区域一" value="shanghai"></el-option>
-                                                <el-option label="区域二" value="beijing"></el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                        <el-form-item>
-                                            <el-button type="primary" @click="onSubmit">查询</el-button>
-                                        </el-form-item>
-                                    </el-form>
-                                    <el-table
-                                            :data="tableData"
-                                            border
-                                            stripe
-                                            :default-sort="{prop: 'date', order: 'descending'}"
-                                            class="m-seat-reserve-record">
-                                        <el-table-column
-                                                fixed
-                                                prop="date"
-                                                label="日期"
-                                                sortable
-                                                width="150">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="name"
-                                                label="姓名"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="province"
-                                                label="省份"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="city"
-                                                label="市区"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="address"
-                                                label="地址"
-                                                width="300">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="zip"
-                                                label="邮编"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                label="操作"
-                                                width="150">
-                                            <template slot-scope="scope">
-                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
-                                                </el-button>
-                                                <el-button type="text" size="small">编辑</el-button>
-                                            </template>
-                                        </el-table-column>
-                                    </el-table>
                                 </div>
                             </el-collapse-item>
                             <el-collapse-item title="违规记录" name="4">
                                 <div class="m-seat-reserve-cont">
-                                    <el-table
-                                            :data="tableData"
-                                            border
-                                            stripe
-                                            :default-sort="{prop: 'date', order: 'descending'}"
-                                            class="m-seat-reserve-record">
-                                        <el-table-column
-                                                fixed
-                                                prop="date"
-                                                label="日期"
-                                                sortable
-                                                width="150">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="name"
-                                                label="姓名"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="province"
-                                                label="省份"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="city"
-                                                label="市区"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="address"
-                                                label="地址"
-                                                width="300">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="zip"
-                                                label="邮编"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                label="操作"
-                                                width="150">
-                                            <template slot-scope="scope">
-                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
-                                                </el-button>
-                                                <el-button type="text" size="small">编辑</el-button>
-                                            </template>
-                                        </el-table-column>
-                                    </el-table>
                                 </div>
                             </el-collapse-item>
                         </el-scrollbar>
@@ -290,120 +85,10 @@
                         <el-scrollbar class="m-scrollbar">
                             <el-collapse-item title="预约记录" name="1">
                                 <div class="m-seat-reserve-cont">
-                                    <el-table
-                                            :data="tableData"
-                                            border
-                                            stripe
-                                            :default-sort="{prop: 'date', order: 'descending'}"
-                                            class="m-seat-reserve-record">
-                                        <el-table-column
-                                                fixed
-                                                prop="date"
-                                                label="日期"
-                                                sortable
-                                                width="150">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="name"
-                                                label="姓名"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="province"
-                                                label="省份"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="city"
-                                                label="市区"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="address"
-                                                label="地址"
-                                                width="300">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="zip"
-                                                label="邮编"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                label="操作"
-                                                width="150">
-                                            <template slot-scope="scope">
-                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
-                                                </el-button>
-                                                <el-button type="text" size="small">编辑</el-button>
-                                            </template>
-                                        </el-table-column>
-                                    </el-table>
                                 </div>
                             </el-collapse-item>
                             <el-collapse-item title="厅室查询" name="2">
                                 <div class="m-seat-reserve-cont">
-                                    <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                                        <el-form-item label="审批人">
-                                            <el-input v-model="formInline.user" placeholder="审批人"></el-input>
-                                        </el-form-item>
-                                        <el-form-item label="活动区域">
-                                            <el-select v-model="formInline.region" placeholder="活动区域">
-                                                <el-option label="区域一" value="shanghai"></el-option>
-                                                <el-option label="区域二" value="beijing"></el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                        <el-form-item>
-                                            <el-button type="primary" @click="onSubmit">查询</el-button>
-                                        </el-form-item>
-                                    </el-form>
-                                    <el-table
-                                            :data="tableData"
-                                            border
-                                            stripe
-                                            :default-sort="{prop: 'date', order: 'descending'}"
-                                            class="m-seat-reserve-record">
-                                        <el-table-column
-                                                fixed
-                                                prop="date"
-                                                label="日期"
-                                                sortable
-                                                width="150">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="name"
-                                                label="姓名"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="province"
-                                                label="省份"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="city"
-                                                label="市区"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="address"
-                                                label="地址"
-                                                width="300">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="zip"
-                                                label="邮编"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                label="操作"
-                                                width="150">
-                                            <template slot-scope="scope">
-                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
-                                                </el-button>
-                                                <el-button type="text" size="small">编辑</el-button>
-                                            </template>
-                                        </el-table-column>
-                                    </el-table>
                                 </div>
                             </el-collapse-item>
                         </el-scrollbar>
@@ -414,120 +99,10 @@
                         <el-scrollbar class="m-scrollbar">
                             <el-collapse-item title="预约记录" name="1">
                                 <div class="m-seat-reserve-cont">
-                                    <el-table
-                                            :data="tableData"
-                                            border
-                                            stripe
-                                            :default-sort="{prop: 'date', order: 'descending'}"
-                                            class="m-seat-reserve-record">
-                                        <el-table-column
-                                                fixed
-                                                prop="date"
-                                                label="日期"
-                                                sortable
-                                                width="150">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="name"
-                                                label="姓名"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="province"
-                                                label="省份"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="city"
-                                                label="市区"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="address"
-                                                label="地址"
-                                                width="300">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="zip"
-                                                label="邮编"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                label="操作"
-                                                width="150">
-                                            <template slot-scope="scope">
-                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
-                                                </el-button>
-                                                <el-button type="text" size="small">编辑</el-button>
-                                            </template>
-                                        </el-table-column>
-                                    </el-table>
                                 </div>
                             </el-collapse-item>
                             <el-collapse-item title="讲座查询" name="2">
                                 <div class="m-seat-reserve-cont">
-                                    <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                                        <el-form-item label="审批人">
-                                            <el-input v-model="formInline.user" placeholder="审批人"></el-input>
-                                        </el-form-item>
-                                        <el-form-item label="活动区域">
-                                            <el-select v-model="formInline.region" placeholder="活动区域">
-                                                <el-option label="区域一" value="shanghai"></el-option>
-                                                <el-option label="区域二" value="beijing"></el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                        <el-form-item>
-                                            <el-button type="primary" @click="onSubmit">查询</el-button>
-                                        </el-form-item>
-                                    </el-form>
-                                    <el-table
-                                            :data="tableData"
-                                            border
-                                            stripe
-                                            :default-sort="{prop: 'date', order: 'descending'}"
-                                            class="m-seat-reserve-record">
-                                        <el-table-column
-                                                fixed
-                                                prop="date"
-                                                label="日期"
-                                                sortable
-                                                width="150">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="name"
-                                                label="姓名"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="province"
-                                                label="省份"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="city"
-                                                label="市区"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="address"
-                                                label="地址"
-                                                width="300">
-                                        </el-table-column>
-                                        <el-table-column
-                                                prop="zip"
-                                                label="邮编"
-                                                width="120">
-                                        </el-table-column>
-                                        <el-table-column
-                                                label="操作"
-                                                width="150">
-                                            <template slot-scope="scope">
-                                                <el-button @click="handleClick(scope.row)" type="text" size="small">查看
-                                                </el-button>
-                                                <el-button type="text" size="small">编辑</el-button>
-                                            </template>
-                                        </el-table-column>
-                                    </el-table>
                                 </div>
                             </el-collapse-item>
                         </el-scrollbar>
@@ -863,7 +438,7 @@
                 <el-tab-pane class="m-tabs_inline" name="基本信息" label="基本信息">
                     <div class="m-base-msg">
                         <el-scrollbar class="m-scrollbar">
-                            <el-descriptions class="margin-top" v-if="user.load" title="基本资料" :column="2" border>
+                            <el-descriptions class="margin-top"  v-if="user.load" title="基本资料" :column="2" border>
                                 <template slot="extra">
                                     <el-button icon="el-icon-refresh" type="text"
                                                :loading="refreshUserBTLoading"
