@@ -1,9 +1,11 @@
 package cn.hnist.sharo.controller;
 
 import cn.hnist.sharo.model.Book;
+import cn.hnist.sharo.model.mexpand.Book_filtrate;
 import cn.hnist.sharo.model.mexpand.Filtrate;
 import cn.hnist.sharo.service.BookService;
 import cn.hnist.sharo.unit.BackEndHttpRequest;
+import cn.hnist.sharo.unit.ListRes;
 import cn.hnist.sharo.unit.Res;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +36,16 @@ public class BookController {
     }
 
     // 查询所有书籍
-    @RequestMapping(value = "/all",method = RequestMethod.POST)
+    @RequestMapping(value = "/filtrate",method = RequestMethod.POST)
     public @ResponseBody
-    Res<List<JSONObject>> bookAllHandle(@RequestBody Filtrate filtrate){
-        return new Res<List<JSONObject>>("success",bookService.all(filtrate));
+    ListRes<JSONObject> bookAllHandle(@RequestBody Book_filtrate book_filtrate){
+        List<?>  res = bookService.filtrate(book_filtrate);
+        if(res != null){
+            List<JSONObject> books = (List<JSONObject>) res.get(0);
+            int total = ((List<Integer>)res.get(1)).get(0);
+            return new ListRes<>("success",books,total);
+        }
+        return new ListRes<>("fail",null,-1);
     }
 
     @RequestMapping(value = "/store", method = RequestMethod.POST)

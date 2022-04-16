@@ -52,9 +52,9 @@ public class AdminController {
         if(res != null){
             List<User> users = (List<User>)res.get(0);
             int total = ((List<Integer>)res.get(1)).get(0);
-            return new ListRes<>(users,total,"success");
+            return new ListRes<>("success",users,total);
         }
-        else return new ListRes<>(null,-1,"fail");
+        else return new ListRes<>("fail",null,-1);
     }
 
     // 更新用户信息

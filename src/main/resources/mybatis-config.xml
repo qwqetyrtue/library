@@ -18,6 +18,7 @@
         <typeAlias alias="Borrow_create" type="cn.hnist.sharo.model.mexpand.Borrow_create"/>
         <typeAlias alias="User_register" type="cn.hnist.sharo.model.mexpand.User_register"/>
         <typeAlias alias="User_filtrate" type="cn.hnist.sharo.model.mexpand.User_filtrate"/>
+        <typeAlias alias="Borrow_filtrate" type="cn.hnist.sharo.model.mexpand.Borrow_filtrate"/>
 
         <!--json-->
         <typeAlias alias="JSONObject" type="com.alibaba.fastjson.JSONObject"/>

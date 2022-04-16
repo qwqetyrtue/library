@@ -10,7 +10,7 @@
     </resultMap>
 
     <select id="login" parameterType="Admin" resultType="Admin">
-        SELECT *
+        SELECT mid, password, name, email, gender, `Call`
         FROM admin
         WHERE mid = #{mid}
           AND password = #{password}
@@ -18,7 +18,8 @@
 
     <!-- 筛选查询用户 -->
     <select id="usersfilter" resultMap="UserMap,CountResultMap" parameterType="User_filtrate">
-        SELECT SQL_CALC_FOUND_ROWS uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, password, postcode, bloodtype,logout
+        SELECT SQL_CALC_FOUND_ROWS uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, password,
+        postcode, bloodtype,logout
         FROM User
         WHERE
         <choose>

@@ -159,7 +159,7 @@ window.onload = function () {
                         });
                     })
             },
-            // 刷新表单
+            // 刷新表格
             refreshUserListHandle() {
                 // 防止按键连点
                 this.refreshUserBTLoading = true;
@@ -319,11 +319,11 @@ window.onload = function () {
                     });
                 });
             },
-            // 刷新用户更新表单
+            // 重置用户更新表单
             userUpdateFormResetHandle() {
                 this.userUpdateForm = JSON.parse(JSON.stringify(this.userUpdateForm_cp))
             },
-            // 刷新表单
+            // 重置表单
             formResetHandle(formName) {
                 this.$refs[formName].resetFields();
                 this.$refs[formName].clearValidate();
@@ -382,10 +382,61 @@ window.onload = function () {
                             duration: 0,
                         });
                     })
-            }
+            },
+            // 归还书籍操作
+            bookRestoreHandle(row) {
+                this.$confirm('是否确认要归还选中书籍?', '确认', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    $.ajax({
+                        type: 'post',
+                        url: '/' + this.BASE_URL + '/borrow/finish',
+                        data: JSON.stringify({
+                            bkid: row.bkid,
+                            borrowid: row.borrowid
+                        }),
+                        contentType: "application/json;charset=UTF-8",
+                    })
+                        .then(r => {
+                            let res = JSON.parse(r);
+                            if (res.res == "success") {
+                                this.$message({
+                                    type: 'success',
+                                    message: '归还成功!',
+                                    duration: 1500,
+                                    onClose: async () => {
+                                        await this.reqBookList({
+                                            limit: this.bookListPageSize,
+                                            offset: this.bookListPageSize * (this.bookListCurrentPage - 1)
+                                        });
+                                        await this.reqBorrowList({
+                                            limit: this.borrowListPageSize,
+                                            offset: this.borrowListPageSize * (this.borrowListCurrentPage - 1)
+                                        });
+                                    }
+                                });
+                            } else {
+                                this.$message({
+                                    message: res.data,
+                                    type: 'error',
+                                    duration: 1500,
+                                });
+                            }
+                        })
+                })
+                    .catch(err => {
+                        this.$message({
+                            message: "归还失败",
+                            type: 'error',
+                            duration: 1500,
+                        });
+                    })
+            },
         },
         computed: {
-            // 渲染在节目中的分页数据
+            // 渲染在页面中的分页数据
             userListPaging() {
                 let bg = (this.userListCurrentPage - 1) * this.userListPageSize;
                 let end = bg + this.userListPageSize;

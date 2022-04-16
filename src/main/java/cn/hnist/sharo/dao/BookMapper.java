@@ -14,7 +14,7 @@ import java.util.List;
 @Mapper
 public interface BookMapper {
     // 筛选
-    List<JSONObject> select(Book_filtrate book_filtrate);
+    List<JSONObject> filtrate(Book_filtrate book_filtrate);
     // 查询所有书籍
     List<JSONObject> all(Filtrate filtrate);
     // 查询书籍详情

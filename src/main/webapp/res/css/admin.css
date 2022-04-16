@@ -159,7 +159,12 @@ i {
 .m-search-pop .el-input {
     width: 250px !important;
 }
-
+.m-search-pop .el-form--inline > .el-form-item {
+    margin-bottom: 0;
+}
+.m-search-pop .el-divider {
+    margin: 12px 0;
+}
 .m-search .el-form--inline > .el-form-item {
     margin-bottom: 0;
 }

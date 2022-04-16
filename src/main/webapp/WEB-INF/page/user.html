@@ -122,8 +122,19 @@
                 <el-tab-pane class="m-tabs_inline m-tabs_inline_table" name="已借书籍" label="已借书籍">
                     <div class="m-scrollbar-form-paging">
                         <el-scrollbar ref="borrowListScrollbar" class="m-scrollbar">
+                            <el-form :inline="true">
+                                <el-select v-model="borrowListSearch.state" :loading="borrowSearchStateBTLoading"
+                                           placeholder="请选择" @change="borrowSearchStateChange">
+                                    <el-option label="全部" value=""></el-option>
+                                    <el-option label="在借" value="BORROW"></el-option>
+                                    <el-option label="已归还" value="RETURN"></el-option>
+                                    <el-option label="逾期" value="OVERDUE"></el-option>
+                                    <el-option label="其他" value="ACCIDENT"></el-option>
+                                </el-select>
+                            </el-form>
                             <el-table
-                                    :data="borrowList"
+                                    v-loading="borrowListLoading"
+                                    :data="borrowListPaging"
                                     border
                                     stripe
                                     :default-sort="{prop: 'createtime', order: 'descending'}">
@@ -230,10 +241,7 @@
                                         <el-button type="text" size="small"
                                                    @click="bookListRowClickHandle(scope.row)">查看书籍
                                         </el-button>
-                                        <!--状态判断 v-if="scope.row.state != 'RETURN'" -->
-                                        <el-button v-if="scope.row.state != 'RETURN'" type="text" size="small"
-                                                   @click="bookRestoreHandle(scope.row)">归还
-                                        </el-button>
+                                        <!--改为只能由管理员执行归还操作-->
                                     </template>
                                 </el-table-column>
                             </el-table>
@@ -241,14 +249,14 @@
                         <el-row class="m-paging" type="flex" align="middle" justify="space-between">
                             <el-col :span="12">
                                 <el-pagination
-                                        @size-change="bookListSizeChangeHandle"
-                                        @current-change="bookListCurrentChangeHandle"
-                                        :current-page="bookListCurrentPage"
-                                        :page-sizes="bookListPageSizes"
-                                        :page-size="bookListPageSize"
-                                        :hide-on-single-page="bookListPageHideWhenSingle"
+                                        @size-change="borrowListSizeChangeHandle"
+                                        @current-change="borrowListCurrentChangeHandle"
+                                        :current-page="borrowListCurrentPage"
+                                        :page-sizes="borrowListPageSizes"
+                                        :page-size="borrowListPageSize"
+                                        :hide-on-single-page="borrowListPageHideWhenSingle"
                                         layout="total, sizes, prev, pager, next, jumper"
-                                        :total="bookListTotalSize">
+                                        :total="borrowListTotalSize">
                                 </el-pagination>
                             </el-col>
                             <el-col :span="2">
@@ -265,25 +273,28 @@
                 <el-tab-pane class="m-tabs_inline" name="查询书籍" label="查询书籍">
                     <div class="m-scrollbar-form-paging">
                         <el-scrollbar ref="bookListScrollbar" class="m-scrollbar">
-                            <el-form :inline="true" :model="formInline" ref="formInline">
+                            <el-form :inline="true">
                                 <el-form-item label="书籍名称">
-                                    <el-input v-model="bookSearch.name" placeholder="请输入书籍名称"></el-input>
+                                    <el-input v-model="bookListSearch.bkname" placeholder="请输入书籍名称"></el-input>
                                 </el-form-item>
                                 <el-form-item label="作者">
-                                    <el-input v-model="bookSearch.author" placeholder="请输入作者名称"></el-input>
+                                    <el-input v-model="bookListSearch.atname" placeholder="请输入作者名称"></el-input>
                                 </el-form-item>
                                 <el-form-item label="筛选">
-                                    <el-select v-model="bookSearch.filtrate" placeholder="筛选项">
-                                        <el-option label="仅显示有书" value="have"></el-option>
-                                        <el-option label="仅显示在库" value="store"></el-option>
+                                    <el-select v-model="bookListSearch.state" placeholder="状态">
+                                        <el-option label="全部" value=""></el-option>
+                                        <el-option label="在库" value="STORE"></el-option>
+                                        <el-option label="借出" value="LEND"></el-option>
+                                        <el-option label="未入库" value="NOTINCLUDE"></el-option>
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item>
-                                    <el-button type="primary" @click="onSubmit">查询书籍</el-button>
+                                    <el-button type="primary" :loading="bookListSearchBTLoading" @click="submitBookSearchHandle">查询书籍</el-button>
                                 </el-form-item>
                             </el-form>
                             <el-table
-                                    :data="bookList"
+                                    :data="bookListPaging"
+                                    v-loading="bookListLoading"
                                     border
                                     stripe
                                     :default-sort="{prop: 'bkname', order: 'descending'}">
@@ -368,14 +379,14 @@
                         <el-row class="m-paging" type="flex" align="middle" justify="space-between">
                             <el-col :span="12">
                                 <el-pagination
-                                        @size-change="borrowListSizeChangeHandle"
-                                        @current-change="borrowListCurrentChangeHandle"
-                                        :current-page="borrowListCurrentPage"
-                                        :page-sizes="borrowListPageSizes"
-                                        :page-size="borrowListPageSize"
-                                        :hide-on-single-page="borrowListPageHideWhenSingle"
+                                        @size-change="bookListSizeChangeHandle"
+                                        @current-change="bookListCurrentChangeHandle"
+                                        :current-page="bookListCurrentPage"
+                                        :page-sizes="bookListPageSizes"
+                                        :page-size="bookListPageSize"
+                                        :hide-on-single-page="bookListPageHideWhenSingle"
                                         layout="total, sizes, prev, pager, next, jumper"
-                                        :total="borrowListTotalSize">
+                                        :total="bookListTotalSize">
                                 </el-pagination>
                             </el-col>
                             <el-col :span="2">

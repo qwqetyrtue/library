@@ -1,15 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.hnist.sharo.dao.BorrowMapper">
+
+    <resultMap id="BorrowMap" type="JSONObject">
+    </resultMap>
+
     <insert id="create" parameterType="Borrowrecord">
         INSERT INTO borrowrecord (borrowid, uid, createtime, state, bkid, limittime, remark)
         VALUES (#{borrowid}, #{uid}, #{createtime}, #{state}, #{bkid}, #{limittime}, #{remark})
     </insert>
 
-    <select id="all" parameterType="User" resultType="JSONObject">
-        SELECT *
+
+    <select id="filtrate" parameterType="Borrow_filtrate" resultMap="BorrowMap,CountResultMap">
+        SELECT SQL_CALC_FOUND_ROWS borrowid, uid, createtime, returntime, state, bkid, limittime, remark, bkname, timeleft, time
         FROM borrow_book
-        WHERE uid = #{uid}
+        WHERE
+        uid = #{uid}
+        <if test="state!=null">
+            AND state=#{state}
+        </if>
+        <choose>
+            <when test="order !=null and order!= ''">
+                ORDER BY #{order}
+            </when>
+            <otherwise>
+                ORDER BY borrowid
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="limit !=null and limit &gt; 0 ">
+                LIMIT #{limit}
+            </when>
+            <otherwise>
+                LIMIT 10
+            </otherwise>
+        </choose>
+        <if test="offset !=null and offset &gt;= 0">
+            OFFSET #{offset}
+        </if>;
+        SELECT FOUND_ROWS() as total;
     </select>
 
     <update id="update" parameterType="Borrowrecord">

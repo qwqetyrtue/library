@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.hnist.sharo.dao.BookMapper">
+
+    <resultMap id="BookMap" type="JSONObject">
+    </resultMap>
+
     <!-- 查询书籍 -->
-    <select id="select" parameterType="Book_filtrate" resultType="JSONObject">
-        SELECT *
+    <select id="filtrate" parameterType="Book_filtrate" resultMap="BookMap,CountResultMap">
+        SELECT SQL_CALC_FOUND_ROWS bkname, bkid, atid, atname, state, remark, publisher, storedate, binding, language,
+        category
         FROM Book_Author
         WHERE
-        <if test="bkname != null  and bkname != ''">
-            Bkname LIKE concat('%', #{bkname}, '%')
-        </if>
+        <choose>
+            <when test="bkname != null  and bkname != ''">
+                bkname LIKE concat('%', #{bkname}, '%')
+            </when>
+            <otherwise>
+                bkname LIKE '%%'
+            </otherwise>
+        </choose>
         <if test="state != null">
-            AND State LIKE concat('%', #{state}, '%')
+            AND state = #{state}
         </if>
         <if test="publisher != null  and publisher != ''">
-            AND Publisher LIKE concat('%', #{publisher}, '%')
+            AND publisher LIKE concat('%', #{publisher}, '%')
         </if>
         <if test="atname != null  and atname != ''">
-            AND Atname like concat('%', #{atname}, '%')
+            AND atname like concat('%', #{atname}, '%')
         </if>
         <choose>
             <when test="order !=null and order!= ''">
-                ORDER BY #{order};
+                ORDER BY #{order}
             </when>
             <otherwise>
-                ORDER BY Bkname
+                ORDER BY bkname
             </otherwise>
         </choose>
         <choose>
@@ -35,8 +45,9 @@
             </otherwise>
         </choose>
         <if test="offset !=null and offset &gt;= 0">
-            OFFSET #{offset};
-        </if>
+            OFFSET #{offset}
+        </if>;
+        SELECT FOUND_ROWS() as total;
     </select>
 
     <!-- 显示书籍列表 -->
@@ -48,7 +59,7 @@
                 ORDER BY #{order}
             </when>
             <otherwise>
-                ORDER BY Bkname
+                ORDER BY bkname
             </otherwise>
         </choose>
         <choose>
@@ -96,7 +107,7 @@
             <if test="storedate != null and storedate != ''">storedate</if>
             <if test="ISBN != null and ISBN != ''">ISBN=#{ISBN}</if>
         </set>
-        WHERE Bkid=#{old_bkid}
+        WHERE bkid=#{old_bkid}
     </update>
 
     <!--移除书籍记录-->

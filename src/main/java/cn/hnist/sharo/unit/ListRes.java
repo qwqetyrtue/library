@@ -5,7 +5,7 @@ import java.util.List;
 public class ListRes<T> {
     private List<T> data;
 
-    public ListRes(List<T> data, int total, String res) {
+    public ListRes( String res,List<T> data, int total) {
         this.data = data;
         this.total = total;
         this.res = res;

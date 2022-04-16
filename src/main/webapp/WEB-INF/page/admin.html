@@ -60,13 +60,13 @@
                             <el-form-item>
                                 <el-checkbox v-model="searchConfigChecked.base"></el-checkbox>
                             </el-form-item>
-                            <el-form-item label="UID">
+                            <el-form-item label="UID:">
                                 <el-input placeholder="uid" v-model="searchConfigForm.uid"></el-input>
                             </el-form-item>
-                            <el-form-item label="姓名">
+                            <el-form-item label="姓名:">
                                 <el-input placeholder="姓名" v-model="searchConfigForm.name"></el-input>
                             </el-form-item>
-                            <el-form-item label="电话">
+                            <el-form-item label="电话:">
                                 <el-input placeholder="uid" v-model="searchConfigForm.call"></el-input>
                             </el-form-item>
                             <el-form-item>
@@ -86,7 +86,7 @@
                                     <el-form-item>
                                         <el-checkbox v-model="searchConfigChecked.gender"></el-checkbox>
                                     </el-form-item>
-                                    <el-form-item label="性别">
+                                    <el-form-item label="性别:">
                                         <el-select v-model="searchConfigForm.gender" placeholder="请选择">
                                             <el-option label="男" value="MALE"></el-option>
                                             <el-option label="女" value="FEMALE"></el-option>
@@ -94,35 +94,39 @@
                                         </el-select>
                                     </el-form-item>
                                 </el-form>
+                                <el-divider></el-divider>
                                 <el-form :inline="true" label-width="80px">
                                     <el-form-item>
                                         <el-checkbox v-model="searchConfigChecked.homeadd"></el-checkbox>
                                     </el-form-item>
-                                    <el-form-item label="家乡" label-width="80px">
+                                    <el-form-item label="家乡:" label-width="80px">
                                         <el-input placeholder="家乡" v-model="searchConfigForm.homeadd"></el-input>
                                     </el-form-item>
                                 </el-form>
+                                <el-divider></el-divider>
                                 <el-form :inline="true" label-width="80px">
                                     <el-form-item>
                                         <el-checkbox v-model="searchConfigChecked.email"></el-checkbox>
                                     </el-form-item>
-                                    <el-form-item label="邮箱" label-width="80px">
+                                    <el-form-item label="邮箱:" label-width="80px">
                                         <el-input placeholder="邮箱" v-model="searchConfigForm.email"></el-input>
                                     </el-form-item>
                                 </el-form>
+                                <el-divider></el-divider>
                                 <el-form :inline="true" label-width="80px">
                                     <el-form-item>
                                         <el-checkbox v-model="searchConfigChecked.postcode"></el-checkbox>
                                     </el-form-item>
-                                    <el-form-item label="邮政编码" label-width="80px">
+                                    <el-form-item label="邮政编码:" label-width="80px">
                                         <el-input placeholder="邮政编码" v-model="searchConfigForm.postcode"></el-input>
                                     </el-form-item>
                                 </el-form>
+                                <el-divider></el-divider>
                                 <el-form :inline="true" label-width="80px">
                                     <el-form-item>
                                         <el-checkbox v-model="searchConfigChecked.bloodtype"></el-checkbox>
                                     </el-form-item>
-                                    <el-form-item label="血型" label-width="80px">
+                                    <el-form-item label="血型:" label-width="80px">
                                         <el-select v-model="searchConfigForm.bloodtype" placeholder="请选择">
                                             <el-option label="A型" value="A"></el-option>
                                             <el-option label="B型" value="B"></el-option>

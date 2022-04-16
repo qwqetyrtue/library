@@ -2,6 +2,7 @@ package cn.hnist.sharo.service;
 
 import cn.hnist.sharo.dao.BookMapper;
 import cn.hnist.sharo.model.Book;
+import cn.hnist.sharo.model.mexpand.Book_filtrate;
 import cn.hnist.sharo.model.mexpand.Filtrate;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Service;
@@ -17,8 +18,12 @@ public class BookServiceImpl implements BookService{
     public BookMapper bookMapper;
 
     @Override
-    public List<JSONObject> all(Filtrate filtrate) {
-        return bookMapper.all(filtrate);
+    public List<?> filtrate(Book_filtrate book_filtrate) {
+        try{
+           return bookMapper.filtrate(book_filtrate);
+        } catch (Exception e){
+            return null;
+        }
     }
 
     @Override

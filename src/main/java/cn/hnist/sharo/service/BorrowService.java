@@ -3,6 +3,7 @@ package cn.hnist.sharo.service;
 import cn.hnist.sharo.model.Borrowrecord;
 import cn.hnist.sharo.model.User;
 import cn.hnist.sharo.model.mexpand.Borrow_create;
+import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,7 @@ public interface BorrowService {
 
     boolean create(Borrow_create borrow_create);
 
-    List<JSONObject> all(User user);
+    List<?> filtrate(Borrow_filtrate borrow_filtrate);
 
     boolean finish(Borrowrecord borrowrecord);
 }

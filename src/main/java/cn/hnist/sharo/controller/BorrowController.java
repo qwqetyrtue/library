@@ -3,7 +3,9 @@ package cn.hnist.sharo.controller;
 import cn.hnist.sharo.model.Borrowrecord;
 import cn.hnist.sharo.model.User;
 import cn.hnist.sharo.model.mexpand.Borrow_create;
+import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
 import cn.hnist.sharo.service.BorrowService;
+import cn.hnist.sharo.unit.ListRes;
 import cn.hnist.sharo.unit.Res;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +41,16 @@ public class BorrowController {
         return new Res<>("fail","借阅失败");
     }
 
-    @RequestMapping(value = "/all",method = RequestMethod.POST)
+    @RequestMapping(value = "/filtrate",method = RequestMethod.POST)
     public @ResponseBody
-    Res<List<JSONObject>> borrowAllHandle(@RequestBody User user){
-        return new Res<>("success",borrowService.all(user));
+    ListRes<Borrowrecord> borrowFiltrateHandle(@RequestBody Borrow_filtrate borrow_filtrate){
+        List<?> res = borrowService.filtrate(borrow_filtrate);
+        if(res != null) {
+            List<Borrowrecord> borrows = (List<Borrowrecord>) res.get(0);
+            int total = ((List<Integer>) res.get(1)).get(0);
+            return new ListRes<>("success",borrows,total);
+        }
+        return new ListRes<>("fail",null,-1);
     }
 
     @RequestMapping(value = "/finish",method = RequestMethod.POST)

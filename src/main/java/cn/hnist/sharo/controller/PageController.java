@@ -9,13 +9,8 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class PageController {
 
-    @RequestMapping(value = "/")
+    @RequestMapping(value = {"/","/index"})
     public String indexHandle(HttpSession session) {
-        return "index";
-    }
-
-    @RequestMapping(value = "/index")
-    public String indexHandle2(HttpSession session) {
         return "index";
     }
 

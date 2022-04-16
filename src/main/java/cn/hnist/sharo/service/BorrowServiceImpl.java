@@ -8,6 +8,7 @@ import cn.hnist.sharo.model.User;
 import cn.hnist.sharo.model.menum.BookState;
 import cn.hnist.sharo.model.menum.BorrowState;
 import cn.hnist.sharo.model.mexpand.Borrow_create;
+import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,8 +57,12 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     @Override
-    public List<JSONObject> all(User user) {
-        return borrowMapper.all(user);
+    public List<?> filtrate(Borrow_filtrate borrow_filtrate) {
+        try{
+            return borrowMapper.filtrate(borrow_filtrate);
+        }catch (Exception e){
+            return null;
+        }
     }
 
     @Transactional

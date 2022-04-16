@@ -1,16 +1,24 @@
 window.onload = function () {
     let app = new Vue({
         el: ".m-container",
-        async mounted() {
+        created() {
             let paths = document.location.pathname.split('/');
             this.BASE_URL = paths.length == 3 ? paths[1] : '';
-            console.log(this.BASE_URL);
+        },
+        async mounted() {
+            this.UserPageLoading = true;
             // 查询用户信息
             await this.reqUserMsg();
             // 查询书籍列表
-            await this.reqBookList();
+            await this.reqBookList({
+                limit: this.bookListPageSize,
+                offset: this.bookListPageSize * (this.bookListCurrentPage - 1)
+            });
             // 查询借阅列表
-            await this.reqBorrowList();
+            await this.reqBorrowList({
+                limit: this.borrowListPageSize,
+                offset: this.borrowListPageSize * (this.borrowListCurrentPage - 1)
+            });
             this.UserPageLoading = false;
         },
         data() {
@@ -72,8 +80,8 @@ window.onload = function () {
             };
             return {
                 BASE_URL: '',
-                UserPageLoading: true,
-                user: {load:false},
+                UserPageLoading: false,
+                user: {load: false},
                 activeIndex: '1',
                 PageTitle: '图书馆,欢迎您!',
                 tabIndex1: "预约",
@@ -101,11 +109,6 @@ window.onload = function () {
                     password: '',
                     checkPassword: '',
                     verifyCode: ''
-                },
-                bookSearch: {
-                    name: "",
-                    author: "",
-                    filtrate: ""
                 },
                 bookReserveForm: {
                     isbn: '',
@@ -139,19 +142,37 @@ window.onload = function () {
                 },
                 // 列表
                 bookList: [],
+                bookListSearch: {
+                    bkname: "",
+                    atname: "",
+                    state: ""
+                },
+                bookListSearchBTLoading: false,
+                bookSearchBTLoading: false,
                 bookListLoading: false,
                 bookListCurrentPage: 1,
-                bookListPageSizes: [10, 20, 50, 100],
-                bookListPageSize: 10,
-                bookListPageHideWhenSingle: true,
-                bookListTotalSize: 400,
+                bookListPageSizes: [5, 10, 20, 50, 100],
+                bookListPageSize: 5,
+                bookListPageHideWhenSingle: false,
+                bookListTotalSize: 0,
+                bookListBg: 0,
+                bookListEnd: 0,
+
+
                 borrowList: [],
+                borrowListSearch: {
+                    state: ""
+                },
+                borrowSearchStateBTLoading: false,
                 borrowListLoading: false,
                 borrowListCurrentPage: 1,
-                borrowListPageSizes: [10, 20, 50, 100],
-                borrowListPageSize: 10,
-                borrowListPageHideWhenSingle: true,
-                borrowListTotalSize: 400,
+                borrowListPageSizes: [5, 10, 20, 50, 100],
+                borrowListPageSize: 5,
+                borrowListPageHideWhenSingle: false,
+                borrowListTotalSize: 0,
+                borrowListBg: 0,
+                borrowListEnd: 0,
+
                 // 防止按键连击
                 isbnCheckBTLoading: false,
                 refreshBorrowBTLoading: false,
@@ -523,50 +544,6 @@ window.onload = function () {
                         console.log(err)
                     })
             },
-            bookRestoreHandle(row) {
-                this.$confirm('是否确认要归还选中书籍?', '确认', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    $.ajax({
-                        type: 'post',
-                        url: '/' + this.BASE_URL + '/borrow/finish',
-                        data: JSON.stringify({
-                            bkid: row.bkid,
-                            borrowid: row.borrowid
-                        }),
-                        contentType: "application/json;charset=UTF-8",
-                    })
-                        .then(r => {
-                            let res = JSON.parse(r);
-                            if (res.res == "success") {
-                                this.$message({
-                                    type: 'success',
-                                    message: '归还成功!',
-                                    duration: 1500,
-                                    onClose: async () => {
-                                        await this.reqBookList();
-                                        await this.reqBorrowList();
-                                    }
-                                });
-                            } else {
-                                this.$message({
-                                    message: res.data,
-                                    type: 'error',
-                                    duration: 1500,
-                                });
-                            }
-                        })
-                })
-                    .catch(err => {
-                        this.$message({
-                            message: "归还失败",
-                            type: 'error',
-                            duration: 1500,
-                        });
-                    })
-            },
             createBorrowFormSubmitHandle() {
                 let v = this;
                 $.ajax({
@@ -589,8 +566,14 @@ window.onload = function () {
                                 type: 'success',
                                 duration: 1500,
                                 onClose: async () => {
-                                    await this.reqBookList();
-                                    await this.reqBorrowList();
+                                    await this.reqBookList({
+                                        limit: this.bookListPageSize,
+                                        offset: this.bookListPageSize * (this.bookListCurrentPage - 1)
+                                    });
+                                    await this.reqBorrowList({
+                                        limit: this.borrowListPageSize,
+                                        offset: this.borrowListPageSize * (this.borrowListCurrentPage - 1)
+                                    });
                                 }
                             });
                         } else {
@@ -605,7 +588,7 @@ window.onload = function () {
                         console.log(err)
                     })
             },
-            // 处理数据
+            // 处理用更新表单的数据
             reloadUserUpdate(formName) {
                 let {
                     uid,
@@ -636,6 +619,7 @@ window.onload = function () {
                 if (formName != null)
                     this.$refs[formName].clearValidate();
             },
+            // 创建借阅表单按点击事件
             createBorrowHandle(row) {
                 let date = new Date();
                 this.borrowForm.createdate = `${date.getFullYear()}-${date.getMonth() + 1 > 10 ? '' : 0}${date.getMonth() + 1}-${date.getDate() > 10 ? '' : 0}${date.getDate()}`
@@ -646,17 +630,89 @@ window.onload = function () {
                 this.borrowForm.bkremark = row.remark;
                 this.borrowCreateDialogShowHandle();
             },
+            // 书籍列表分页变化事件
             bookListSizeChangeHandle(val) {
-                console.log(`每页 ${val} 条`);
+                // 单页数减小
+                if (this.bookListPageSize > val) {
+                    this.bookListPageSize = val;
+                } else {
+                    let page = this.bookListCurrentPage;
+                    let bg = (page - 1) * val;
+                    let end = bg + val;
+                    // 判断当前页在切换单页显示数目后还是否存在
+                    while (bg > this.bookListTotalSize) {
+                        bg -= val;
+                        page--;
+                        end = bg + val;
+                    }
+                    // 判断显示的这页数据是否包含在已经获取到的数据中
+                    if (bg < this.bookListBg || end > this.bookListEnd) {
+                        this.bookListPageSize = val;
+                        this.reqBookList({
+                            limit: val,
+                            offset: bg
+                        }).then(() => {
+                            this.bookListCurrentPage = page;
+                        })
+                    }
+                    this.bookListPageSize = val;
+                }
             },
             bookListCurrentChangeHandle(val) {
-                console.log(`当前页: ${val}`);
+                // 判断显示的这页数据是否包含在已经获取到的数据中
+                let bg = (val - 1) * this.bookListPageSize;
+                let end = bg + this.bookListPageSize;
+                if (bg < this.bookListBg || end > this.bookListEnd) {
+                    this.reqBookList({
+                        limit: this.bookListPageSize,
+                        offset: bg
+                    }).then(() => {
+                        console.log("2:page=>", val)
+                        this.bookListCurrentPage = val;
+                    })
+                } else this.bookListCurrentPage = val;
             },
+            // 借阅列表分页变化事件
             borrowListSizeChangeHandle(val) {
-                console.log(`每页 ${val} 条`);
+                // 单页数减小
+                if (this.borrowListPageSize > val) {
+                    this.borrowListPageSize = val;
+                } else {
+                    let page = this.borrowListCurrentPage;
+                    let bg = (page - 1) * val;
+                    let end = bg + val;
+                    // 判断当前页在切换单页显示数目后还是否存在
+                    while (bg > this.borrowListTotalSize) {
+                        bg -= val;
+                        page--;
+                        end = bg + val;
+                    }
+                    // 判断显示的这页数据是否包含在已经获取到的数据中
+                    if (bg < this.borrowListBg || end > this.borrowListEnd) {
+                        this.borrowListPageSize = val;
+                        this.reqBorrowList({
+                            limit: val,
+                            offset: bg
+                        }).then(() => {
+                            this.borrowListCurrentPage = page;
+                        })
+                    }
+                    this.borrowListPageSize = val;
+                }
             },
             borrowListCurrentChangeHandle(val) {
-                console.log(`当前页: ${val}`);
+                // 判断显示的这页数据是否包含在已经获取到的数据中
+                let bg = (val - 1) * this.borrowListPageSize;
+                let end = bg + this.borrowListPageSize;
+                if (bg < this.borrowListBg || end > this.borrowListEnd) {
+                    this.reqBorrowList({
+                        limit: this.borrowListPageSize,
+                        offset: bg
+                    }).then(() => {
+                        console.log("2:page=>", val)
+                        this.borrowListCurrentPage = val;
+                    })
+                } else this.borrowListCurrentPage = val;
             },
             // 滚动条回到顶部
             backupHandle(name) {
@@ -671,9 +727,12 @@ window.onload = function () {
                     this.refreshBookBTLoading = false;
                 }, 3000);
 
-                this.reqBookList()
-                    .then((res) => {
-                        if (res) {
+                this.reqBookList({
+                    limit: this.bookListPageSize,
+                    offset: this.bookListPageSize * (this.bookListCurrentPage - 1)
+                })
+                    .then(r => {
+                        if (r) {
                             this.$message({
                                 message: '刷新成功',
                                 type: 'success',
@@ -706,26 +765,26 @@ window.onload = function () {
                 setTimeout(() => {
                     this.refreshBorrowBTLoading = false;
                 }, 1500)
-                this.reqBorrowList()
-                    .then((r) => {
-                        let res = JSON.parse(r);
-                        if (res.res == "success") {
+                this.reqBorrowList({
+                    limit: this.borrowListPageSize,
+                    offset: this.borrowListPageSize * (this.borrowListCurrentPage - 1)
+                })
+                    .then(r => {
+                        if (r) {
                             this.$message({
                                 message: '刷新成功',
                                 type: 'success',
                                 duration: 1000,
                             });
-                        }else throw new Error(res.data)
+                        }
                     })
-                    .catch(err => {
-                        console.log(err)
-                        this.$message({
-                            message: err,
-                            type: 'error',
-                            showClose: true,
-                            duration: 0,
-                        });
-                    })
+            },
+            borrowSearchStateChange() {
+                this.borrowSearchStateBTLoading = true;
+                setTimeout(() => {
+                    this.borrowSearchStateBTLoading = false;
+                }, 2500)
+                this.refreshBorrowListHandle();
             },
             // 请求数据
             reqUserMsg() {
@@ -752,52 +811,61 @@ window.onload = function () {
                         });
                     })
             },
-            reqBookList() {
+            reqBookList(paging) {
+                this.bookListBg = paging.offset;
+                this.bookListEnd = paging.offset + paging.limit;
                 this.bookListLoading = true;
+                let filtrate = {atname:this.bookListSearch.atname,bkname:this.bookListSearch.bkname}
+                if(this.bookListSearch.state != ""){
+                    filtrate.state = this.bookListSearch.state;
+                }
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/book/all',
-                    data: JSON.stringify({
-                        "limit": 10,
-                        "offset": 0,
-                        "order": "bkname"
-                    }),
+                    url: '/' + this.BASE_URL + '/book/filtrate',
+                    data: JSON.stringify({...filtrate, ...paging}),
                     contentType: "application/json;charset=UTF-8",
                 })
                     .then(r => {
                         let res = JSON.parse(r);
                         if (res.res == "success") {
+                            console.log(res)
                             this.bookList = res.data;
+                            this.bookListTotalSize = res.total;
                             this.bookListLoading = false;
-                            return true
-                        } else throw new Error(res.data);
-
+                            return true;
+                        } else throw new Error();
                     })
                     .catch(err => {
                         this.bookListLoading = false;
                         console.log(err)
                         this.$message({
-                            message: '出现未知错误',
+                            message: err,
                             type: 'error',
                             showClose: true,
                             duration: 0,
                         });
                     })
             },
-            reqBorrowList() {
-                this.borrowListLoading = true;
+            reqBorrowList(paging) {
+                this.borrowListBg = paging.offset;
+                this.borrowListEnd = paging.offset + paging.limit;
+                this.userListLoading = true;
+                let filtrate;
+                if (this.borrowListSearch.state != '') {
+                    filtrate = {uid: this.user.uid, state: this.borrowListSearch.state};
+                } else filtrate = {uid: this.user.uid};
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/borrow/all',
-                    data: JSON.stringify({
-                        "uid": this.user.uid
-                    }),
+                    url: '/' + this.BASE_URL + '/borrow/filtrate',
+                    data: JSON.stringify({...filtrate, ...paging}),
                     contentType: "application/json;charset=UTF-8",
                 })
                     .then(r => {
                         let res = JSON.parse(r);
                         if (res.res == "success") {
+                            console.log(res)
                             this.borrowList = res.data;
+                            this.borrowListTotalSize = res.total;
                             this.borrowListLoading = false;
                             return true;
                         } else throw new Error();
@@ -806,15 +874,23 @@ window.onload = function () {
                         this.borrowListLoading = false;
                         console.log(err)
                         this.$message({
-                            message: '出现未知错误',
+                            message: err,
                             type: 'error',
                             showClose: true,
                             duration: 0,
                         });
                     })
             },
-            onSubmit() {
-                console.log('submit!');
+            // 书籍搜索按钮点击事件
+            submitBookSearchHandle() {
+                this.bookListSearchBTLoading = true;
+                setTimeout(()=>{
+                    this.bookListSearchBTLoading = false;
+                },2000)
+                this.reqBookList({
+                    limit: this.bookListPageSize,
+                    offset: this.bookListPageSize * (this.bookListCurrentPage - 1)
+                })
             },
             selectHandle(key, keyPath) {
                 console.log(key, keyPath);
@@ -836,6 +912,18 @@ window.onload = function () {
 
             },
         },
-        computed: {}
+        computed: {
+            // 渲染在页面中的分页数据
+            borrowListPaging() {
+                let bg = (this.borrowListCurrentPage - 1) * this.borrowListPageSize;
+                let end = bg + this.borrowListPageSize;
+                return this.borrowList.slice(bg - this.borrowListBg, bg - this.borrowListBg + this.borrowListPageSize);
+            },
+            bookListPaging() {
+                let bg = (this.bookListCurrentPage - 1) * this.bookListPageSize;
+                let end = bg + this.bookListPageSize;
+                return this.bookList.slice(bg - this.bookListBg, bg - this.bookListBg + this.bookListPageSize);
+            },
+        }
     })
 }
