@@ -90,6 +90,7 @@ window.onload = function () {
                 userUpdateDialogVisible: false,
                 bookDetailsDialogVisible: false,
                 borrowCreateDialogVisible: false,
+                seatPickDialogVisible: false,
                 // 验证码按钮
                 showSendButton: true,
                 count: 0,
@@ -140,7 +141,8 @@ window.onload = function () {
                         {validator: checkVerifyCode, trigger: 'blur'}
                     ]
                 },
-                // 列表
+
+                // 书籍列表
                 bookList: [],
                 bookListSearch: {
                     bkname: "",
@@ -157,8 +159,7 @@ window.onload = function () {
                 bookListTotalSize: 0,
                 bookListBg: 0,
                 bookListEnd: 0,
-
-
+                // 借阅列表
                 borrowList: [],
                 borrowListSearch: {
                     state: ""
@@ -172,6 +173,12 @@ window.onload = function () {
                 borrowListTotalSize: 0,
                 borrowListBg: 0,
                 borrowListEnd: 0,
+
+                // 座位
+                roomList: [],
+                room: {},
+                seats: [],
+                libraryFloorSelect: "",
 
                 // 防止按键连击
                 isbnCheckBTLoading: false,
@@ -197,7 +204,11 @@ window.onload = function () {
                     type: [],
                     resource: '',
                     desc: ''
-                }
+                },
+
+                scaleFloor: 1,
+                scaleStep: 0.1,
+                preDownPos: {}
             }
         },
         methods: {
@@ -258,6 +269,37 @@ window.onload = function () {
                         break;
                 }
                 return res;
+            },
+            seatState(state) {
+                let res;
+                switch (state) {
+                    case "FREE":
+                        res = {state: "空闲", type: "success"};
+                        break;
+                    case "OCCUPIED":
+                        res = {state: "被占", type: "danger"};
+                        break;
+                    case "ACCIDENT":
+                        res = {state: "事故", type: "info"};
+                        break;
+                    case "OFFLINE":
+                        res = {state: "不可用", type: "warning"};
+                        break;
+                    default:
+                        res = {state: "不可用", type: "warning"};
+                        break;
+                }
+                return res;
+            },
+            // 座位
+            seatsToArray(list) {
+                if (list.length == 0)
+                    return null
+                let arr = new Array(this.room.seats).fill(null);
+                for (let each in list) {
+                    arr[list[each].number - 1] = list[each];
+                }
+                return arr;
             },
             // tab变化
             userCommandHandle(command) {
@@ -321,6 +363,12 @@ window.onload = function () {
             },
             borrowCreateDialogHideHandle() {
                 this.borrowCreateDialogVisible = false;
+            },
+            seatPickDialogHideHandle() {
+                this.seatPickDialogVisible = false;
+            },
+            seatPickDialogShowHandle() {
+                this.seatPickDialogVisible = true;
             },
             // 提交表单
             userUpdateFormSubmitHandle() {
@@ -630,6 +678,13 @@ window.onload = function () {
                 this.borrowForm.bkremark = row.remark;
                 this.borrowCreateDialogShowHandle();
             },
+            // 显示座位选择页面点击事件
+            async showSeatPickHandle(row) {
+                this.room = JSON.parse(JSON.stringify(row));
+                this.room.seat = JSON.parse(this.room.seat);
+                await this.reqSeats(row);
+                this.seatPickDialogShowHandle();
+            },
             // 书籍列表分页变化事件
             bookListSizeChangeHandle(val) {
                 // 单页数减小
@@ -779,13 +834,6 @@ window.onload = function () {
                         }
                     })
             },
-            borrowSearchStateChange() {
-                this.borrowSearchStateBTLoading = true;
-                setTimeout(() => {
-                    this.borrowSearchStateBTLoading = false;
-                }, 2500)
-                this.refreshBorrowListHandle();
-            },
             // 请求数据
             reqUserMsg() {
                 return $.ajax({
@@ -804,7 +852,7 @@ window.onload = function () {
                     .catch(err => {
                         console.log(err)
                         this.$message({
-                            message: err,
+                            message: "error",
                             type: 'error',
                             showClose: true,
                             duration: 0,
@@ -815,8 +863,8 @@ window.onload = function () {
                 this.bookListBg = paging.offset;
                 this.bookListEnd = paging.offset + paging.limit;
                 this.bookListLoading = true;
-                let filtrate = {atname:this.bookListSearch.atname,bkname:this.bookListSearch.bkname}
-                if(this.bookListSearch.state != ""){
+                let filtrate = {atname: this.bookListSearch.atname, bkname: this.bookListSearch.bkname}
+                if (this.bookListSearch.state != "") {
                     filtrate.state = this.bookListSearch.state;
                 }
                 return $.ajax({
@@ -839,7 +887,7 @@ window.onload = function () {
                         this.bookListLoading = false;
                         console.log(err)
                         this.$message({
-                            message: err,
+                            message: "error",
                             type: 'error',
                             showClose: true,
                             duration: 0,
@@ -874,36 +922,107 @@ window.onload = function () {
                         this.borrowListLoading = false;
                         console.log(err)
                         this.$message({
-                            message: err,
+                            message: "error",
                             type: 'error',
                             showClose: true,
                             duration: 0,
                         });
                     })
             },
+            reqRoomList() {
+                let filtrate = {};
+                if (this.libraryFloorSelect != '') {
+                    filtrate.location = this.libraryFloorSelect;
+                }
+                return $.ajax({
+                    type: 'post',
+                    url: '/' + this.BASE_URL + '/room/rooms',
+                    data: JSON.stringify({...filtrate}),
+                    contentType: "application/json;charset=UTF-8",
+                })
+                    .then(r => {
+                        let res = JSON.parse(r);
+                        if (res.res == "success") {
+                            this.roomList = res.data;
+                            return true
+                        } else throw new Error(res.data);
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        this.$message({
+                            message: "error",
+                            type: 'error',
+                            showClose: true,
+                            duration: 0,
+                        });
+                    })
+            },
+            reqSeats(row) {
+                return $.ajax({
+                    type: 'post',
+                    url: '/' + this.BASE_URL + '/seat/room',
+                    data: JSON.stringify({roomid: row.roomid}),
+                    contentType: "application/json;charset=UTF-8",
+                })
+                    .then(r => {
+                        let res = JSON.parse(r)
+                        if (res.res == "success") {
+                            this.seats = this.seatsToArray(res.data);
+                            if (this.seats == null)
+                                this.seats = [];
+                            return true
+                        } else throw new Error(res.data);
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        this.$message({
+                            message: "error",
+                            type: 'error',
+                            showClose: true,
+                            duration: 0,
+                        });
+                    })
+            },
+            // 借阅列表选择框筛选
+            borrowSearchStateChangeHandle() {
+                this.borrowSearchStateBTLoading = true;
+                setTimeout(() => {
+                    this.borrowSearchStateBTLoading = false;
+                }, 2500)
+                this.refreshBorrowListHandle();
+            },
+            // 楼层筛选
+            libraryFloorChangeHandle() {
+                this.reqRoomList();
+            },
             // 书籍搜索按钮点击事件
             submitBookSearchHandle() {
                 this.bookListSearchBTLoading = true;
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.bookListSearchBTLoading = false;
-                },2000)
+                }, 2000)
                 this.reqBookList({
                     limit: this.bookListPageSize,
                     offset: this.bookListPageSize * (this.bookListCurrentPage - 1)
                 })
             },
-            selectHandle(key, keyPath) {
-                console.log(key, keyPath);
-            },
-            submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        alert('submit!');
-                    } else {
-                        console.log('error submit!!');
-                        return false;
-                    }
-                });
+            // 预约座位
+            reserveSeatHandle(row) {
+                this.$confirm('是否预约这个座位', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '预约成功!'
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消'
+                    });
+                })
             },
             // 重置表单
             formResetHandle(formName) {
@@ -911,6 +1030,7 @@ window.onload = function () {
                 this.$refs[formName].clearValidate();
 
             },
+
         },
         computed: {
             // 渲染在页面中的分页数据
@@ -924,6 +1044,48 @@ window.onload = function () {
                 let end = bg + this.bookListPageSize;
                 return this.bookList.slice(bg - this.bookListBg, bg - this.bookListBg + this.bookListPageSize);
             },
-        }
+        },
+        //自定义指令
+        directives: {
+            drag: {
+                // 指令的定义
+                bind: function (el) {
+                    let oDiv = el;  // 获取当前元素
+                    oDiv.onmousedown = (e) => {
+                        console.log('onmousedown')
+                        // 算出鼠标相对元素的位置
+                        let disX = e.clientX - oDiv.offsetLeft;
+                        let disY = e.clientY - oDiv.offsetTop;
+
+                        document.onmousemove = (e) => {
+                            // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+                            let left = e.clientX - disX;
+                            let top = e.clientY - disY;
+                            oDiv.style.left = left + 'px';
+                            oDiv.style.top = top + 'px';
+                            oDiv.style.cursor = "pointer";
+                        };
+                        document.onmouseup = (e) => {
+                            document.onmousemove = null;
+                            document.onmouseup = null;
+                            oDiv.style.cursor = "auto";
+                        }
+                    }
+                }
+            },
+            zoom: {
+                bind: function (el) {
+                    let oDiv = el;
+                    oDiv.style.zoom = 1;
+                    oDiv.onwheel = (e) => {
+                        console.log(e)
+                        let zoom = parseFloat(oDiv.style.zoom);
+                        let tZoom = zoom + (e.wheelDelta > 0 ? 0.05 : -0.05);
+                        if (tZoom > 2 || tZoom < 0.5) return true;
+                        oDiv.style.zoom = tZoom;
+                    }
+                }
+            }
+        },
     })
 }

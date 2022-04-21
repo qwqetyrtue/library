@@ -9,6 +9,8 @@
         <typeAlias alias="Book" type="cn.hnist.sharo.model.Book"/>
         <typeAlias alias="Borrowrecord" type="cn.hnist.sharo.model.Borrowrecord"/>
         <typeAlias alias="User" type="cn.hnist.sharo.model.User"/>
+        <typeAlias alias="Seat" type="cn.hnist.sharo.model.Seat"/>
+        <typeAlias alias="Room" type="cn.hnist.sharo.model.Room"/>
 
         <!--拓展-->
         <typeAlias alias="Update_pwd" type="cn.hnist.sharo.model.mexpand.Update_pwd"/>
@@ -23,7 +25,4 @@
         <!--json-->
         <typeAlias alias="JSONObject" type="com.alibaba.fastjson.JSONObject"/>
     </typeAliases>
-    <mappers>
-        <mapper resource="cn/hnist/sharo/dao/UserMapper.xml" />
-    </mappers>
 </configuration>

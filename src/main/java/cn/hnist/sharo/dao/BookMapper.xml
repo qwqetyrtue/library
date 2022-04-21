@@ -52,7 +52,8 @@
 
     <!-- 显示书籍列表 -->
     <select id="all" parameterType="Filtrate" resultType="JSONObject">
-        SELECT *
+        SELECT bkname, bkid, atid, atname, state, remark, publisher, storedate, binding, language,
+        category
         FROM Book_Author
         <choose>
             <when test="order !=null and order!= ''">

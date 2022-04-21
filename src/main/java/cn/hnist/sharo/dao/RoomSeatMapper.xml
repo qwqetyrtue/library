@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hnist.sharo.dao.RoomSeatMapper">
+    <select id="room" parameterType="room" resultType="room">
+        SELECT roomid, name, location, seat, legend, seats
+        FROM room
+        WHERE roomid = #{roomid}
+    </select>
+
+    <select id="rooms" resultType="room">
+        SELECT roomid, name, location, seat, legend, seats
+        FROM room
+        <if test="location!=null and location!=''">
+            WHERE location LIKE concat('%',#{location},'%')
+        </if>
+    </select>
+
+    <select id="seat" parameterType="seat" resultType="seat">
+        SELECT seatid, state, createdate, roomid, number
+        FROM seat
+        WHERE seatid = #{seatid}
+    </select>
+
+    <select id="seatsbyroom" parameterType="room" resultType="seat">
+        SELECT seatid, state, createdate, roomid, number
+        FROM seat
+        WHERE roomid = #{roomid}
+        ORDER BY number
+    </select>
+
+
+</mapper>

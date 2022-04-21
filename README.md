@@ -8,39 +8,94 @@
 
 ## 项目结构
 
-```
+```powershell
 # javaee 项目结构
-├── META-INF
-|  └── application.xml
+├── javaee.iml
 ├── pom.xml
+├── README.md
 └── src
 |  └── main
 |     ├── java
 |     |  └── cn
 |     |     └── hnist
 |     |        └── sharo
+|     |           ├── aop
+|     |           |  ├── AdminAspect.java
+|     |           |  ├── ControllerAspect.java
+|     |           |  └── LogAspect.java
 |     |           ├── controller
-|     |           |  └── TestController.java
+|     |           |  ├── AdminController.java
+|     |           |  ├── BookController.java
+|     |           |  ├── BorrowController.java
+|     |           |  ├── PageController.java
+|     |           |  └── UserController.java
 |     |           ├── dao
+|     |           |  ├── AdminMapper.java
+|     |           |  ├── AdminMapper.xml
+|     |           |  ├── BookMapper.java
+|     |           |  ├── BookMapper.xml
+|     |           |  ├── BorrowMapper.java
+|     |           |  ├── BorrowMapper.xml
 |     |           |  ├── UserMapper.java
 |     |           |  └── UserMapper.xml
 |     |           ├── model
+|     |           |  ├── Admin.java
+|     |           |  ├── Author.java
+|     |           |  ├── Book.java
+|     |           |  ├── Borrowrecord.java
+|     |           |  ├── menum
+|     |           |  |  ├── BloodType.java
+|     |           |  |  ├── BookState.java
+|     |           |  |  ├── BorrowState.java
+|     |           |  |  └── Gender.java
+|     |           |  ├── mexpand
+|     |           |  |  ├── Book_filtrate.java
+|     |           |  |  ├── Borrow_create.java
+|     |           |  |  ├── Borrow_filtrate.java
+|     |           |  |  ├── Filtrate.java
+|     |           |  |  ├── Update_bkid.java
+|     |           |  |  ├── Update_pwd.java
+|     |           |  |  ├── User_filtrate.java
+|     |           |  |  └── User_register.java
 |     |           |  └── User.java
-|     |           └── service
-|     |              ├── UserService.java
-|     |              └── UserServiceImpl.java
-|     ├── resources
-|     |  ├── applicationContext.xml
-|     |  ├── mybatis-config.xml
-|     |  └── springMVC.xml
+|     |           ├── service
+|     |           |  ├── AdminService.java
+|     |           |  ├── AdminServiceImpl.java
+|     |           |  ├── BookService.java
+|     |           |  ├── BookServiceImpl.java
+|     |           |  ├── BorrowService.java
+|     |           |  ├── BorrowServiceImpl.java
+|     |           |  ├── UserService.java
+|     |           |  └── UserServiceImpl.java
+|     |           └── unit
+|     |              ├── BackEndHttpRequest.java
+|     |              ├── ColorLog.java
+|     |              ├── CustomContextListener.java
+|     |              ├── CustomObjectMapper.java
+|     |              ├── EmailVerifyCode.java
+|     |              ├── ListRes.java
+|     |              └── Res.java
 |     └── webapp
-|        ├── index.jsp
+|        ├── res
+|        |  ├── css
+|        |  ├── images
+|        |  └── js
+|        |     ├── element-ui@2.15.7
+|        |     ├── gsap@3.9.1
+|        |     ├── jquery
+|        |     ├── ribbon
+|        |     └── vue
 |        └── WEB-INF
-|           ├── tp
+|           ├── page
+|           |  ├── 404page.html
+|           |  ├── admin.html
 |           |  ├── index.html
-|           |  └── yes.html
+|           |  ├── librarian.html
+|           |  ├── login.html
+|           |  ├── notice.html
+|           |  ├── profile.html
+|           |  └── user.html
 |           └── web.xml
-
 ```
 
 ## 问题
@@ -401,12 +456,11 @@ jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true
 
 
 
-### ~~`elmentUI` 中的`el-button`当类型为`text`时不能通过获取点击目标并`disabled`来实现防止重复点击~~`elemntUI`中在`el-table`自定义表头中使用`el-table`无法disabled
+### 16. ~~`elmentUI` 中的`el-button`当类型为`text`时不能通过获取点击目标并`disabled`来实现防止重复点击~~`elemntUI`中在`el-table`自定义表头中使用`el-table`无法disabled
 
 [csdn上我的记录](https://blog.csdn.net/reol44/article/details/124053518)
 
-
-### mysql筛选查询时,分页后如何获取总查询条数
+### 17. mysql筛选查询时,分页后如何获取总查询条数
 
 [SQL_CALC_FOUND_ROWS的使用](https://blog.csdn.net/qq_37171353/article/details/107824749)
 
@@ -448,5 +502,99 @@ SELECT FOUND_ROWS() as total_count;
  <property name="url"
                   value="jdbc:mysql://localhost:3306/library_database?characterEncoding=utf8&amp;useAffectedRows=true&amp;useSSL=false&amp;allowMultiQueries=true
 "/>
+```
+
+### 18. vue自定义drag和zoom指令
+
+[vue.js 自定义指令（拖拽、拖动、移动） 指令 v-drag](https://blog.csdn.net/qq_37237495/article/details/104689452)
+
+```js
+directives: {
+            drag: {
+                // 指令的定义
+                bind: function(el) {
+                    let oDiv = el;  // 获取当前元素
+                    oDiv.onmousedown = (e) => {
+                        console.log('onmousedown')
+                        // 算出鼠标相对元素的位置
+                        let disX = e.clientX - oDiv.offsetLeft;
+                        let disY = e.clientY - oDiv.offsetTop;
+
+                        document.onmousemove = (e) => {
+                            // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+                            let left = e.clientX - disX;
+                            let top = e.clientY - disY;
+                            oDiv.style.left = left + 'px';
+                            oDiv.style.top = top + 'px';
+                            oDiv.style.cursor = "pointer";
+                        };
+                        document.onmouseup = (e) => {
+                            document.onmousemove = null;
+                            document.onmouseup = null;
+                            oDiv.style.cursor = "auto";
+                        }
+                    }
+                }
+            },
+            zoom: {
+                bind: function (el) {
+                    let oDiv = el;
+                    oDiv.style.zoom = 1;
+                    oDiv.onwheel = (e)=>{
+                        console.log(e)
+                        let zoom = parseFloat(oDiv.style.zoom);
+                        let tZoom = zoom + (e.wheelDelta>0 ? 0.05 : -0.05);
+                        if( tZoom > 2 || tZoom<0.5 ) return true;
+                        oDiv.style.zoom=tZoom;
+                    }
+                }
+            }
+        },
+```
+
+
+### 19. 如何终止Promise的运行
+
+```js
+function reqData(data){
+    return new $.ajax({
+        url: "url",
+        data: JSON.stringify(data)
+    })
+    .then(r=>{
+        let res = JSON.parase(r)
+        // 如果返回中代表结果的参数为真
+        if(res.res == "success"){
+            let data = res.data;
+            // 处理数据
+            // ...
+            return true;
+        }else{
+            // 返回错误
+            throw new Error("错误信息")
+        }
+    })
+    .catch(err=>{
+        //底层错误处理
+        console.log(err);
+        throw new Error("向下抛出的错误信息")
+    })
+}
+// 提交搜索的时间触发函数
+function submitSearch(){
+    // 传入的参数
+    let data = {}
+    // 调用函数
+    reqData(data)
+    .then(res=>{
+        if(res == true){
+            // 跳出弹框等相应给用户的操作
+        }
+    })
+    // 如果reqData报错了,可以拿到reqData的catch中抛出的错误
+    .catch(err=>{
+        // 跳出错误弹框等...
+    })
+}
 ```
 

@@ -18,7 +18,7 @@
     --medium: 16px;
     --large: 18px;
     --ex_large: 20px;
-
+    --green: #09F175;
 }
 
 html body {
@@ -106,11 +106,26 @@ i {
     border-bottom: 1px solid #D1DBE5;
 }
 
-.m-adminMsg-avatar {
+.m-adminMsg-avatar .el-avatar{
     width: 80px;
     height: 80px;
+    border: 1px solid var(--gray);
+    position: relative;
 }
-
+.m-adminMsg-avatar .el-dropdown {
+    height: 0;
+    width: 0;
+    overflow: visible;
+    padding: 0;
+    position: absolute;
+    transform: translate(40px,40px);
+}
+.m-adminMsg-avatar .el-dropdown .el-button {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background-color: var(--green);
+}
 .m-tab {
     width: 100%;
     height: 100%;
@@ -118,7 +133,7 @@ i {
 }
 
 .m-menu {
-    width: 80%;
+    width: 90%;
     height: 95%;
     border-radius: 10px;
 }
@@ -138,6 +153,15 @@ i {
 }
 
 .m-manage-user {
+    width: 100%;
+    height: 100%;
+}
+.m-manage-book {
+    width: 100%;
+    height: 100%;
+}
+
+.m-manage-borrow {
     width: 100%;
     height: 100%;
 }
@@ -194,12 +218,12 @@ i {
     height: 50px;
 }
 
-.m-user-msg-drawer {
+.m-user-msg-drawer,.m-book-msg-drawer,.m-borrow-msg-drawer {
     padding: 10px 5px 10px 20px;
     height: 100%;
 }
 
-.m-user-msg-drawer .el-form {
+.m-user-msg-drawer .el-form,.m-book-msg-drawer .el-form,.m-borrow-msg-drawer .el-form {
     width: 500px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
@@ -208,6 +232,14 @@ i {
     border: 1px solid var(--gray_bg);
 }
 
-.m-user-msg-drawer .el-form .el-form-item {
-    width: 400px;
+.m-user-msg-drawer .el-input,.m-book-msg-drawer .el-input,.m-borrow-msg-drawer .el-input{
+    width: 250px;
+}
+
+.m-book-msg-drawer-imgs  {
+    margin: 5px 0;
+}
+
+.m-book-msg-drawer-imgs .el-input {
+    width: 100%;
 }

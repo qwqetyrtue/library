@@ -13,7 +13,7 @@
 
     <select id="filtrate" parameterType="Borrow_filtrate" resultMap="BorrowMap,CountResultMap">
         SELECT SQL_CALC_FOUND_ROWS borrowid, uid, createtime, returntime, state, bkid, limittime, remark, bkname, timeleft, time
-        FROM borrow_book
+        FROM borrow_book_user
         WHERE
         uid = #{uid}
         <if test="state!=null">

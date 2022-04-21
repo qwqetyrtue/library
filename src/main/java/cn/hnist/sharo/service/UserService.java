@@ -6,10 +6,12 @@ import cn.hnist.sharo.model.User;
 import cn.hnist.sharo.model.mexpand.User_filtrate;
 import cn.hnist.sharo.unit.Res;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.stereotype.Repository;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+@Repository("userService")
 public interface UserService {
     // 用户登录
     User login(User user);

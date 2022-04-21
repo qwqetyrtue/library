@@ -4,11 +4,16 @@
 
     <resultMap id="UserMap" type="JSONObject">
     </resultMap>
+    <resultMap id="BookMap" type="JSONObject">
+    </resultMap>
+    <resultMap id="BorrowrecordMap" type="JSONObject">
+    </resultMap>
 
     <resultMap id="CountResultMap" type="Integer">
         <result column="total" jdbcType="INTEGER" javaType="Integer"/>
     </resultMap>
 
+    <!-- 登录查询 -->
     <select id="login" parameterType="Admin" resultType="Admin">
         SELECT mid, password, name, email, gender, `Call`
         FROM admin
@@ -16,6 +21,7 @@
           AND password = #{password}
     </select>
 
+    <!-- ........................用户管理........................ -->
     <!-- 筛选查询用户 -->
     <select id="usersfilter" resultMap="UserMap,CountResultMap" parameterType="User_filtrate">
         SELECT SQL_CALC_FOUND_ROWS uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, password,
@@ -62,7 +68,7 @@
                 ORDER BY #{order}
             </when>
             <otherwise>
-                ORDER BY _id
+                ORDER BY uid
             </otherwise>
         </choose>
         <choose>
@@ -104,4 +110,235 @@
         SET logout=#{logout}
         WHERE uid = #{uid}
     </update>
+
+
+    <!-- ........................书籍管理........................ -->
+    <!-- 筛选查询书籍 -->
+    <select id="booksfilter" resultMap="BookMap,CountResultMap" parameterType="Book_filtrate">
+        SELECT SQL_CALC_FOUND_ROWS bkid, bkname, price, state, introduce, remark, publisher, storedate, isbn, isbn10, imgs, publishadd, publishdate, page, category, language, chinaclass, binding, atname, atid
+        FROM book_author
+        WHERE
+        <choose>
+            <when test="bkid !=null and bkid !=''">
+                bkid LIKE CONCAT('%',#{bkid},'%')
+            </when>
+            <otherwise>
+                bkid LIKE '%%'
+            </otherwise>
+        </choose>
+
+        <if test="state !=null">
+            AND state=#{state}
+        </if>
+        <if test="bkname !=null and bkname !=''">
+            AND bkname LIKE CONCAT('%',#{bkname},'%')
+        </if>
+        <if test="atname !=null and atname !=''">
+            AND atname LIKE CONCAT('%',#{atname},'%')
+        </if>
+        <if test="isbn !=null and isbn !=''">
+            AND isbn LIKE CONCAT('%',#{isbn},'%'),
+        </if>
+        <if test="isbn10 !=null and isbn10 !=''">
+            AND isbn10 LIKE CONCAT('%',#{isbn10},'%')
+        </if>
+        <if test="language !=null and language !=''">
+            AND language LIKE CONCAT('%',#{language},'%')
+        </if>
+        <if test="binding !=null and binding !=''">
+            AND binding LIKE CONCAT('%',#{binding},'%')
+        </if>
+        <if test="chinaclass !=null and chinaclass !=''">
+            AND chinaclass LIKE CONCAT('%',#{chinaclass},'%')
+        </if>
+        <choose>
+            <when test="order !=null and order!= ''">
+                ORDER BY #{order}
+            </when>
+            <otherwise>
+                ORDER BY bkid
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="limit !=null and limit &gt; 0 ">
+                LIMIT #{limit}
+            </when>
+            <otherwise>
+                LIMIT 10
+            </otherwise>
+        </choose>
+        <if test="offset !=null and offset &gt;= 0">
+            OFFSET #{offset}
+        </if>;
+        SELECT FOUND_ROWS() as total;
+    </select>
+
+    <!-- 根据名字查询作者 -->
+    <select id="authorsbyname" parameterType="Author" resultType="Author">
+        SELECT DISTINCT name,atid  FROM author WHERE name LIKE CONCAT('%',#{name},'%');
+    </select>
+
+    <!-- 修改书籍信息 -->
+    <update id="booksupdate" parameterType="Book">
+        UPDATE book
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="category!=null and category!=''">
+                category=#{category},
+            </if>
+            <if test="publishadd!=null and publishadd!=''">
+                publishadd=#{publishadd},
+            </if>
+            <if test="page!=null and page &gt;= 1">
+                page=#{page},
+            </if>
+            <if test="state!=null">
+                state=#{state},
+            </if>
+            <if test="isbn10!=null and isbn10!=''">
+                isbn10=#{isbn10},
+            </if>
+            <if test="publishdate!=null">
+                publishdate=#{publishdate},
+            </if>
+            <if test="publisher!=null and publisher!=''">
+                publisher=#{publisher},
+            </if>
+            <if test="price!=null and price &gt;0">
+                price=#{price},
+            </if>
+            <if test="storedate!=null">
+                storedate=#{storedate},
+            </if>
+            <if test="language!=null and language!=''">
+                language=#{language},
+            </if>
+            <if test="bkid!=null and bkid!=''">
+                bkid=#{bkid},
+            </if>
+            <if test="binding!=null and binding!=''">
+                binding=#{binding},
+            </if>
+            <if test="chinaclass!=null and chinaclass!=''">
+                chinaclass=#{chinaclass},
+            </if>
+            <if test="isbn!=null and isbn!=''">
+                isbn=#{isbn},
+            </if>
+            <if test="introduce!=null and introduce!=''">
+                introduce=#{introduce},
+            </if>
+            <if test="atid!=null and atid!=''">
+                atid=#{atid},
+            </if>
+            <if test="imgs!=null and imgs!=''">
+                imgs=#{imgs}
+            </if>
+        </set>
+        WHERE bkid=#{bkid}
+    </update>
+
+    <!-- 将书籍移出书库 -->
+    <update id="booksdelete" parameterType="Book">
+        UPDATE book
+        SET state='NOTINCLUDE'
+        WHERE bkid = #{bkid}
+    </update>
+
+    <!-- ........................借阅管理........................ -->
+    <!-- 筛选查询借阅单 -->
+    <select id="borrowsfilter" resultMap="BorrowrecordMap,CountResultMap" parameterType="Borrow_filtrate">
+        SELECT SQL_CALC_FOUND_ROWS borrowid, uid, createtime, returntime, state, bkid, limittime, remark, uname, bkname, timeleft, time
+        FROM borrow_book_user
+        WHERE
+        <choose>
+            <when test="borrowid !=null and borrowid !=''">
+                borrowid LIKE CONCAT('%',#{borrowid},'%')
+            </when>
+            <otherwise>
+                borrowid LIKE '%%'
+            </otherwise>
+        </choose>
+
+        <if test="bkid !=null and bkid !=''">
+            AND bkid LIKE CONCAT('%',#{bkid},'%')
+        </if>
+        <if test="uid !=null and uid !=''">
+            AND uid LIKE CONCAT('%',#{uid},'%')
+        </if>
+        <if test="state !=null">
+            AND state=#{state}
+        </if>
+
+        <choose>
+            <when test="order !=null and order!= ''">
+                ORDER BY #{order}
+            </when>
+            <otherwise>
+                ORDER BY borrowid
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="limit !=null and limit &gt; 0 ">
+                LIMIT #{limit}
+            </when>
+            <otherwise>
+                LIMIT 10
+            </otherwise>
+        </choose>
+        <if test="offset !=null and offset &gt;= 0">
+            OFFSET #{offset}
+        </if>;
+        SELECT FOUND_ROWS() as total;
+    </select>
+
+    <!-- 修改订单信息 -->
+    <update id="borrowupdate" parameterType="Borrowrecord">
+        UPDATE borrowrecord
+        <set>
+            <if test="borrowid!=null and borrowid!=''">
+                borrowid=#{borrowid},
+            </if>
+            <if test="uid!=null and uid!=''">
+                uid=#{uid},
+            </if>
+            <if test="bkid!=null and bkid!=''">
+                bkid=#{bkid},
+            </if>
+            <if test="createtime!=null">
+                createtime=#{createtime},
+            </if>
+            <if test="returntime!=null">
+                returntime=#{returntime},
+            </if>
+            <if test="limittime!=null">
+                limittime=#{limittime},
+            </if>
+            <if test="state!=null">
+                state=#{state},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark=#{remark}
+            </if>
+        </set>
+        WHERE borrowid=#{borrowid}
+    </update>
+
+    <!-- 删除订单信息 -->
+    <update id="borrowdelete" parameterType="Borrowrecord">
+        UPDATE borrowrecord SET state='ACCIDENT' WHERE borrowid=#{borrowid}
+    </update>
+
+    <!-- 根据名字查询用户 -->
+    <select id="usersbyname" parameterType="User" resultType="User">
+        SELECT uid,name FROM user WHERE name LIKE CONCAT('%',#{name},'%')
+    </select>
+
+    <!-- 根据名字查询书籍 -->
+    <select id="booksbyname" parameterType="Book" resultType="Book">
+        SELECT bkid,name FROM book WHERE name LIKE CONCAT('%',#{name},'%')
+    </select>
+
 </mapper>

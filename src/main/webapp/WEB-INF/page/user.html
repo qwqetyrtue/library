@@ -70,7 +70,44 @@
                                 </div>
                             </el-collapse-item>
                             <el-collapse-item title="座位查询" name="3">
-                                <div class="m-seat-reserve-cont">
+                                <div class="m-seat-reserve-cont m-room-pick">
+                                    <el-select v-model="libraryFloorSelect" @change="libraryFloorChangeHandle" placeholder="请选择">
+                                        <el-option label="一层" value="图书馆一楼"></el-option>
+                                        <el-option label="二层" value="图书馆二楼"></el-option>
+                                        <el-option label="三层" value="图书馆三楼"></el-option>
+                                        <el-option label="四层" value="图书馆四楼"></el-option>
+                                    </el-select>
+                                    <el-scrollbar class="m-scrollbar">
+                                        <el-table
+                                                :fit="false"
+                                                :data="roomList"
+                                                border
+                                                stripe>
+                                            <el-table-column
+                                                    prop="name"
+                                                    label="名称"
+                                                    width="180"
+                                                    :resizable="false">
+                                            </el-table-column>
+                                            <el-table-column
+                                                    prop="location"
+                                                    label="位置"
+                                                    width="180"
+                                                    :resizable="false">
+                                            </el-table-column>
+                                            <el-table-column
+                                                    prop="seats"
+                                                    label="位子"
+                                                    width="90"
+                                                    :resizable="false">
+                                            </el-table-column>
+                                            <el-table-column width="180" label="" :resizable="false">
+                                                <template slot-scope="scope">
+                                                    <el-button @click="showSeatPickHandle(scope.row)" type="primary">选择座位</el-button>
+                                                </template>
+                                            </el-table-column>
+                                        </el-table>
+                                    </el-scrollbar>
                                 </div>
                             </el-collapse-item>
                             <el-collapse-item title="违规记录" name="4">
@@ -124,7 +161,7 @@
                         <el-scrollbar ref="borrowListScrollbar" class="m-scrollbar">
                             <el-form :inline="true">
                                 <el-select v-model="borrowListSearch.state" :loading="borrowSearchStateBTLoading"
-                                           placeholder="请选择" @change="borrowSearchStateChange">
+                                           placeholder="请选择" @change="borrowSearchStateChangeHandle">
                                     <el-option label="全部" value=""></el-option>
                                     <el-option label="在借" value="BORROW"></el-option>
                                     <el-option label="已归还" value="RETURN"></el-option>
@@ -172,7 +209,7 @@
                                         prop="time"
                                         label="借阅时间"
                                         width="90">
-                                    <template slot-scope="scope">
+                                    <template slot-scope="scope" v-if="scope.row.time">
                                         {{scope.row.time}}天
                                     </template>
                                 </el-table-column>
@@ -180,7 +217,7 @@
                                         prop="timeleft"
                                         label="剩余时间"
                                         width="90">
-                                    <template slot-scope="scope">
+                                    <template slot-scope="scope" v-if="scope.row.timeleft">
                                         {{scope.row.timeleft}}天
                                     </template>
                                 </el-table-column>
@@ -289,7 +326,9 @@
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item>
-                                    <el-button type="primary" :loading="bookListSearchBTLoading" @click="submitBookSearchHandle">查询书籍</el-button>
+                                    <el-button type="primary" :loading="bookListSearchBTLoading"
+                                               @click="submitBookSearchHandle">查询书籍
+                                    </el-button>
                                 </el-form-item>
                             </el-form>
                             <el-table
@@ -406,8 +445,11 @@
                             <el-col :span="12">
                                 <el-form ref="bookReserveForm" :model="bookReserveForm" label-width="80px">
                                     <el-form-item label="ISBN">
-                                        <el-input v-model="bookReserveForm.isbn"  maxlength="13" show-word-limit></el-input>
-                                        <el-button :loading="isbnCheckBTLoading" type="text" @click="isbnCheckHandle">查询</el-button>
+                                        <el-input v-model="bookReserveForm.isbn" maxlength="13"
+                                                  show-word-limit></el-input>
+                                        <el-button :loading="isbnCheckBTLoading" type="text" @click="isbnCheckHandle">
+                                            查询
+                                        </el-button>
                                     </el-form-item>
                                     <el-form-item label="备注">
                                         <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 6}"
@@ -425,7 +467,7 @@
                             <el-col :span="12">
                                 <div class="m-book-reserve-msg">
                                     <el-scrollbar class="m-scrollbar">
-                                        <el-descriptions :column="1" border v-if="isbnCheckForm.load"  title="书籍信息">
+                                        <el-descriptions :column="1" border v-if="isbnCheckForm.load" title="书籍信息">
                                             <el-descriptions-item v-if="v" v-for="(v,k,i) in isbnCheckForm.data"
                                                                   :key="'isbnf'+ i" :label="k">{{v}}
                                             </el-descriptions-item>
@@ -449,7 +491,7 @@
                 <el-tab-pane class="m-tabs_inline" name="基本信息" label="基本信息">
                     <div class="m-base-msg">
                         <el-scrollbar class="m-scrollbar">
-                            <el-descriptions class="margin-top"  v-if="user.load" title="基本资料" :column="2" border>
+                            <el-descriptions class="margin-top" v-if="user.load" title="基本资料" :column="2" border>
                                 <template slot="extra">
                                     <el-button icon="el-icon-refresh" type="text"
                                                :loading="refreshUserBTLoading"
@@ -564,7 +606,9 @@
                                     <el-input v-model.number="passwordUpdateForm.verifyCode"></el-input>
                                 </el-col>
                                 <el-col :offset="4" :span="8">
-                                    <el-button :Loading="verifySendBTLoading" v-if="showSendButton" type="text" @click="passwordVerifyCodeSendHandle">发送验证码</el-button>
+                                    <el-button :Loading="verifySendBTLoading" v-if="showSendButton" type="text"
+                                               @click="passwordVerifyCodeSendHandle">发送验证码
+                                    </el-button>
                                     <el-button v-if="!showSendButton" type="text">{{count}}s后重新获取</el-button>
                                 </el-col>
                             </el-form-item>
@@ -573,7 +617,9 @@
                                     <el-button @click="formResetHandle('passwordUpdateForm')">重置</el-button>
                                 </el-col>
                                 <el-col :span="11">
-                                    <el-button :loading="passwordUpdateBTLoading" type="primary" @click="passwordUpdateFormSubmitHandle">修改密码</el-button>
+                                    <el-button :loading="passwordUpdateBTLoading" type="primary"
+                                               @click="passwordUpdateFormSubmitHandle">修改密码
+                                    </el-button>
                                 </el-col>
                             </el-form-item>
                         </el-form>
@@ -826,6 +872,75 @@
                     </el-form-item>
                 </el-form>
             </el-scrollbar>
+        </div>
+    </el-dialog>
+    <el-dialog :close-on-click-modal="false" top="3vh" width="90%" custom-class="m-dialog-radius" title="查询座位" center
+               :visible.sync="seatPickDialogVisible">
+        <div class="m-seat-pick-cont">
+            <div class="m-seat-pick">
+                <el-scrollbar class="m-scrollbar">
+                    <el-table
+                            v-if="seats!=null"
+                            :data="seats"
+                            border
+                            stripe>
+                        <el-table-column
+                                prop="number"
+                                label="序号"
+                                width="90"
+                                :resizable="false">
+                        </el-table-column>
+                        <el-table-column
+                                label="状态"
+                                width="90"
+                                :resizable="false">
+                            <template slot-scope="scope">
+                                {{seatState(scope.row.state).state}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="seatid"
+                                label="座位号"
+                                width="90"
+                                :resizable="false">
+                        </el-table-column>
+                        <el-table-column
+                                prop="createdate"
+                                label="投入时间"
+                                width="150"
+                                :resizable="false">
+                        </el-table-column>
+                        <el-table-column width="180" label="" :resizable="false">
+                            <template slot-scope="scope">
+                                <el-button @click="reserveSeatHandle(scope.row)" type="primary">预约座位</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-scrollbar>
+            </div>
+            <div class="m-seat-show">
+                <div class="m-pick-show-cont" ref="pickShow" v-drag v-zoom v-if="seats!=null && seats.length>0">
+                    <div class="m-pick-show-row" v-if="room.seat!=null" v-for="(v,i) in room.seat" :key="room.roomid+''+i">
+                        <template v-if="v!=null" v-for="(vs,j) in v">
+                            <el-tag
+                                    v-if="vs-1 >= 0 && seats[vs-1]!=null"
+                                    class="m-pick-show-item"
+                                    :key="room.roomid+i+j"
+                                    :type="seatState(seats[vs-1].state).type"
+                                    @click="reserveSeatHandle(seats[vs-1])">
+                                {{ seatState(seats[vs - 1].state).state}}
+                            </el-tag>
+                            <el-tag
+                                    v-else
+                                    class="m-pick-show-item"
+                                    :key="room.roomid+i+''+j"
+                                    type="info">
+                                书架
+                            </el-tag>
+                        </template>
+                    </div>
+                </div>
+            </div>
         </div>
     </el-dialog>
 </div>

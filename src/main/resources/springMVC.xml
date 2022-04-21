@@ -45,6 +45,7 @@
     <mvc:resources mapping="/css/**" location="/res/css/"/>
     <mvc:resources mapping="/js/**" location="/res/js/"/>
     <mvc:resources mapping="/images/**" location="/res/images/"/>
+    <mvc:resources mapping="/resources/**" location="/res/resources/"/>
 
 
     <!-- 开启mvc注解驱动 -->

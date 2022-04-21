@@ -1,13 +1,15 @@
 package cn.hnist.sharo.controller;
 
-import cn.hnist.sharo.model.Admin;
-import cn.hnist.sharo.model.User;
+import cn.hnist.sharo.model.*;
+import cn.hnist.sharo.model.mexpand.Book_filtrate;
+import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
 import cn.hnist.sharo.model.mexpand.Filtrate;
 import cn.hnist.sharo.model.mexpand.User_filtrate;
 import cn.hnist.sharo.service.AdminService;
 import cn.hnist.sharo.service.UserService;
 import cn.hnist.sharo.unit.ListRes;
 import cn.hnist.sharo.unit.Res;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,7 +45,21 @@ public class AdminController {
         return new Res<>("fail","登陆失败");
     }
 
+    @RequestMapping(value = "/admin",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<Admin> adminCheckHandle(HttpSession session){
+        Admin login = (Admin) session.getAttribute("admin");
+        return new Res<>("success",login);
+    }
 
+    @RequestMapping(value = "/outlogin",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminOutLoginHandle(HttpSession session){
+        session.removeAttribute("admin");
+        return new Res<>("success","退出登录");
+    }
+
+    /** --------------用户管理-------------- **/
     // 筛选查询用户
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public @ResponseBody
@@ -80,5 +96,93 @@ public class AdminController {
         }
     }
 
+    /** --------------书籍管理-------------- **/
+    // 筛选查询书籍
+    @RequestMapping(value = "/books", method = RequestMethod.POST)
+    public @ResponseBody
+    ListRes<Book> adminBooksListHandle(@RequestBody Book_filtrate book_filtrate) {
+        List<?> res = adminService.booksFilter(book_filtrate);
+        if(res != null){
+            List<Book> books = (List<Book>)res.get(0);
+            int total = ((List<Integer>)res.get(1)).get(0);
+            return new ListRes<>("success",books,total);
+        }
+        else return new ListRes<>("fail",null,-1);
+    }
 
+    // 更新书籍信息
+    @RequestMapping(value = "/books/update", method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminBooksUpdateHandle(@RequestBody Book book){
+        if(adminService.booksUpdate(book)){
+            return new Res<>("success","修改成功");
+        }else{
+            return new Res<>("fail","修改失败");
+        }
+    }
+
+    // 更新书籍信息
+    @RequestMapping(value = "/books/delete", method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminBooksDeleteHandle(@RequestBody Book book){
+        String res = adminService.booksDelete(book);
+        if(res != null){
+            return new Res<>("success","res");
+        }else{
+            return new Res<>("fail",null);
+        }
+    }
+
+    @RequestMapping(value = "/books/authors",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<List<Author>> adminBooksAuthorHandle(@RequestBody Author author){
+        List<Author> res = adminService.authorsByName(author);
+        if(res != null){
+            return new Res<>("success",res);
+        }else return new Res<>("fail",null);
+    }
+
+    /** --------------订单管理-------------- **/
+    // 筛选查询订单
+    @RequestMapping(value = "/borrows", method = RequestMethod.POST)
+    public @ResponseBody
+    ListRes<JSONObject> adminBorrowsListHandle(@RequestBody Borrow_filtrate borrow_filtrate) {
+        List<?> res = adminService.borrowsFilter(borrow_filtrate);
+        if(res != null){
+            List<JSONObject> borrows = (List<JSONObject>)res.get(0);
+            int total = ((List<Integer>)res.get(1)).get(0);
+            return new ListRes<>("success",borrows,total);
+        }
+        else return new ListRes<>("fail",null,-1);
+    }
+
+    // 筛选查询订单
+    @RequestMapping(value = "/borrows/update", method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminBorrowsUpdateHandle(@RequestBody Borrowrecord borrowrecord) {
+        if(adminService.borrowUpdate(borrowrecord)){
+            return new Res<>("success","修改成功");
+        }else{
+            return new Res<>("fail","修改失败");
+        }
+    }
+
+    @RequestMapping(value = "/borrows/users",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<List<User>> adminBorrowUserHandle(@RequestBody User user){
+        List<User> res = adminService.usersByName(user);
+        if(res != null){
+            return new Res<>("success",res);
+        }else return new Res<>("fail",null);
+    }
+
+    @RequestMapping(value = "/borrows/books",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<List<Book>> adminBorrowBookHandle(@RequestBody Book book){
+        List<Book> res = adminService.booksByName(book);
+        if(res != null){
+            return new Res<>("success",res);
+        }else return new Res<>("fail",null);
+    }
 }
+
