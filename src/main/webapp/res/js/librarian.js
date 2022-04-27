@@ -1,9 +1,11 @@
 window.onload = function (){
     let app = new Vue({
         el: '.m-container',
-        async mounted() {
+        created() {
             let paths = document.location.pathname.split('/');
-            this.BASE_URL = paths.length == 3 ? paths[1] : '';
+            this.BASE_URL = paths.length == 3 ? '/' + paths[1] + '/' : '';
+        },
+        async mounted() {
         },
         data() {
             return {
@@ -31,7 +33,7 @@ window.onload = function (){
                 this.$refs.adminForm.validate((valid)=>{
                     if(valid){
                         $.ajax({
-                            url: '/' + this.BASE_URL + '/admin/login',
+                            url: this.BASE_URL + 'admin/login',
                             type: "post",
                             contentType: "application/json;charset=UTF-8",
                             data: JSON.stringify({'mid': this.adminForm.user, 'password': this.adminForm.password}),
@@ -45,7 +47,7 @@ window.onload = function (){
                                         type: 'success',
                                         duration: 1500,
                                         onClose: () => {
-                                            location.href = '/' + this.BASE_URL + '/admin'
+                                            location.href = this.BASE_URL + 'admin'
                                         }
                                     })
                                 } else {

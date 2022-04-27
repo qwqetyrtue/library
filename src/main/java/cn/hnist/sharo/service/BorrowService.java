@@ -15,6 +15,4 @@ public interface BorrowService {
     boolean create(Borrow_create borrow_create);
 
     List<?> filtrate(Borrow_filtrate borrow_filtrate);
-
-    boolean finish(Borrowrecord borrowrecord);
 }

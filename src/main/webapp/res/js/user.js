@@ -3,7 +3,7 @@ window.onload = function () {
         el: ".m-container",
         created() {
             let paths = document.location.pathname.split('/');
-            this.BASE_URL = paths.length == 3 ? paths[1] : '';
+            this.BASE_URL = paths.length == 3 ? '/' + paths[1] + '/' : '';
         },
         async mounted() {
             this.UserPageLoading = true;
@@ -307,7 +307,7 @@ window.onload = function () {
                 switch (command) {
                     case "outlogin" :
                         $.ajax({
-                            url: '/' + this.BASE_URL + '/user/outlogin',
+                            url: this.BASE_URL + 'user/outlogin',
                             type: "post",
                         })
                             .then(res => {
@@ -317,7 +317,7 @@ window.onload = function () {
                                         type: 'warning',
                                         duration: 1500,
                                         onClose: () => {
-                                            location.href = '/' + this.BASE_URL + '/login'
+                                            location.href = this.BASE_URL + 'login'
                                         }
                                     });
                                 }
@@ -377,7 +377,7 @@ window.onload = function () {
                     if (valid) {
                         $.ajax({
                             type: 'post',
-                            url: '/' + this.BASE_URL + '/user/update',
+                            url: this.BASE_URL + 'user/update',
                             data: JSON.stringify(v.userUpdateForm),
                             contentType: "application/json;charset=UTF-8",
                         })
@@ -428,7 +428,7 @@ window.onload = function () {
                     if (valid) {
                         $.ajax({
                             type: 'post',
-                            url: '/' + this.BASE_URL + '/user/updatepwd',
+                            url: this.BASE_URL + 'user/updatepwd',
                             data: JSON.stringify({
                                 uid: this.user.uid,
                                 password: this.passwordUpdateForm.password,
@@ -449,12 +449,12 @@ window.onload = function () {
                                         duration: 1500,
                                         onClose: () => {
                                             $.ajax({
-                                                url: '/' + this.BASE_URL + '/user/outlogin',
+                                                url: this.BASE_URL + 'user/outlogin',
                                                 type: "post",
                                             })
                                                 .then(res => {
                                                     if (JSON.parse(res).res == "success") {
-                                                        location.href = '/' + this.BASE_URL + '/login'
+                                                        location.href = this.BASE_URL + '/login'
                                                     }
                                                 })
                                                 .catch(err => {
@@ -488,7 +488,7 @@ window.onload = function () {
             passwordVerifyCodeSendHandle(ev) {
                 this.verifySendBTLoading = true;
                 $.ajax({
-                    url: '/' + this.BASE_URL + '/user/sendverifycode',
+                    url: this.BASE_URL + 'user/sendverifycode',
                     type: "post",
                     contentType: "application/json;charset=UTF-8",
                     data: JSON.stringify({
@@ -551,7 +551,7 @@ window.onload = function () {
                 }, 3000)
                 $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/book/isbn',
+                    url: this.BASE_URL + 'book/isbn',
                     data: JSON.stringify({"isbn": this.bookReserveForm.isbn}),
                     contentType: "application/json;charset=UTF-8"
                 })
@@ -573,7 +573,7 @@ window.onload = function () {
                 }
                 $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/book/details',
+                    url: this.BASE_URL + 'book/details',
                     data: JSON.stringify({"bkid": row.bkid}),
                     contentType: "application/json;charset=UTF-8"
                 })
@@ -596,7 +596,7 @@ window.onload = function () {
                 let v = this;
                 $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/borrow/create',
+                    url: this.BASE_URL + 'borrow/create',
                     data: JSON.stringify({
                         bkid: v.borrowForm.bkid,
                         uid: v.user.uid,
@@ -838,7 +838,7 @@ window.onload = function () {
             reqUserMsg() {
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/user/user',
+                    url: this.BASE_URL + 'user/user',
                 })
                     .then(r => {
                         let res = JSON.parse(r);
@@ -869,7 +869,7 @@ window.onload = function () {
                 }
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/book/filtrate',
+                    url: this.BASE_URL + 'book/filtrate',
                     data: JSON.stringify({...filtrate, ...paging}),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -904,7 +904,7 @@ window.onload = function () {
                 } else filtrate = {uid: this.user.uid};
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/borrow/filtrate',
+                    url: this.BASE_URL + 'borrow/filtrate',
                     data: JSON.stringify({...filtrate, ...paging}),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -936,7 +936,7 @@ window.onload = function () {
                 }
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/room/rooms',
+                    url: this.BASE_URL + 'room/rooms',
                     data: JSON.stringify({...filtrate}),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -960,7 +960,7 @@ window.onload = function () {
             reqSeats(row) {
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/seat/room',
+                    url: this.BASE_URL + 'seat/room',
                     data: JSON.stringify({roomid: row.roomid}),
                     contentType: "application/json;charset=UTF-8",
                 })

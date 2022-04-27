@@ -68,9 +68,9 @@ public class AdminController {
         if(res != null){
             List<User> users = (List<User>)res.get(0);
             int total = ((List<Integer>)res.get(1)).get(0);
-            return new ListRes<>("success",users,total);
+            return new ListRes<>("success","查询成功",users,total);
         }
-        else return new ListRes<>("fail",null,-1);
+        else return new ListRes<>("fail","查询失败",null,-1);
     }
 
     // 更新用户信息
@@ -105,9 +105,9 @@ public class AdminController {
         if(res != null){
             List<Book> books = (List<Book>)res.get(0);
             int total = ((List<Integer>)res.get(1)).get(0);
-            return new ListRes<>("success",books,total);
+            return new ListRes<>("success","查询成功",books,total);
         }
-        else return new ListRes<>("fail",null,-1);
+        else return new ListRes<>("fail","查询失败",null,-1);
     }
 
     // 更新书籍信息
@@ -142,8 +142,8 @@ public class AdminController {
         }else return new Res<>("fail",null);
     }
 
-    /** --------------订单管理-------------- **/
-    // 筛选查询订单
+    /** --------------借阅单管理-------------- **/
+    // 筛选查询借阅
     @RequestMapping(value = "/borrows", method = RequestMethod.POST)
     public @ResponseBody
     ListRes<JSONObject> adminBorrowsListHandle(@RequestBody Borrow_filtrate borrow_filtrate) {
@@ -151,12 +151,12 @@ public class AdminController {
         if(res != null){
             List<JSONObject> borrows = (List<JSONObject>)res.get(0);
             int total = ((List<Integer>)res.get(1)).get(0);
-            return new ListRes<>("success",borrows,total);
+            return new ListRes<>("success","查询成功",borrows,total);
         }
-        else return new ListRes<>("fail",null,-1);
+        else return new ListRes<>("fail","查询失败",null,-1);
     }
 
-    // 筛选查询订单
+    // 筛选查询借阅
     @RequestMapping(value = "/borrows/update", method = RequestMethod.POST)
     public @ResponseBody
     Res<String> adminBorrowsUpdateHandle(@RequestBody Borrowrecord borrowrecord) {
@@ -167,6 +167,22 @@ public class AdminController {
         }
     }
 
+    // 借阅书籍归还
+    @RequestMapping(value = "/borrows/finish",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminBorrowsFinish(@RequestBody Borrowrecord borrowrecord,HttpSession session){
+        try {
+            Admin admin = (Admin) session.getAttribute("admin");
+            borrowrecord.setMid(admin.getMid());
+            if(adminService.borrowsFinish(borrowrecord))
+                return new Res<>("success","归还成功");
+        }catch (Exception e){
+            return new Res<>("fail",e.getMessage());
+        }
+        return new Res<>("fail","归还失败");
+    }
+
+    // 根据名称查询用户
     @RequestMapping(value = "/borrows/users",method = RequestMethod.POST)
     public @ResponseBody
     Res<List<User>> adminBorrowUserHandle(@RequestBody User user){
@@ -176,6 +192,7 @@ public class AdminController {
         }else return new Res<>("fail",null);
     }
 
+    // 根据书名查询书籍
     @RequestMapping(value = "/borrows/books",method = RequestMethod.POST)
     public @ResponseBody
     Res<List<Book>> adminBorrowBookHandle(@RequestBody Book book){

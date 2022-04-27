@@ -5,6 +5,11 @@
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
 	http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"	id="WebApp_ID" version="3.1">
 
+  <error-page>
+    <error-code>404</error-code>
+    <location>/404notfound</location>
+  </error-page>
+
   <!-- 监听程序 关闭时断开mysql连接 -->
   <listener>
     <listener-class>cn.hnist.sharo.unit.CustomContextListener</listener-class>

@@ -12,30 +12,34 @@
     <script src="js/element-ui@2.15.7/lib/index.js"></script>
     <!--页面js-->
     <script src="js/index.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<div class="m-container">
+<div class="m-container" v-cloak>
     <div class="m-header">
-        <div class="m-header-bg">
-
-        </div>
+        <div class="m-header-bg" ref="mHeaderBg"></div>
         <div class="m-header-nav">
             <el-menu
-                    :default-active="activeIndex"
+                    :default-active="menuIndex"
                     mode="horizontal"
-                    @select="handleSelect"
+                    @select="menuSelectHandle"
                     background-color="#0391DB"
                     text-color="#fff"
                     active-text-color="#035F91">
-                <el-menu-item index="1">首页</el-menu-item>
-                <el-menu-item index="2">图书馆概况</el-menu-item>
-                <el-menu-item index="3">通知公告</el-menu-item>
-                <el-menu-item index="4">活动</el-menu-item>
+                <el-menu-item index="">首页</el-menu-item>
+                <el-menu-item index="profile">图书馆概况</el-menu-item>
+                <el-menu-item index="notice">通知公告</el-menu-item>
+                <el-menu-item index="route">资源</el-menu-item>
             </el-menu>
         </div>
         <div class="m-header-slide">
             <el-carousel :interval="4000" type="card" height="470px">
-                <el-carousel-item class="m-slide-cont" v-for="item in 4" :key="item" :style="{backgroundImage:'url(./images/banner0'+item+'.png)'}">
+                <el-carousel-item class="m-slide-cont" v-for="item in 4" :key="item"
+                                  :style="{backgroundImage:'url(http://localhost:8080/library/images/banner0'+item+'.png)'}">
                 </el-carousel-item>
             </el-carousel>
         </div>
@@ -50,8 +54,9 @@
             </div>
             <div>
                 <div class="m-body-news-slide">
-                    <el-carousel :interval="4000" arrow="hidden" height="275px">
-                        <el-carousel-item class="m-slide-cont" v-for="item in 6" :key="item" :style="{backgroundImage:'url(./images/ban0'+item+'.jpg)'}">
+                    <el-carousel :interval="4000" arrow="hidden" height="300px">
+                        <el-carousel-item class="m-slide-cont" v-for="item in 6" :key="item"
+                                          :style="{backgroundImage:'url(http://localhost:8080/library/images/ban0'+item+'.jpg)'}">
 
                         </el-carousel-item>
                     </el-carousel>
@@ -79,10 +84,19 @@
                     <i class="el-icon-arrow-right"></i>
                 </div>
                 <div class="m-body-part-cont">
-                    <div class="m-body-part-one" v-for="i in 4">
-                        <i class="el-icon-notebook-1"></i>
-                        <span><a href="/Detail.html">公益植树添新绿，喜迎党的二十大——图书馆教工党支部牵手新闻学院学生党支部开展植树</a></span>
-                    </div>
+                    <el-scrollbar class="m-scrollbar">
+                        <el-collapse v-model="newsIndex" accordion>
+                            <el-collapse-item :name="i" v-for="i in 5" :key="i">
+                                <div class="m-body-part-one" slot="title">
+                                    <i class="el-icon-notebook-1"></i>
+                                    <span>公益植树添新绿，喜迎党的二十大——图书馆教工党支部牵手新闻学院学生党支部开展植树</span>
+                                </div>
+                                <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+                                <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+                                <el-button type="text" @click="paperDetailCheckHandle">查看详情</el-button>
+                            </el-collapse-item>
+                        </el-collapse>
+                    </el-scrollbar>
                 </div>
             </div>
             <div class="m-body-parts">
@@ -93,10 +107,19 @@
                     <a href="/List.html"><i class="el-icon-arrow-right"></i></a>
                 </div>
                 <div class="m-body-part-cont">
-                    <div class="m-body-part-one" v-for="i in 4">
-                        <i class="el-icon-notebook-1"></i>
-                        <span><a href="/Detail.html">公益植树添新绿，喜迎党的二十大——图书馆教工党支部牵手新闻学院学生党支部开展植树</a></span>
-                    </div>
+                    <el-scrollbar class="m-scrollbar">
+                        <el-collapse v-model="noticeIndex" accordion>
+                            <el-collapse-item :name="i" v-for="i in 5" :key="i">
+                                <div class="m-body-part-one" slot="title">
+                                    <i class="el-icon-notebook-1"></i>
+                                    <span>公益植树添新绿，喜迎党的二十大——图书馆教工党支部牵手新闻学院学生党支部开展植树</span>
+                                </div>
+                                <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+                                <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+                                <el-button type="text" @click="paperDetailCheckHandle">查看详情</el-button>
+                            </el-collapse-item>
+                        </el-collapse>
+                    </el-scrollbar>
                 </div>
             </div>
         </div>
@@ -104,7 +127,8 @@
     <div class="m-foot">
         <div class="m-foot_main">
             <span>
-                <a href="#">联系我们</a><span>|</span> <a href="#">法律声明</a><span>|</span> <a href="/login.html">后台管理</a><span>|</span>
+                <a href="#">联系我们</a><span>|</span> <a href="#">法律声明</a><span>|</span> <a
+                    href="/login.html">后台管理</a><span>|</span>
                 <a href="#">旧版网站</a>
             </span>
             <span>

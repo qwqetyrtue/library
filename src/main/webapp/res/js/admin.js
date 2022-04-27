@@ -1,9 +1,18 @@
 window.onload = function () {
+    let wangEditor = window.wangEditor;
+    const editorConfig= {
+        placeholder : '请输入内容'
+    }
+    // 编辑器
+    let editor = null;
+    // 工具栏
+    let toolbar = null;
+
     let app = new Vue({
         el: ".m-container",
         created() {
             let paths = document.location.pathname.split('/');
-            this.BASE_URL = paths.length == 3 ? paths[1] : '';
+            this.BASE_URL = paths.length == 3 ? '/' + paths[1] + '/' : '';
         },
         async mounted() {
             this.AdminPageLoading = true;
@@ -55,6 +64,7 @@ window.onload = function () {
                         duration: 0,
                     });
                 })
+            this.initWangEditor()
         },
         data() {
             let validateEmail = (rule, value, callback) => {
@@ -78,7 +88,8 @@ window.onload = function () {
             return {
                 BASE_URL: "",
                 admin: {},
-                menuValue: "1",
+                menuValue: "userM",
+                resourceValue: "paperM",
                 AdminPageLoading: false,
                 /** --------------用户列表源数据-------------- **/
                 userList: [],
@@ -208,8 +219,21 @@ window.onload = function () {
                 borrowUserSelectOption: [],
                 borrowBookSelectLoading: false,
                 borrowBookSelectOption: [],
-
-
+                /** --------------文章列表源数据-------------- **/
+                paperList: [],
+                paperListBg: 0,
+                paperListEnd: 0,
+                paperListLoading: false,
+                paperListCurrentPage: 1,
+                paperListPageSizes: [5, 10, 20, 50, 100],
+                paperListPageSize: 5,
+                paperListPageHideWhenSingle: false,
+                paperListTotalSize: 0,
+                // 按键防止连点
+                refreshPaperBTLoading: false,
+                submitPaperSearchBTLoading: false,
+                mPaperSlide: false,
+                editorShow: false,
             }
         },
         methods: {
@@ -238,6 +262,45 @@ window.onload = function () {
                 }
                 return res;
             },
+            bookState(state) {
+                let res;
+                switch (state) {
+                    case "LEND":
+                        res = {state: "借阅中", type: "warning"};
+                        break;
+                    case "STORE":
+                        res = {state: "在库", type: "success"};
+                        break
+                    case "NOTINCLUDE":
+                        res = {state: "未入库", type: "info"};
+                        break;
+                    default:
+                        res = {state: "信息缺失", type: "info"};
+                        break;
+                }
+                return res;
+            },
+            borrowState(state) {
+                let res;
+                switch (state) {
+                    case "BORROW":
+                        res = {state: "借阅中", type: ""};
+                        break;
+                    case "RETURN":
+                        res = {state: "已归还", type: "success"};
+                        break;
+                    case "OVERDUE":
+                        res = {state: "预期", type: "warning"};
+                        break;
+                    case "ACCIDENT":
+                        res = {state: "事故", type: "danger"};
+                        break;
+                    default:
+                        res = {state: "信息缺失", type: "danger"};
+                        break;
+                }
+                return res;
+            },
             // 滚动条回到顶部
             backupHandle(name) {
                 this.$refs[name].wrap.scrollTop = 0
@@ -251,7 +314,7 @@ window.onload = function () {
             reqAdminMsg() {
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/admin',
+                    url: this.BASE_URL + 'admin/admin',
                 })
                     .then(r => {
                         let res = JSON.parse(r);
@@ -274,7 +337,7 @@ window.onload = function () {
             adminOutLoginHandle() {
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/outlogin',
+                    url: this.BASE_URL + 'admin/outlogin',
                 })
                     .then(r => {
                         let res = JSON.parse(r);
@@ -285,7 +348,7 @@ window.onload = function () {
                                 showClose: true,
                                 duration: 1500,
                                 onClose: () => {
-                                    location.href = "/" + this.BASE_URL + "/librarian"
+                                    location.href = this.BASE_URL + "librarian"
                                 }
                             });
                             return true;
@@ -336,7 +399,7 @@ window.onload = function () {
                 this.userListLoading = true;
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/users',
+                    url: this.BASE_URL + 'admin/users',
                     data: JSON.stringify({...paging, ...filtrate}),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -554,7 +617,7 @@ window.onload = function () {
             reqUserUpdateSubmit() {
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/users/update',
+                    url: this.BASE_URL + 'admin/users/update',
                     data: JSON.stringify(this.userUpdateForm),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -582,7 +645,7 @@ window.onload = function () {
             reqUserDeleteSubmit(row) {
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/users/delete',
+                    url: this.BASE_URL + 'admin/users/delete',
                     data: JSON.stringify(row),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -628,7 +691,7 @@ window.onload = function () {
                 this.bookListLoading = true;
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/books',
+                    url: this.BASE_URL + 'admin/books',
                     data: JSON.stringify({...paging, ...filtrate}),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -878,7 +941,7 @@ window.onload = function () {
                 console.log(data);
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/books/update',
+                    url: this.BASE_URL + 'admin/books/update',
                     data: JSON.stringify(data),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -906,7 +969,7 @@ window.onload = function () {
             reqBookDeleteSubmit(row) {
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/books/delete',
+                    url: this.BASE_URL + 'admin/books/delete',
                     data: JSON.stringify(row),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -935,7 +998,7 @@ window.onload = function () {
                     this.bookAuthorSelectLoading = true;
                     $.ajax({
                         type: 'post',
-                        url: '/' + this.BASE_URL + '/admin/books/authors',
+                        url: this.BASE_URL + 'admin/books/authors',
                         data: JSON.stringify({name: query}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -943,7 +1006,10 @@ window.onload = function () {
                             let res = JSON.parse(r);
                             if (res.res == "success") {
                                 this.bookAuthorSelectOption = [];
-                                this.bookAuthorSelectOption.push({atid: this.bookUpdateForm.atid, name: this.bookUpdateForm.atname})
+                                this.bookAuthorSelectOption.push({
+                                    atid: this.bookUpdateForm.atid,
+                                    name: this.bookUpdateForm.atname
+                                })
                                 let options = res.data.filter(item => {
                                     return item.atid !== this.bookAuthorSelectOption[0].atid;
                                 });
@@ -985,7 +1051,7 @@ window.onload = function () {
                 this.borrowListLoading = true;
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/borrows',
+                    url: this.BASE_URL + 'admin/borrows',
                     data: JSON.stringify({...paging, ...filtrate}),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -1212,11 +1278,11 @@ window.onload = function () {
                 let data = JSON.parse(JSON.stringify(this.borrowUpdateForm));
                 data.uid = data.user;
                 data.bkid = data.book;
-                if(data.createtime != '')
+                if (data.createtime != '')
                     data.createtime = new Date(data.createtime).valueOf();
-                if(data.returntime != '')
+                if (data.returntime != '')
                     data.returntime = new Date(data.returntime).valueOf();
-                if(data.limittime != '')
+                if (data.limittime != '')
                     data.limittime = new Date(data.limittime).valueOf();
                 delete data.user;
                 delete data.book;
@@ -1224,10 +1290,12 @@ window.onload = function () {
                 delete data.bkname;
                 delete data.time;
                 delete data.timeleft;
+                delete data.mname;
+                delete data.mid;
                 console.log(data)
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/borrows/update',
+                    url: this.BASE_URL + 'admin/borrows/update',
                     data: JSON.stringify(data),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -1255,7 +1323,7 @@ window.onload = function () {
             reqBorrowDeleteSubmit(row) {
                 return $.ajax({
                     type: 'post',
-                    url: '/' + this.BASE_URL + '/admin/borrows/delete',
+                    url: this.BASE_URL + 'admin/borrows/delete',
                     data: JSON.stringify(row),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -1283,7 +1351,7 @@ window.onload = function () {
                     this.borrowUserSelectLoading = true;
                     $.ajax({
                         type: 'post',
-                        url: '/' + this.BASE_URL + '/admin/borrows/users',
+                        url: this.BASE_URL + 'admin/borrows/users',
                         data: JSON.stringify({name: query}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1291,9 +1359,12 @@ window.onload = function () {
                             let res = JSON.parse(r);
                             if (res.res == "success") {
                                 this.borrowUserSelectOption = [];
-                                this.borrowUserSelectOption.push({uid: this.borrowUpdateForm.uid, name: this.borrowUpdateForm.uname})
+                                this.borrowUserSelectOption.push({
+                                    uid: this.borrowUpdateForm.uid,
+                                    name: this.borrowUpdateForm.uname
+                                })
                                 let options = res.data.filter(item => {
-                                    return item.uid!== this.borrowUserSelectOption[0].uid;
+                                    return item.uid !== this.borrowUserSelectOption[0].uid;
                                 });
                                 this.borrowUserSelectOption = [...this.borrowUserSelectOption, ...options];
                                 console.log(this.borrowUserSelectOption)
@@ -1314,7 +1385,7 @@ window.onload = function () {
                     this.borrowBookSelectLoading = true;
                     $.ajax({
                         type: 'post',
-                        url: '/' + this.BASE_URL + '/admin/borrows/books',
+                        url: this.BASE_URL + 'admin/borrows/books',
                         data: JSON.stringify({name: query}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1322,7 +1393,10 @@ window.onload = function () {
                             let res = JSON.parse(r);
                             if (res.res == "success") {
                                 this.borrowBookSelectOption = []
-                                this.borrowBookSelectOption.push({bkid: this.borrowUpdateForm.bkid, name: this.borrowUpdateForm.bkname})
+                                this.borrowBookSelectOption.push({
+                                    bkid: this.borrowUpdateForm.bkid,
+                                    name: this.borrowUpdateForm.bkname
+                                })
                                 let options = res.data.filter(item => {
                                     return item.bkid !== this.borrowBookSelectOption[0].bkid;
                                 });
@@ -1339,6 +1413,165 @@ window.onload = function () {
                     this.borrowBookSelectOption = [];
                 }
             },
+            /** --------------文章列表-------------- **/
+            // 分页修改
+            reqPaperList(paging, flag) {
+                this.borrowListBg = paging.offset;
+                this.borrowListEnd = paging.offset + paging.limit;
+                let filtrate = null
+                if (!flag) {
+                    filtrate = {}
+                    for (let each in this.borrowSearchConfigChecked) {
+                        if (each === "base") {
+                            if (this.borrowSearchConfigChecked[each]) {
+                                filtrate.borrowid = this.borrowSearchConfigForm.borrowid;
+                                filtrate.uid = this.borrowSearchConfigForm.uid;
+                                filtrate.bkid = this.borrowSearchConfigForm.bkid;
+                            }
+                        } else if (this.borrowSearchConfigChecked[each]) {
+                            filtrate[each] = this.borrowSearchConfigForm[each];
+                        }
+                    }
+                    console.log(filtrate)
+                }
+                this.borrowListLoading = true;
+                return $.ajax({
+                    type: 'post',
+                    url: this.BASE_URL + 'admin/borrows',
+                    data: JSON.stringify({...paging, ...filtrate}),
+                    contentType: "application/json;charset=UTF-8",
+                })
+                    .then(r => {
+                        let res = JSON.parse(r);
+                        if (res.res == "success") {
+                            this.borrowList = res.data
+                            this.borrowListTotalSize = res.total;
+                            this.borrowListLoading = false;
+                            return true;
+                        } else throw new Error();
+                    })
+                    .catch(err => {
+                        this.borrowListLoading = false;
+                        console.log(err)
+                        throw  err;
+                    })
+            },
+            // 刷新用户表格
+            refreshPaperListHandle() {
+                // 防止按键连点
+                this.refreshBorrowBTLoading = true;
+                setTimeout(() => {
+                    this.refreshBorrowBTLoading = false;
+                }, 1500)
+                this.reqBorrowList({
+                    limit: this.borrowListPageSize,
+                    offset: this.borrowListPageSize * (this.borrowListCurrentPage - 1)
+                })
+                    .then(res => {
+                        this.$message({
+                            message: '刷新成功',
+                            type: 'success',
+                            duration: 1000,
+                        });
+                    })
+                    .catch(err => {
+                        this.$message({
+                            message: '出现未知错误',
+                            type: 'error',
+                            showClose: true,
+                            duration: 0,
+                        });
+                    })
+            },
+            // 提交用户查询
+            submitPaperSearchHandle() {
+                this.submitBorrowSearchBTLoading = true;
+                setTimeout(() => {
+                    this.submitBorrowSearchBTLoading = false;
+                }, 1500)
+                this.reqBorrowList({
+                    limit: this.borrowListPageSizes[0],
+                    offset: 0
+                })
+                    .then(res => {
+                        this.borrowListPageSize = this.borrowListPageSizes[0];
+                        this.borrowListCurrentPage = 1;
+                        this.$message({
+                            message: '查询成功',
+                            type: 'success',
+                            duration: 1000,
+                        });
+                    })
+                    .catch(err => {
+                        this.$message({
+                            message: '出现未知错误',
+                            type: 'error',
+                            showClose: true,
+                            duration: 0,
+                        });
+                    })
+            },
+            // 分页修改
+            paperListSizeChangeHandle(val) {
+                // 单页数减小
+                // 原来单页数量比总条数大 -> 只有一页,在加大单页数,不查询
+                if (this.borrowListTotalSize <= this.borrowListPageSize) {
+                    this.borrowListPageSize = val;
+                } else if (this.borrowListPageSize > val) {
+                    this.borrowListPageSize = val;
+                } else {
+                    let page = this.borrowListCurrentPage;
+                    let bg = (page - 1) * val;
+                    let end = bg + val;
+                    // 判断当前页在切换单页显示数目后还是否存在
+                    while (bg > this.borrowListTotalSize) {
+                        bg -= val;
+                        page--;
+                        end = bg + val;
+                    }
+                    // 判断显示的这页数据是否包含在已经获取到的数据中
+                    if (bg < this.borrowListBg || end > this.borrowListEnd) {
+                        this.borrowListPageSize = val;
+                        this.reqBorrowList({
+                            limit: val,
+                            offset: bg
+                        }).then(() => {
+                            this.borrowListCurrentPage = page;
+                        })
+                            .catch(err => {
+                                this.$message({
+                                    message: '出现未知错误',
+                                    type: 'error',
+                                    showClose: true,
+                                    duration: 0,
+                                });
+                            })
+                    }
+                    this.borrowListPageSize = val;
+                }
+            },
+            paperListCurrentChangeHandle(val) {
+                // 判断显示的这页数据是否包含在已经获取到的数据中
+                let bg = (val - 1) * this.borrowListPageSize;
+                let end = bg + this.borrowListPageSize;
+                if (bg < this.borrowListBg || end > this.borrowListEnd) {
+                    this.reqBorrowList({
+                        limit: this.borrowListPageSize,
+                        offset: bg
+                    }).then(() => {
+                        console.log("2:page=>", val)
+                        this.borrowListCurrentPage = val;
+                    })
+                        .catch(err => {
+                            this.$message({
+                                message: '出现未知错误',
+                                type: 'error',
+                                showClose: true,
+                                duration: 0,
+                            });
+                        })
+                } else this.borrowListCurrentPage = val;
+            },
             /** ------------------------------ **/
             // 归还书籍操作
             bookRestoreHandle(row) {
@@ -1349,7 +1582,7 @@ window.onload = function () {
                 }).then(() => {
                     $.ajax({
                         type: 'post',
-                        url: '/' + this.BASE_URL + '/borrow/finish',
+                        url: this.BASE_URL + 'admin/borrows/finish',
                         data: JSON.stringify({
                             bkid: row.bkid,
                             borrowid: row.borrowid
@@ -1393,11 +1626,29 @@ window.onload = function () {
                 })
                     .catch(err => {
                         this.$message({
-                            message: "归还失败",
-                            type: 'error',
+                            message: "操作取消",
+                            type: 'info',
                             duration: 1500,
                         });
                     })
+            },
+            // 收起列表
+            contAsideHandle(name) {
+                console.log("yes")
+                this[name] = !this[name];
+            },
+            // 初始化富文本编辑器
+            initWangEditor(){
+                editor = wangEditor.createEditor({
+                    selector: '#editor-container',
+                    config: editorConfig,
+                    mode: 'default' // 或 'simple' 参考下文
+                })
+                toolbar  = wangEditor.createToolbar({
+                    editor: editor,
+                    selector: '#toolbar-container',
+                    mode: 'default' // 或 'simple' 参考下文
+                })
             },
         },
         computed: {
@@ -1416,6 +1667,11 @@ window.onload = function () {
                 let bg = (this.borrowListCurrentPage - 1) * this.borrowListPageSize;
                 let end = bg + this.borrowListPageSize;
                 return this.borrowList.slice(bg - this.borrowListBg, bg - this.borrowListBg + this.borrowListPageSize);
+            },
+            paperListPaging() {
+                let bg = (this.paperListCurrentPage - 1) * this.paperListPageSize;
+                let end = bg + this.paperListPageSize;
+                return this.paperList.slice(bg - this.paperListBg, bg - this.paperListBg + this.paperListPageSize);
             },
         }
     })

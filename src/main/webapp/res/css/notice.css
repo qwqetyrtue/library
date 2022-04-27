@@ -44,7 +44,6 @@ div {
     box-sizing: border-box;
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
-
 .m-header {
     width: 100%;
     height: auto;
@@ -53,7 +52,6 @@ div {
 .m-header-bg {
     width: 100%;
     height: 150px;
-    background-image: url("/images/head_logo.png");
     background-repeat: no-repeat;
     background-size: 100% auto;
     border-bottom: 1px solid var(--gray);
@@ -66,8 +64,24 @@ div {
     justify-content: center;
     align-items: center;
     background-color: var(--blue);
-    border-bottom: 1px solid var(--gray);
+    padding: 5px 0;
 }
+
+.el-menu.el-menu--horizontal{
+    border: none;
+    user-select: none;
+}
+.el-menu--horizontal>.el-menu-item.is-active {
+    font-size: var(--medium);
+}
+.el-menu--horizontal>.el-menu-item {
+    width: 150px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
 
 .m-body {
     width: 100%;

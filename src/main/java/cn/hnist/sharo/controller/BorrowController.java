@@ -48,20 +48,8 @@ public class BorrowController {
         if(res != null) {
             List<Borrowrecord> borrows = (List<Borrowrecord>) res.get(0);
             int total = ((List<Integer>) res.get(1)).get(0);
-            return new ListRes<>("success",borrows,total);
+            return new ListRes<>("success","查询成功",borrows,total);
         }
-        return new ListRes<>("fail",null,-1);
-    }
-
-    @RequestMapping(value = "/finish",method = RequestMethod.POST)
-    public @ResponseBody
-    Res<String> borrowReturnHandle(@RequestBody Borrowrecord borrowrecord){
-        try {
-            if(borrowService.finish(borrowrecord))
-                return new Res<>("success","归还成功");
-        }catch (Exception e){
-            return new Res<>("fail",e.getMessage());
-        }
-        return new Res<>("fail","归还失败");
+        return new ListRes<>("fail","查询失败",null,-1);
     }
 }

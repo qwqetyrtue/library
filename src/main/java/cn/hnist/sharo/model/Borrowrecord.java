@@ -2,18 +2,23 @@ package cn.hnist.sharo.model;
 
 
 import cn.hnist.sharo.model.menum.BorrowState;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class Borrowrecord {
 
   private long id;
   private String borrowid;
   private String uid;
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
   private java.sql.Timestamp createtime;
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
   private java.sql.Timestamp returntime;
   private BorrowState state;
   private String bkid;
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
   private java.sql.Timestamp limittime;
   private String remark;
+  private String mid;
 
 
   public long getId() {
@@ -96,4 +101,11 @@ public class Borrowrecord {
     this.remark = remark;
   }
 
+  public String getMid() {
+    return mid;
+  }
+
+  public void setMid(String mid) {
+    this.mid = mid;
+  }
 }

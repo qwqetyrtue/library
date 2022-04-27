@@ -1,5 +1,6 @@
 package cn.hnist.sharo.dao;
 
+import cn.hnist.sharo.model.Author;
 import cn.hnist.sharo.model.Book;
 import cn.hnist.sharo.model.mexpand.Book_filtrate;
 import cn.hnist.sharo.model.mexpand.Filtrate;
@@ -19,12 +20,15 @@ public interface BookMapper {
     List<JSONObject> all(Filtrate filtrate);
     // 查询书籍详情
     List<JSONObject> details(Book book);
-    // 更新基础信息
-    int update(Book book);
-    // 更新bkid
-    int updatebkid(Update_bkid update_bkid);
-    // 删除书籍信息
-    int delete(Book book);
-    // 添加书籍
-    int store(Book book);
+    // 书籍借出
+    int lend(Book book);
+
+    // 查询书籍
+    List<?> booksfilter(Book_filtrate book_filtrate);
+    // 更新书籍
+    int booksupdate(Book book);
+    // 移除书籍
+    int booksdelete(Book book);
+    // 根据作者名称查询作者
+    List<Author> authorsbyname(Author author);
 }

@@ -50,10 +50,10 @@ public class BorrowServiceImpl implements BorrowService {
             Book book = new Book();
             book.setBkid(borrow_create.getBkid());
             book.setState(BookState.LEND);
-            if (bookMapper.update(book) == 1)
+            if (bookMapper.lend(book) == 1)
                 return true;
-            else throw new RuntimeException("修改书籍状态失败");
-        }else throw new RuntimeException("提交借阅单失败");
+            else throw new RuntimeException("书籍已借出或未入库");
+        }else throw new RuntimeException("书籍不存在");
     }
 
     @Override
@@ -64,24 +64,4 @@ public class BorrowServiceImpl implements BorrowService {
             return null;
         }
     }
-
-    @Transactional
-    @Override
-    public boolean finish(Borrowrecord borrowrecord) throws RuntimeException{
-        LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
-        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
-        // 转换为 Timestamp 类型对象
-        Timestamp timestamp = new Timestamp(creatTimestamp);
-        borrowrecord.setReturntime(timestamp);
-        borrowrecord.setState(BorrowState.RETURN);
-        if(borrowMapper.update(borrowrecord) == 1){
-            Book book = new Book();
-            book.setState(BookState.STORE);
-            book.setBkid(borrowrecord.getBkid());
-            if(bookMapper.update(book) == 1)
-                return true;
-            else throw new RuntimeException("修改书籍状态失败");
-        }else throw new RuntimeException("修改借阅单失败");
-    }
-
 }

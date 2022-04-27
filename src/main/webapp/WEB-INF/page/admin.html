@@ -12,6 +12,10 @@
     <script src="js/element-ui@2.15.7/lib/index.js"></script>
     <!-- 引入jquery -->
     <script src="js/jquery/jquery@3.6.0.js"></script>
+    <!-- 引入 wangEditor.css -->
+    <link href="js/wangeditoreditor@5.0.1/dist/css/style.css" rel="stylesheet">
+    <!-- 引入 wangEditor.js -->
+    <script src="js/wangeditoreditor@5.0.1/dist/index.js"></script>
     <!--页面js-->
     <script src="js/admin.js"></script>
     <style>
@@ -33,9 +37,9 @@
                     <el-avatar fit="fill"
                                src="resources/avatar-default.jpg">
                     </el-avatar>
-                    <el-dropdown  trigger="click" placement="bottom-start" @command="menuChoseHandle">
+                    <el-dropdown trigger="click" placement="bottom-start" @command="menuChoseHandle">
                         <el-button circle size="small"></el-button>
-                        <el-dropdown-menu slot="dropdown" >
+                        <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command="changeavatar">修改头像</el-dropdown-item>
                             <el-dropdown-item command="changepsw">修改密码</el-dropdown-item>
                             <el-dropdown-item command="outlogin">退出登录</el-dropdown-item>
@@ -46,7 +50,7 @@
                 <el-row type="flex" align="middle" justify="center">admin: {{admin.name}}</el-row>
             </div>
         </el-tab-pane>
-        <el-tab-pane class="m-tabs" name="1">
+        <el-tab-pane class="m-tabs" name="userM">
             <div slot="label" class="m-tabs-label">
                 <!--用户管理-->
                 <el-row type="flex" align="middle" justify="start">
@@ -84,70 +88,68 @@
                             </el-form-item>
                         </el-form>
                     </el-col>
-                    <el-row :span="4">
-                        <el-popover
-                                placement="bottom-end"
-                                width="400"
-                                trigger="click">
-                            <div class="m-search-pop">
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="userSearchConfigChecked.gender"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="性别:" label-width="80px">
-                                        <el-select v-model="userSearchConfigForm.gender" placeholder="请选择">
-                                            <el-option label="男" value="MALE"></el-option>
-                                            <el-option label="女" value="FEMALE"></el-option>
-                                            <el-option label="隐藏" value="HIDE"></el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                </el-form>
-                                <el-divider></el-divider>
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="userSearchConfigChecked.homeadd"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="家乡:" label-width="80px">
-                                        <el-input placeholder="家乡" v-model="userSearchConfigForm.homeadd"></el-input>
-                                    </el-form-item>
-                                </el-form>
-                                <el-divider></el-divider>
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="userSearchConfigChecked.email"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="邮箱:" label-width="80px">
-                                        <el-input placeholder="邮箱" v-model="userSearchConfigForm.email"></el-input>
-                                    </el-form-item>
-                                </el-form>
-                                <el-divider></el-divider>
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="userSearchConfigChecked.postcode"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="邮政编码:" label-width="80px">
-                                        <el-input placeholder="邮政编码" v-model="userSearchConfigForm.postcode"></el-input>
-                                    </el-form-item>
-                                </el-form>
-                                <el-divider></el-divider>
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="userSearchConfigChecked.bloodtype"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="血型:" label-width="80px">
-                                        <el-select v-model="userSearchConfigForm.bloodtype" placeholder="请选择">
-                                            <el-option label="A型" value="A"></el-option>
-                                            <el-option label="B型" value="B"></el-option>
-                                            <el-option label="AB型" value="AB"></el-option>
-                                            <el-option label="O型" value="O"></el-option>
-                                            <el-option label="RH型" value="RH"></el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                </el-form>
-                            </div>
-                            <el-button type="text" slot="reference">更多筛选</el-button>
-                        </el-popover>
-                    </el-row>
+                    <el-popover
+                            placement="bottom-end"
+                            width="400"
+                            trigger="click">
+                        <div class="m-search-pop">
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="userSearchConfigChecked.gender"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="性别:" label-width="80px">
+                                    <el-select v-model="userSearchConfigForm.gender" placeholder="请选择">
+                                        <el-option label="男" value="MALE"></el-option>
+                                        <el-option label="女" value="FEMALE"></el-option>
+                                        <el-option label="隐藏" value="HIDE"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+                            <el-divider></el-divider>
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="userSearchConfigChecked.homeadd"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="家乡:" label-width="80px">
+                                    <el-input placeholder="家乡" v-model="userSearchConfigForm.homeadd"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-divider></el-divider>
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="userSearchConfigChecked.email"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="邮箱:" label-width="80px">
+                                    <el-input placeholder="邮箱" v-model="userSearchConfigForm.email"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-divider></el-divider>
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="userSearchConfigChecked.postcode"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="邮政编码:" label-width="80px">
+                                    <el-input placeholder="邮政编码" v-model="userSearchConfigForm.postcode"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-divider></el-divider>
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="userSearchConfigChecked.bloodtype"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="血型:" label-width="80px">
+                                    <el-select v-model="userSearchConfigForm.bloodtype" placeholder="请选择">
+                                        <el-option label="A型" value="A"></el-option>
+                                        <el-option label="B型" value="B"></el-option>
+                                        <el-option label="AB型" value="AB"></el-option>
+                                        <el-option label="O型" value="O"></el-option>
+                                        <el-option label="RH型" value="RH"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <el-button class="m-search-pop-button" type="text" slot="reference">更多筛选</el-button>
+                    </el-popover>
                 </el-row>
                 <div class="m-scrollbar-form-paging">
                     <el-scrollbar ref="userListScrollbar" class="m-scrollbar">
@@ -366,7 +368,7 @@
                 </el-drawer>
             </div>
         </el-tab-pane>
-        <el-tab-pane class="m-tabs" name="2">
+        <el-tab-pane class="m-tabs" name="bookM">
             <div slot="label" class="m-tabs-label">
                 <el-row type="flex" align="middle" justify="start">
                     <el-col :span="4">
@@ -400,84 +402,82 @@
                             </el-form-item>
                         </el-form>
                     </el-col>
-                    <el-row :span="4">
-                        <el-popover
-                                placement="bottom-end"
-                                width="440"
-                                trigger="click">
-                            <div class="m-search-pop">
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="bookSearchConfigChecked.bkid"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="书籍ID:" label-width="120px">
-                                        <el-input placeholder="书籍ID" v-model="bookSearchConfigForm.bkid"></el-input>
-                                    </el-form-item>
-                                </el-form>
-                                <el-divider></el-divider>
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="bookSearchConfigChecked.isbn"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="ISBN码:" label-width="120px">
-                                        <el-input placeholder="ISBN码" v-model="bookSearchConfigForm.isbn"></el-input>
-                                    </el-form-item>
-                                </el-form>
-                                <el-divider></el-divider>
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="bookSearchConfigChecked.isbn10"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="ISBN(10位)码:" label-width="120px">
-                                        <el-input placeholder="ISBN(10位)码"
-                                                  v-model="bookSearchConfigForm.isbn10"></el-input>
-                                    </el-form-item>
-                                </el-form>
-                                <el-divider></el-divider>
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="bookSearchConfigChecked.language"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="语言:" label-width="120px">
-                                        <el-input placeholder="语言" v-model="bookSearchConfigForm.language"></el-input>
-                                    </el-form-item>
-                                </el-form>
-                                <el-divider></el-divider>
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="bookSearchConfigChecked.binding"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="装订:" label-width="120px">
-                                        <el-input placeholder="装订" v-model="bookSearchConfigForm.binding"></el-input>
-                                    </el-form-item>
-                                </el-form>
-                                <el-divider></el-divider>
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="bookSearchConfigChecked.chinaclass"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="中国图书分类码:" label-width="120px">
-                                        <el-input placeholder="中国图书分类码"
-                                                  v-model="bookSearchConfigForm.chinaclass"></el-input>
-                                    </el-form-item>
-                                </el-form>
-                                <el-divider></el-divider>
-                                <el-form :inline="true">
-                                    <el-form-item>
-                                        <el-checkbox v-model="bookSearchConfigChecked.state"></el-checkbox>
-                                    </el-form-item>
-                                    <el-form-item label="状态:" label-width="120px">
-                                        <el-select v-model="bookSearchConfigForm.state" placeholder="请选择">
-                                            <el-option label="借出" value="LEND"></el-option>
-                                            <el-option label="在库" value="STORE"></el-option>
-                                            <el-option label="未收录" value="NOTINCLUDE"></el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                </el-form>
-                            </div>
-                            <el-button type="text" slot="reference">更多筛选</el-button>
-                        </el-popover>
-                    </el-row>
+                    <el-popover
+                            placement="bottom-end"
+                            width="440"
+                            trigger="click">
+                        <div class="m-search-pop">
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="bookSearchConfigChecked.bkid"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="书籍ID:" label-width="120px">
+                                    <el-input placeholder="书籍ID" v-model="bookSearchConfigForm.bkid"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-divider></el-divider>
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="bookSearchConfigChecked.isbn"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="ISBN码:" label-width="120px">
+                                    <el-input placeholder="ISBN码" v-model="bookSearchConfigForm.isbn"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-divider></el-divider>
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="bookSearchConfigChecked.isbn10"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="ISBN(10位)码:" label-width="120px">
+                                    <el-input placeholder="ISBN(10位)码"
+                                              v-model="bookSearchConfigForm.isbn10"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-divider></el-divider>
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="bookSearchConfigChecked.language"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="语言:" label-width="120px">
+                                    <el-input placeholder="语言" v-model="bookSearchConfigForm.language"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-divider></el-divider>
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="bookSearchConfigChecked.binding"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="装订:" label-width="120px">
+                                    <el-input placeholder="装订" v-model="bookSearchConfigForm.binding"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-divider></el-divider>
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="bookSearchConfigChecked.chinaclass"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="中国图书分类码:" label-width="120px">
+                                    <el-input placeholder="中国图书分类码"
+                                              v-model="bookSearchConfigForm.chinaclass"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-divider></el-divider>
+                            <el-form :inline="true">
+                                <el-form-item>
+                                    <el-checkbox v-model="bookSearchConfigChecked.state"></el-checkbox>
+                                </el-form-item>
+                                <el-form-item label="状态:" label-width="120px">
+                                    <el-select v-model="bookSearchConfigForm.state" placeholder="请选择">
+                                        <el-option label="借出" value="LEND"></el-option>
+                                        <el-option label="在库" value="STORE"></el-option>
+                                        <el-option label="未收录" value="NOTINCLUDE"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <el-button class="m-search-pop-button" type="text" slot="reference">更多筛选</el-button>
+                    </el-popover>
                 </el-row>
                 <div class="m-scrollbar-form-paging">
                     <el-scrollbar ref="bookListScrollbar" class="m-scrollbar">
@@ -501,7 +501,9 @@
                                     label="书籍状态"
                                     width="90">
                                 <template slot-scope="scope">
-                                    {{scope.row.state}}
+                                    <el-tag :type="bookState(scope.row.state).type" disable-transitions>
+                                        {{bookState(scope.row.state).state}}
+                                    </el-tag>
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -756,11 +758,11 @@
                 </el-drawer>
             </div>
         </el-tab-pane>
-        <el-tab-pane class="m-tabs" name="3">
+        <el-tab-pane class="m-tabs" name="borrowM">
             <div slot="label" class="m-tabs-label">
                 <el-row type="flex" align="middle" justify="start">
                     <el-col :span="4">
-                        <i class="el-icon-user"></i>
+                        <i class="el-icon-tickets"></i>
                     </el-col>
                     <el-col :span="16">
                         借阅管理
@@ -793,17 +795,15 @@
                             </el-form-item>
                         </el-form>
                     </el-col>
-                    <el-row :span="4">
-                        <el-popover
-                                placement="bottom-end"
-                                width="400"
-                                trigger="click">
-                            <div class="m-search-pop">
+                    <el-popover
+                            placement="bottom-end"
+                            width="400"
+                            trigger="click">
+                        <div class="m-search-pop">
 
-                            </div>
-                            <el-button type="text" slot="reference">更多筛选</el-button>
-                        </el-popover>
-                    </el-row>
+                        </div>
+                        <el-button class="m-search-pop-button" type="text" slot="reference">更多筛选</el-button>
+                    </el-popover>
                 </el-row>
                 <div class="m-scrollbar-form-paging">
                     <el-scrollbar ref="borrowListScrollbar" class="m-scrollbar">
@@ -829,14 +829,48 @@
                                     width="120">
                             </el-table-column>
                             <el-table-column
+                                    prop="uname"
+                                    label="用户名"
+                                    width="120">
+                            </el-table-column>
+                            <el-table-column
                                     prop="bkid"
                                     label="书籍ID"
                                     width="120">
                             </el-table-column>
                             <el-table-column
-                                    prop="state"
+                                    prop="bkname"
+                                    label="书籍"
+                                    width="200">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="mid"
+                                    label="操作员ID"
+                                    width="120">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="mname"
+                                    label="操作员姓名"
+                                    width="120">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="timeleft"
+                                    label="剩余时间(天)"
+                                    width="90">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="time"
+                                    label="借阅时间(天)"
+                                    width="90">
+                            </el-table-column>
+                            <el-table-column
                                     label="借阅状态"
                                     width="120">
+                                <template slot-scope="scope">
+                                    <el-tag :type="borrowState(scope.row.state).type" disable-transitions>
+                                        {{borrowState(scope.row.state).state}}
+                                    </el-tag>
+                                </template>
                             </el-table-column>
                             <el-table-column
                                     label="创建时间"
@@ -887,6 +921,10 @@
                                     </el-row>
                                 </template>
                                 <template slot-scope="scope">
+                                    <el-button v-if="scope.row.state == 'BORROW'" type="text"
+                                               @click="bookRestoreHandle(scope.row)" size="small">
+                                        归还
+                                    </el-button>
                                     <el-button type="text" @click="borrowMsgUpdateHandle(scope.row)" size="small">
                                         修改
                                     </el-button>
@@ -945,7 +983,8 @@
                                                 :label="item.name"
                                                 :value="item.uid">
                                             <span style="float: left">{{ item.name }}</span>
-                                            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.uid }}</span>
+                                            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.uid
+                                                }}</span>
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
@@ -964,7 +1003,8 @@
                                                 :label="item.name"
                                                 :value="item.bkid">
                                             <span style="float: left">{{ item.name }}</span>
-                                            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.bkid }}</span>
+                                            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.bkid
+                                                }}</span>
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
@@ -1004,7 +1044,8 @@
                                      ref="borrowUpdateForm" label-position="top"
                                      label-width="90px">
                                 <el-form-item label="备注">
-                                    <el-input type="textarea" resize="vertical" :autosize="{ minRows: 4}" placeholder="请输入备注"
+                                    <el-input type="textarea" resize="vertical" :autosize="{ minRows: 4}"
+                                              placeholder="请输入备注"
                                               v-model="borrowUpdateForm.remark"></el-input>
                                 </el-form-item>
                             </el-form>
@@ -1019,7 +1060,7 @@
                 </el-drawer>
             </div>
         </el-tab-pane>
-        <el-tab-pane class="m-tabs" name="4">
+        <el-tab-pane class="m-tabs" name="reserveM">
             <div slot="label" class="m-tabs-label">
                 <el-row type="flex" align="middle" justify="start">
                     <el-col :span="4">
@@ -1034,6 +1075,118 @@
                 </el-row>
             </div>
             预约管理
+        </el-tab-pane>
+        <el-tab-pane class="m-tabs" name="resourceM">
+            <div slot="label" class="m-tabs-label">
+                <el-row type="flex" align="middle" justify="start">
+                    <el-col :span="4">
+                        <i class="el-icon-files"></i>
+                    </el-col>
+                    <el-col :span="16">
+                        资源管理
+                    </el-col>
+                    <el-col :span="4">
+                        <i class="el-icon-arrow-right"></i>
+                    </el-col>
+                </el-row>
+            </div>
+            <div class="m-manage-resource">
+                <el-tabs v-model="resourceValue" type="border-card" class="m-tab">
+                    <el-tab-pane class="m-tabs m-manage-resource-paper" name="paperM" label="文章管理">
+                        <div :class="{'slide-left':mPaperSlide}">
+                            <div class="m-scrollbar-paper">
+                                <el-row type="flex" justify="space-between" align="middle">
+                                    <el-col class="m-search" :span="20">
+                                        <el-switch
+                                                v-model="editorShow"
+                                                active-text="编辑器"
+                                                active-color="#13ce66"
+                                                inactive-color="#ff4949">
+                                        </el-switch>
+                                        <el-form :inline="true">
+                                        </el-form>
+                                    </el-col>
+                                    <el-popover
+                                            placement="bottom-end"
+                                            width="400"
+                                            trigger="click">
+                                        <div class="m-search-pop">
+
+                                        </div>
+                                        <el-button class="m-search-pop-button" type="text" slot="reference">更多筛选</el-button>
+                                    </el-popover>
+                                </el-row>
+                                <div class="m-scrollbar-form-paging">
+                                    <el-scrollbar ref="paperListScrollbar" class="m-scrollbar">
+                                        <el-table
+                                                v-loading="paperListLoading"
+                                                :data="paperListPaging"
+                                                border
+                                                stripe
+                                                :default-sort="{prop: 'createtime', order: 'descending'}">
+                                            <el-table-column
+                                                    prop="borrowid"
+                                                    label="BorrowID"
+                                                    width="140">
+                                            </el-table-column>
+                                            <el-table-column
+                                                    prop="uid"
+                                                    label="用户ID"
+                                                    width="240">
+                                            </el-table-column>
+                                            <el-table-column
+                                                    prop="timeleft"
+                                                    label="剩余时间(天)"
+                                                    width="150">
+                                            </el-table-column>
+                                            <el-table-column
+                                                    prop="time"
+                                                    label="借阅时间(天)"
+                                                    width="150">
+                                            </el-table-column>
+                                        </el-table>
+                                    </el-scrollbar>
+                                    <el-row class="m-paging" type="flex" align="middle" justify="space-between">
+                                        <el-col :span="16">
+                                            <el-pagination
+                                                    @size-change="paperListSizeChangeHandle"
+                                                    @current-change="paperListCurrentChangeHandle"
+                                                    :current-page="paperListCurrentPage"
+                                                    :page-sizes="paperListPageSizes"
+                                                    :page-size="paperListPageSize"
+                                                    :hide-on-single-page="paperListPageHideWhenSingle"
+                                                    layout="total, sizes, prev, pager, next, jumper"
+                                                    :total="paperListTotalSize">
+                                            </el-pagination>
+                                        </el-col>
+                                        <el-col :span="3">
+                                            <el-button :loading="refreshPaperBTLoading" size="medium"
+                                                       icon="el-icon-refresh" type="text"
+                                                       @click="refreshPaperListHandle"></el-button>
+                                            <el-button size="small" circle icon="el-icon-caret-top"
+                                                       @click="backupHandle('paperListScrollbar')"></el-button>
+                                        </el-col>
+                                    </el-row>
+                                </div>
+                            </div>
+                        </div>
+                        <transition name="el-fade-in-linear">
+                            <div v-show="editorShow">
+                                <el-button plain class="m-aside-button"
+                                           :icon="mPaperSlide?'el-icon-arrow-right':'el-icon-arrow-left'"
+                                           @click="contAsideHandle('mPaperSlide')"></el-button>
+                                <div class="m-edit-cont">
+                                    <div id="toolbar-container"></div>
+                                    <div id="editor-container"></div>
+                                </div>
+                            </div>
+                        </transition>
+                    </el-tab-pane>
+                    <el-tab-pane class="m-tabs" name="imgsM" label="图片管理">
+                        图片管理
+                    </el-tab-pane>
+                </el-tabs>
+            </div>
         </el-tab-pane>
     </el-tabs>
 </div>

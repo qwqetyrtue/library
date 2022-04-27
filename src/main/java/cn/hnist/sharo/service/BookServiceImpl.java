@@ -27,16 +27,6 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public int store(Book book) {
-        return bookMapper.store(book);
-    }
-
-    @Override
-    public int delete(Book book) {
-        return bookMapper.delete(book);
-    }
-
-    @Override
     public JSONObject details(Book book) {
         List<JSONObject> res = bookMapper.details(book);
         if(res!=null && res.size() > 0){

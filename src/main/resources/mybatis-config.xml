@@ -11,6 +11,8 @@
         <typeAlias alias="User" type="cn.hnist.sharo.model.User"/>
         <typeAlias alias="Seat" type="cn.hnist.sharo.model.Seat"/>
         <typeAlias alias="Room" type="cn.hnist.sharo.model.Room"/>
+        <typeAlias alias="Paper" type="cn.hnist.sharo.model.Paper"/>
+        <typeAlias alias="Imgs" type="cn.hnist.sharo.model.Imgs"/>
 
         <!--拓展-->
         <typeAlias alias="Update_pwd" type="cn.hnist.sharo.model.mexpand.Update_pwd"/>

@@ -98,6 +98,91 @@
 |           └── web.xml
 ```
 
+## 功能点
+
+- [ ] 用户
+  - [x] 书籍查询
+  - [x] 借阅单查询
+  - [x] 创建借阅单
+  - [x] 个人资料显示
+  - [x] 修改个人资料
+  - [x] 退出登录
+  - [x] 修改密码
+  - [ ] 座位查询
+  - [ ] 占座
+  - [ ] 预约会议室
+- [ ] 管理员
+  - [x] 个人资料显示
+  - [ ] 修改个人资料
+  - [x] 退出登录
+  - [x] 借阅单列表和查询
+  - [x] 借阅单修改
+  - [ ] 借阅单添加
+  - [x] 书籍列表和查询
+  - [x] 书籍修改
+  - [ ] 书籍添加
+  - [x] 用户列表和查询
+  - [x] 用户信息修改
+  - [ ] 添加用户
+  - [ ] 图片列表和查询
+  - [ ] 图片修改
+  - [ ] 上传图片
+  - [ ] 文章列表和查询
+  - [ ] 文章修改
+
+- [ ] 首页
+
+## 路径映射
+
+```powershell
+	# c.h.s.c.AdminController:
+{POST [/admin/login]}: adminLoginHandle(Admin,HttpSession)
+{POST [/admin/admin]}: adminCheckHandle(HttpSession)
+{POST [/admin/outlogin]}: adminOutLoginHandle(HttpSession)
+{POST [/admin/users]}: adminUsersListHandle(User_filtrate)
+{POST [/admin/users/update]}: adminUsersUpdateHandle(User)
+{POST [/admin/users/delete]}: adminUsersDeleteHandle(User)
+{POST [/admin/books]}: adminBooksListHandle(Book_filtrate)
+{POST [/admin/books/delete]}: adminBooksDeleteHandle(Book)
+{POST [/admin/books/authors]}: adminBooksAuthorHandle(Author)
+{POST [/admin/books/update]}: adminBooksUpdateHandle(Book)
+{POST [/admin/borrows]}: adminBorrowsListHandle(Borrow_filtrate)
+{POST [/admin/borrows/update]}: adminBorrowsUpdateHandle(Borrowrecord)
+{POST [/admin/borrows/finish]}: adminBorrowsFinish(Borrowrecord,HttpSession)
+{POST [/admin/borrows/users]}: adminBorrowUserHandle(User)
+{POST [/admin/borrows/books]}: adminBorrowBookHandle(Book)
+	# c.h.s.c.BookController:
+{POST [/book/filtrate]}: bookAllHandle(Book_filtrate)
+{POST [/book/isbn]}: isbnCheckHandle(JSONObject)
+{POST [/book/details]}: bookDetailsHandle(Book)
+	# c.h.s.c.BorrowController:
+{POST [/borrow/filtrate]}: borrowFiltrateHandle(Borrow_filtrate)
+{POST [/borrow/create]}: borrowCreateHandle(Borrow_create)
+	# c.h.s.c.PageController:
+{ [/user]}: userHandle(HttpSession)
+{ [/login]}: loginHandle(HttpSession)
+{ [/librarian]}: adminLoginHandle(HttpSession)
+{ [/ || /index]}: indexHandle(HttpSession)
+{ [/admin]}: adminHandle(HttpSession)
+	# c.h.s.c.RoomController:
+{POST [/room/room]}: roomMsgHandle(Room)
+{POST [/room/rooms]}: roomsMsgByLocalHandle(Room)
+	# c.h.s.c.SeatController:
+{POST [/seat/room]}: seatMsgByRoomHandle(Room)
+{POST [/seat/seat]}: seatMsgBySeatHandle(Seat)
+	# c.h.s.c.UserController:
+{POST [/user/user]}: userCheckHandle(HttpSession)
+{POST [/user/update]}: userUpdateHandle(User,HttpSession)
+{POST [/user/login]}: userLoginHandle(User,HttpSession)
+{POST [/user/register]}: userRegisterHandle(User_register,HttpSession)
+{POST [/user/outlogin]}: userOutLoginHandle(HttpSession)
+{POST [/user/updatepwd]}: userUpdatePasswordHandle(Update_pwd,HttpSession)
+{POST [/user/sendverifycode]}: userSendVerifyCodeHandle(User_register,HttpSession)
+{POST [/user/checkuid]}: userCheckUidHandle(User,HttpSession)
+```
+
+
+
 ## 问题
 
 ### 1. 解决xml配置文件没有编译到target文件夹的问题
@@ -342,6 +427,20 @@ jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true
 
 ### 14. 偷懒不想写实体类,用`fastjson中的JSONObject`序列化,结果数据库类型为`datetime`的数据返回的时间中间带了个`t`
 
+[java实体类序列化和反序列化的时候时间字段格式化@DateTimeFormat和@JsonFormat](https://blog.csdn.net/weixin_43944305/article/details/111387262)
+
++ 理解(大概,......没搞懂)~update:2022-04-26~
+
+> Serializer和DesSerializer对应的是数据库的读写
+>
+> JsonFormat和DateTimeFormat对应的是返回数据和接收数据
+>
+> + 写了Serializer能让访问数据库时查询到的时间格式化
+>
+> + 写了JsonFormat能让返回给页面的数据时间格式化
+
++ 解决
+
 > 自定义的`ObjectMapper`
 >
 > ```java
@@ -456,9 +555,13 @@ jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true
 
 
 
-### 16. ~~`elmentUI` 中的`el-button`当类型为`text`时不能通过获取点击目标并`disabled`来实现防止重复点击~~`elemntUI`中在`el-table`自定义表头中使用`el-table`无法disabled
+### 16. `elemntUI`中在`el-table`自定义表头中使用`el-table`无法disabled
+
+<font color="gray">~~`elmentUI` 中的`el-button`当类型为`text`时不能通过获取点击目标并`disabled`来实现防止重复点击~~</font> 
 
 [csdn上我的记录](https://blog.csdn.net/reol44/article/details/124053518)
+
+> 最终解决方法: 直接使用`v-loading`,或者`el-button`的`loading`选项,这是`elementUI`提供的加载,在点击按钮后会有加载样式,实用又方便
 
 ### 17. mysql筛选查询时,分页后如何获取总查询条数
 
@@ -598,3 +701,52 @@ function submitSearch(){
 }
 ```
 
+### 20. springMVC项目怎么配置404页面
+
+我的配置
+
++ web.xml
+
+>```xml
+><!-- 配置当出现404代码时跳转到 /404notfound -->
+><error-page>
+>   <error-code>404</error-code>
+>   <location>/404notfound</location>
+></error-page>
+>
+><servlet-mapping>
+>  <servlet-name>springMVC</servlet-name>
+>  <!--
+>      设置springMVC的核心控制器所能处理的请求的请求路径
+>      /所匹配的请求可以是/login或.html或.js或.css方式的请求路径
+>      但是/不能匹配.jsp请求路径的请求
+>  -->
+>  <url-pattern>/*</url-pattern>
+></servlet-mapping>
+>```
+
++ controller: pageController
+
+  在controller里面对 post和get方法的404分别处理,get返回页面,post返回json
+
+```java
+    @RequestMapping(value = "/404notfound",method = RequestMethod.GET)
+    public String notFoundGetHandle(){
+        return "404page";
+    }
+
+    @RequestMapping(value = "/404notfound",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> notFoundPostHandle(){
+        return new Res<>("fail","错误的请求地址 code:404");
+    }
+```
+
+### 21. CDN引入的vue怎么创建和使用模板
+
+[vue CDN 模板挂载操作](https://blog.csdn.net/laow1314/article/details/109323527)
+
+
+### 22. 富文本编辑器 wangEditor
+
+[Document](https://www.wangeditor.com/v5/for-frame.html#%E4%BD%BF%E7%94%A8)

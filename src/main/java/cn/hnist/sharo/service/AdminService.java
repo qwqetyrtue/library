@@ -6,6 +6,7 @@ import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
 import cn.hnist.sharo.model.mexpand.User_filtrate;
 import org.springframework.stereotype.Repository;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Repository("adminService")
@@ -32,8 +33,7 @@ public interface AdminService {
     List<Author> authorsByName(Author author);
 
 
-    // 查询订单
-    // 查询订单
+    // 查询借阅单
     List<?> borrowsFilter(Borrow_filtrate borrow_filtrate);
     // 根据名字查询用户
     List<User> usersByName(User user);
@@ -43,4 +43,6 @@ public interface AdminService {
     boolean borrowDelete(Borrowrecord borrowrecord);
     // 修改借阅单
     boolean borrowUpdate(Borrowrecord borrowrecord);
+    // 归还书籍
+    boolean borrowsFinish(Borrowrecord borrowrecord);
 }

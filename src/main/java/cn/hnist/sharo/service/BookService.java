@@ -13,9 +13,7 @@ public interface BookService {
 
     List<?> filtrate(Book_filtrate book_filtrate);
 
-    int store(Book book);
-
-    int delete(Book book);
-
     JSONObject details(Book book);
+
+
 }

@@ -4,15 +4,17 @@
 
     <resultMap id="BorrowMap" type="JSONObject">
     </resultMap>
+    <resultMap id="BorrowCountResultMap" type="Integer">
+        <result column="total" jdbcType="INTEGER" javaType="Integer"/>
+    </resultMap>
 
     <insert id="create" parameterType="Borrowrecord">
         INSERT INTO borrowrecord (borrowid, uid, createtime, state, bkid, limittime, remark)
         VALUES (#{borrowid}, #{uid}, #{createtime}, #{state}, #{bkid}, #{limittime}, #{remark})
     </insert>
 
-
-    <select id="filtrate" parameterType="Borrow_filtrate" resultMap="BorrowMap,CountResultMap">
-        SELECT SQL_CALC_FOUND_ROWS borrowid, uid, createtime, returntime, state, bkid, limittime, remark, bkname, timeleft, time
+    <select id="filtrate" parameterType="Borrow_filtrate" resultMap="BorrowMap,BorrowCountResultMap">
+        SELECT SQL_CALC_FOUND_ROWS borrowid, uid, createtime, returntime, state, bkid, mid, limittime, remark, bkname, timeleft, time
         FROM borrow_book_user
         WHERE
         uid = #{uid}
@@ -41,15 +43,100 @@
         SELECT FOUND_ROWS() as total;
     </select>
 
-    <update id="update" parameterType="Borrowrecord">
+
+    <!-- ........................借阅管理........................ -->
+    <!-- 筛选查询借阅单 -->
+    <select id="borrowsfilter" resultMap="BorrowMap,BorrowCountResultMap" parameterType="Borrow_filtrate">
+        SELECT SQL_CALC_FOUND_ROWS borrowid, uid, createtime, returntime,mid,mname, state, bkid, limittime, remark, uname, bkname, timeleft, time
+        FROM borrow_book_user
+        WHERE
+        <choose>
+            <when test="borrowid !=null and borrowid !=''">
+                borrowid LIKE CONCAT('%',#{borrowid},'%')
+            </when>
+            <otherwise>
+                borrowid LIKE '%%'
+            </otherwise>
+        </choose>
+
+        <if test="bkid !=null and bkid !=''">
+            AND bkid LIKE CONCAT('%',#{bkid},'%')
+        </if>
+        <if test="uid !=null and uid !=''">
+            AND uid LIKE CONCAT('%',#{uid},'%')
+        </if>
+        <if test="state !=null">
+            AND state=#{state}
+        </if>
+
+        <choose>
+            <when test="order !=null and order!= ''">
+                ORDER BY #{order}
+            </when>
+            <otherwise>
+                ORDER BY borrowid
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="limit !=null and limit &gt; 0 ">
+                LIMIT #{limit}
+            </when>
+            <otherwise>
+                LIMIT 10
+            </otherwise>
+        </choose>
+        <if test="offset !=null and offset &gt;= 0">
+            OFFSET #{offset}
+        </if>;
+        SELECT FOUND_ROWS() as total;
+    </select>
+
+    <!-- 修改借阅单信息 -->
+    <update id="borrowupdate" parameterType="Borrowrecord">
         UPDATE borrowrecord
         <set>
+            <if test="borrowid!=null and borrowid!=''">
+                borrowid=#{borrowid},
+            </if>
+            <if test="uid!=null and uid!=''">
+                uid=#{uid},
+            </if>
+            <if test="bkid!=null and bkid!=''">
+                bkid=#{bkid},
+            </if>
+            <if test="createtime!=null">
+                createtime=#{createtime},
+            </if>
             <if test="returntime!=null">
                 returntime=#{returntime},
             </if>
-            state=#{state},
-            remark=#{remark}
+            <if test="limittime!=null">
+                limittime=#{limittime},
+            </if>
+            <if test="state!=null">
+                state=#{state},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark=#{remark},
+            </if>
+            <if test="mid!=null and mid!=''">
+                mid=#{mid}
+            </if>
         </set>
-        WHERE borrowid = #{borrowid}
+        WHERE borrowid=#{borrowid}
     </update>
+
+    <update id="borrowfinish" parameterType="borrowrecord">
+        UPDATE borrowrecord SET state='return',returntime=#{returntime} WHERE borrowid=#{borrowid}
+    </update>
+
+    <!-- 根据名字查询用户 -->
+    <select id="usersbyname" parameterType="User" resultType="User">
+        SELECT uid,name FROM user WHERE name LIKE CONCAT('%',#{name},'%')
+    </select>
+
+    <!-- 根据名字查询书籍 -->
+    <select id="booksbyname" parameterType="Book" resultType="Book">
+        SELECT bkid,name FROM book WHERE name LIKE CONCAT('%',#{name},'%')
+    </select>
 </mapper>

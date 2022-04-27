@@ -5,32 +5,32 @@
     <title>通知公告</title>
     <!-- 引入样式 -->
     <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/notice.css">
     <!--引入vue-->
     <script src="js/vue/vue.js"></script>
     <!-- 引入组件库 -->
     <script src="js/element-ui@2.15.7/lib/index.js"></script>
     <!--页面js-->
-    <script src="js/profile.js"></script>
+    <script src="js/notice.js"></script>
 </head>
 <body>
 <div class="m-container">
     <div class="m-header">
-        <div class="m-header-bg">
+        <div class="m-header-bg" ref="mHeaderBg">
 
         </div>
         <div class="m-header-nav">
             <el-menu
-                    :default-active="activeIndex"
+                    :default-active="menuIndex"
                     mode="horizontal"
-                    @select="handleSelect"
+                    @select="menuSelectHandle"
                     background-color="#0391DB"
                     text-color="#fff"
                     active-text-color="#035F91">
-                <el-menu-item index="1">首页</el-menu-item>
-                <el-menu-item index="2">图书馆概况</el-menu-item>
-                <el-menu-item index="3">通知公告</el-menu-item>
-                <el-menu-item index="4">活动</el-menu-item>
+                <el-menu-item index="">首页</el-menu-item>
+                <el-menu-item index="profile">图书馆概况</el-menu-item>
+                <el-menu-item index="notice">通知公告</el-menu-item>
+                <el-menu-item index="route">资源</el-menu-item>
             </el-menu>
         </div>
     </div>

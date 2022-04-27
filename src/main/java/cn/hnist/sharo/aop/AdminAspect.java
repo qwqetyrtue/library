@@ -40,12 +40,11 @@ public class AdminAspect {
     }
 
 
-    // 登录用户禁止访问
-    // userLoginHandle
+    // 未登录用户禁止访问
 //    @Pointcut("execution(* cn.hnist.sharo.controller.AdminController.adminUserListHandle(..))")
-//    private void executeNeedogin() {
+//    private void executeNeedLogin() {
 //    }
-//    @Around("executeNotLogin()")
+//    @Around("executeNeedLogin()")
 //    public Object doLoginAround(ProceedingJoinPoint pjp) throws Throwable {
 //        RequestAttributes ra = RequestContextHolder.getRequestAttributes();
 //        ServletRequestAttributes sra = (ServletRequestAttributes) ra;

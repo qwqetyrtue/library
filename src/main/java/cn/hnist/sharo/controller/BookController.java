@@ -43,19 +43,9 @@ public class BookController {
         if(res != null){
             List<JSONObject> books = (List<JSONObject>) res.get(0);
             int total = ((List<Integer>)res.get(1)).get(0);
-            return new ListRes<>("success",books,total);
+            return new ListRes<>("success","查询成功",books,total);
         }
-        return new ListRes<>("fail",null,-1);
-    }
-
-    @RequestMapping(value = "/store", method = RequestMethod.POST)
-    public @ResponseBody
-    Res<String> bookStoreHandle(@RequestBody Book book){
-        int affect = bookService.store(book);
-        if(affect == 1){
-            return new Res<>("success","添加成功");
-        }
-        return new Res<>("fail","添加失败");
+        return new ListRes<>("fail","查询失败",null,-1);
     }
 
     @RequestMapping(value = "/details",method = RequestMethod.POST)

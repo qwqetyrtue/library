@@ -4,9 +4,12 @@
 
     <resultMap id="BookMap" type="JSONObject">
     </resultMap>
+    <resultMap id="BookCountResultMap" type="Integer">
+        <result column="total" jdbcType="INTEGER" javaType="Integer"/>
+    </resultMap>
 
     <!-- 查询书籍 -->
-    <select id="filtrate" parameterType="Book_filtrate" resultMap="BookMap,CountResultMap">
+    <select id="filtrate" parameterType="Book_filtrate" resultMap="BookMap,BookCountResultMap">
         SELECT SQL_CALC_FOUND_ROWS bkname, bkid, atid, atname, state, remark, publisher, storedate, binding, language,
         category
         FROM Book_Author
@@ -76,48 +79,6 @@
         </if>
     </select>
 
-    <!--添加书籍-->
-    <insert id="store" parameterType="Book">
-        INSERT INTO book (bkid, name, atid, price, state, introduce, remark, publisher, storedate, isbn, isbn10, imgs,
-                          publishadd, publishdate, page, category, language, chinaclass, binding)
-        VALUES (#{bkid}, #{name}, #{atid}, #{price}, #{state}, #{introduce}, #{remark}, #{publisher}, #{storedate},
-                #{isbn}, #{isbn10}, #{imgs}, #{publishadd}, #{publishdate}, #{page}, #{category}, #{language},
-                #{chinaclass}, #{binding})
-    </insert>
-
-    <!--修改书籍信息-->
-    <update id="update" parameterType="Book">
-        UPDATE Book
-        <set>
-            <if test="name != null and name != ''">name=#{name},</if>
-            <if test="atid != null and atid != ''">atid=#{atid},</if>
-            <if test="price != null and price &gt; 0">price=#{price},</if>
-            <if test="state !=null">state=#{state},</if>
-            <if test="introduce != null and introduce != ''">introduce=#{introduce},</if>
-            <if test="remark != null and remark != ''">remark=#{remark},</if>
-            <if test="publisher != null and publisher != ''">publisher=#{publisher}</if>
-        </set>
-        WHERE bkid=#{bkid}
-    </update>
-
-    <!--修改bkid和入库时间-->
-    <update id="updatebkid" parameterType="Update_bkid">
-        UPDATE Book
-        <set>
-            <if test="bkid != null and bkid != ''">Bkid=#{bkid}</if>
-            <if test="storedate != null and storedate != ''">storedate</if>
-            <if test="ISBN != null and ISBN != ''">ISBN=#{ISBN}</if>
-        </set>
-        WHERE bkid=#{old_bkid}
-    </update>
-
-    <!--移除书籍记录-->
-    <delete id="delete" parameterType="Book">
-        DELETE
-        FROM book
-        WHERE bkid = #{bkid}
-    </delete>
-
     <!--查询书籍信息-->
     <select id="details" parameterType="Book" resultType="JSONObject">
         SELECT book.*, author.name AS author
@@ -126,4 +87,148 @@
         WHERE bkid = #{bkid}
           AND book.atid = author.atid
     </select>
+
+    <!-- 书籍借出 -->
+    <update id="lend" parameterType="Book">
+        UPDATE book SET state=#{state} WHERE state='STORE' AND bkid=#{bkid};
+    </update>
+
+    <!-- ........................书籍管理........................ -->
+
+    <!-- 筛选查询书籍 -->
+    <select id="booksfilter" resultMap="BookMap,BookCountResultMap" parameterType="Book_filtrate">
+        SELECT SQL_CALC_FOUND_ROWS bkid, bkname, price, state, introduce, remark, publisher, storedate, isbn, isbn10, imgs, publishadd, publishdate, page, category, language, chinaclass, binding, atname, atid
+        FROM book_author
+        WHERE
+        <choose>
+            <when test="bkid !=null and bkid !=''">
+                bkid LIKE CONCAT('%',#{bkid},'%')
+            </when>
+            <otherwise>
+                bkid LIKE '%%'
+            </otherwise>
+        </choose>
+
+        <if test="state !=null">
+            AND state=#{state}
+        </if>
+        <if test="bkname !=null and bkname !=''">
+            AND bkname LIKE CONCAT('%',#{bkname},'%')
+        </if>
+        <if test="atname !=null and atname !=''">
+            AND atname LIKE CONCAT('%',#{atname},'%')
+        </if>
+        <if test="isbn !=null and isbn !=''">
+            AND isbn LIKE CONCAT('%',#{isbn},'%'),
+        </if>
+        <if test="isbn10 !=null and isbn10 !=''">
+            AND isbn10 LIKE CONCAT('%',#{isbn10},'%')
+        </if>
+        <if test="language !=null and language !=''">
+            AND language LIKE CONCAT('%',#{language},'%')
+        </if>
+        <if test="binding !=null and binding !=''">
+            AND binding LIKE CONCAT('%',#{binding},'%')
+        </if>
+        <if test="chinaclass !=null and chinaclass !=''">
+            AND chinaclass LIKE CONCAT('%',#{chinaclass},'%')
+        </if>
+        <choose>
+            <when test="order !=null and order!= ''">
+                ORDER BY #{order}
+            </when>
+            <otherwise>
+                ORDER BY bkid
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="limit !=null and limit &gt; 0 ">
+                LIMIT #{limit}
+            </when>
+            <otherwise>
+                LIMIT 10
+            </otherwise>
+        </choose>
+        <if test="offset !=null and offset &gt;= 0">
+            OFFSET #{offset}
+        </if>;
+        SELECT FOUND_ROWS() as total;
+    </select>
+
+    <!-- 根据名字查询作者 -->
+    <select id="authorsbyname" parameterType="Author" resultType="Author">
+        SELECT DISTINCT name,atid  FROM author WHERE name LIKE CONCAT('%',#{name},'%');
+    </select>
+
+    <!-- 修改书籍信息 -->
+    <update id="booksupdate" parameterType="Book">
+        UPDATE book
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="category!=null and category!=''">
+                category=#{category},
+            </if>
+            <if test="publishadd!=null and publishadd!=''">
+                publishadd=#{publishadd},
+            </if>
+            <if test="page!=null and page &gt;= 1">
+                page=#{page},
+            </if>
+            <if test="state!=null">
+                state=#{state},
+            </if>
+            <if test="isbn10!=null and isbn10!=''">
+                isbn10=#{isbn10},
+            </if>
+            <if test="publishdate!=null">
+                publishdate=#{publishdate},
+            </if>
+            <if test="publisher!=null and publisher!=''">
+                publisher=#{publisher},
+            </if>
+            <if test="price!=null and price &gt;0">
+                price=#{price},
+            </if>
+            <if test="storedate!=null">
+                storedate=#{storedate},
+            </if>
+            <if test="language!=null and language!=''">
+                language=#{language},
+            </if>
+            <if test="bkid!=null and bkid!=''">
+                bkid=#{bkid},
+            </if>
+            <if test="binding!=null and binding!=''">
+                binding=#{binding},
+            </if>
+            <if test="chinaclass!=null and chinaclass!=''">
+                chinaclass=#{chinaclass},
+            </if>
+            <if test="isbn!=null and isbn!=''">
+                isbn=#{isbn},
+            </if>
+            <if test="introduce!=null and introduce!=''">
+                introduce=#{introduce},
+            </if>
+            <if test="atid!=null and atid!=''">
+                atid=#{atid},
+            </if>
+            <if test="imgs!=null and imgs!=''">
+                imgs=#{imgs},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark=#{remark}
+            </if>
+        </set>
+        WHERE bkid=#{bkid}
+    </update>
+
+    <!-- 将书籍移出书库 -->
+    <update id="booksdelete" parameterType="Book">
+        UPDATE book
+        SET state='NOTINCLUDE'
+        WHERE bkid = #{bkid}
+    </update>
 </mapper>

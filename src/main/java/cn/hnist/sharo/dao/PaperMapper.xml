@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hnist.sharo.dao.PaperMapper">
+    <select id="detail" parameterType="Paper" resultType="Paper">
+        SELECT pid, title, content, mid, state, createtime, updatetime, classify, digest
+        FROM paper
+        WHERE pid=#{pid}
+    </select>
+
+    <select id="select" resultType="Paper">
+        SELECT pid, title, mid, state, createtime, updatetime, classify, digest
+        FROM paper
+        ORDER BY createtime DESC
+        LIMIT 10;
+    </select>
+</mapper>
