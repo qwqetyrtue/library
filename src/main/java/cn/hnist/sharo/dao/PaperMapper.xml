@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.hnist.sharo.dao.PaperMapper">
+
+    <resultMap id="PaperMap" type="JSONObject">
+    </resultMap>
+    <resultMap id="PaperCountResultMap" type="Integer">
+        <result column="total" jdbcType="INTEGER" javaType="Integer"/>
+    </resultMap>
+
+
     <select id="detail" parameterType="Paper" resultType="Paper">
         SELECT pid, title, content, mid, state, createtime, updatetime, classify, digest
         FROM paper
@@ -13,4 +21,77 @@
         ORDER BY createtime DESC
         LIMIT 10;
     </select>
+
+
+    <select id="papersfilter" parameterType="Paper_filtrate" resultMap="PaperMap,PaperCountResultMap">
+        SELECT SQL_CALC_FOUND_ROWS pid, title,mid, state, createtime, updatetime, classify, digest
+        FROM paper
+        WHERE
+        <choose>
+            <when test="pid !=null and pid !=''">
+                pid LIKE CONCAT('%',#{pid},'%')
+            </when>
+            <otherwise>
+                pid LIKE '%%'
+            </otherwise>
+        </choose>
+        <if test="mid !=null and mid !=''">
+            AND mid LIKE CONCAT('%',#{mid},'%')
+        </if>
+        <if test="title !=null and title !=''">
+            AND title LIKE CONCAT('%',#{title},'%')
+        </if>
+        <if test="state !=null">
+            AND state=#{state}
+        </if>
+        <if test="classify !=null and classify != ''">
+            AND classify LIKE CONCAT('%',#{classify},'%')
+        </if>
+
+        <choose>
+            <when test="order !=null and order!= ''">
+                ORDER BY #{order}
+            </when>
+            <otherwise>
+                ORDER BY pid
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="limit !=null and limit &gt; 0 ">
+                LIMIT #{limit}
+            </when>
+            <otherwise>
+                LIMIT 10
+            </otherwise>
+        </choose>
+        <if test="offset !=null and offset &gt;= 0">
+            OFFSET #{offset}
+        </if>;
+        SELECT FOUND_ROWS() as total;
+    </select>
+
+    <update id="papersupdate" parameterType="Paper">
+        UPDATE paper
+        <set>
+            <if test="title != null and title != ''">
+                titile=#{title},
+            </if>
+            <if test="content != null and content != ''">
+                content=#{content},
+            </if>
+            <if test="state != null">
+                state=#{state},
+            </if>
+            <if test="updatetime != null">
+                updatetime=#{updatetime},
+            </if>
+            <if test="classify != null and classify != ''">
+                classify=#{classify},
+            </if>
+            <if test="digest != null and digest != ''">
+                digest=#{digest}
+            </if>
+        </set>
+        WHERE pid=#{pid}
+    </update>
 </mapper>

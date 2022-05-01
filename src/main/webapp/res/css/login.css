@@ -47,7 +47,7 @@ div {
 .m-container {
     width: 100vw;
     height: 100vh;
-    background-image: url("../images/login_bg.png");
+    background-image: url("../resources/login_bg.png");
     background-size: 100% auto;
     background-repeat: no-repeat;
     overflow: hidden;

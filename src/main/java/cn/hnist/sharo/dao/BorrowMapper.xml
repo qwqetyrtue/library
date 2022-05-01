@@ -4,6 +4,7 @@
 
     <resultMap id="BorrowMap" type="JSONObject">
     </resultMap>
+
     <resultMap id="BorrowCountResultMap" type="Integer">
         <result column="total" jdbcType="INTEGER" javaType="Integer"/>
     </resultMap>

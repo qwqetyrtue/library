@@ -94,7 +94,7 @@ div {
     width: 100%;
     height: 120px;
     background-size: 100% 100%;
-    background-image: url("../images/foot.png");
+    background-image: url("../resources/foot.png");
     background-repeat: no-repeat;
 }
 

@@ -3,6 +3,7 @@ package cn.hnist.sharo.service;
 import cn.hnist.sharo.model.*;
 import cn.hnist.sharo.model.mexpand.Book_filtrate;
 import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
+import cn.hnist.sharo.model.mexpand.Paper_filtrate;
 import cn.hnist.sharo.model.mexpand.User_filtrate;
 import org.springframework.stereotype.Repository;
 
@@ -45,4 +46,12 @@ public interface AdminService {
     boolean borrowUpdate(Borrowrecord borrowrecord);
     // 归还书籍
     boolean borrowsFinish(Borrowrecord borrowrecord);
+
+
+    // 查询文章
+    List<?> papersFilter(Paper_filtrate paper_filtrate);
+
+    Paper paperDetail(Paper paper);
+
+    boolean paperUpdate(Paper paper);
 }

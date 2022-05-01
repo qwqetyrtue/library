@@ -12,14 +12,14 @@
 
     <!-- 用户登录查询 -->
     <select id="login" parameterType="User" resultType="User">
-        SELECT uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, postcode, bloodtype,logout
+        SELECT uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, postcode, bloodtype,logout,avatar
         FROM user
         WHERE uid = #{uid}
           AND password = #{password}
     </select>
 
     <select id="check" parameterType="User" resultType="User">
-        SELECT uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, postcode, bloodtype
+        SELECT uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, postcode, bloodtype,avatar
         FROM user
         WHERE uid = #{uid}
     </select>
@@ -44,7 +44,8 @@
             <if test="call != null and call != ''">`call`=#{call},</if>
             <if test="name != null and name != ''">`name`=#{name},</if>
             <if test="postcode != null and postcode != ''">postcode=#{postcode},</if>
-            <if test="bloodtype != null">bloodtype=#{bloodtype}</if>
+            <if test="bloodtype != null">bloodtype=#{bloodtype},</if>
+            <if test="avatar !=null and avatar!= ''">avatar=#{avatar}</if>
         </set>
         WHERE uid=#{uid}
     </update>
@@ -133,7 +134,8 @@
             <if test="call != null and call != ''">`call`=#{call},</if>
             <if test="name != null and name != ''">`name`=#{name},</if>
             <if test="postcode != null and postcode != ''">postcode=#{postcode},</if>
-            <if test="bloodtype != null">bloodtype=#{bloodtype}</if>
+            <if test="bloodtype != null">bloodtype=#{bloodtype},</if>
+            <if test="avatar !=null and avatar!= ''">avatar=#{avatar}</if>
         </set>
         WHERE uid=#{uid}
     </update>

@@ -750,3 +750,65 @@ function submitSearch(){
 ### 22. 富文本编辑器 wangEditor
 
 [Document](https://www.wangeditor.com/v5/for-frame.html#%E4%BD%BF%E7%94%A8)
+
++ 怎么自定义菜单项
+
+  [官方案例](https://github.com/wangeditor-team/wangEditor/blob/master/packages/editor/demo/extend-menu.html)
+
+  ```js
+  // 定义菜单类
+  class saveMenu {
+      constructor() {
+          this.title = '保存'
+          this.tag = 'button'
+          this.iconSvg = '图标svg'
+      }
+      getValue(editor) {
+          return null;
+      }
+      isActive(editor) {
+          return false // or false
+      }
+      isDisabled(editor) {
+          return false // or true
+      }
+      exec(editor, value) {
+          app.editorSaveHandle(editor.getHtml());
+      }
+  }
+  // 定义菜单配置方式
+  const saveMenuConf = {
+      key: 'saveMenu',
+      factory() {
+          return new saveMenu()
+      }
+  }
+  // 注册菜单
+  wangEditor.Boot.registerMenu(saveMenuConf)
+  // 使用
+  toolbar = wangEditor.createToolbar({
+      editor: editor,
+      selector: '#toolbar-container',
+      mode: 'default', // 或 'simple' 参考下文
+      config: {
+          insertKeys: {
+              index: 0,
+              keys: ['saveMenu'], // show menu in toolbar
+          }
+      }
+  })
+  ```
+
+### 23. JWT
+
+[JWT详解](https://blog.csdn.net/weixin_45070175/article/details/118559272)
+
+
+### 24. springMvc 文件上传
+
+[Spring MVC，文件上传](https://www.cnblogs.com/nayitian/p/15378399.html)
+
+### 25. cropper.js的使用 图片裁剪
+
+[5分钟搞定图片裁剪，上传](https://cloud.tencent.com/developer/article/1592623?from=15425)
+

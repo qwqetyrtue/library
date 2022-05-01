@@ -1,4 +1,6 @@
 window.onload = function () {
+    let cropper = null;
+
     let app = new Vue({
         el: ".m-container",
         created() {
@@ -20,6 +22,7 @@ window.onload = function () {
                 offset: this.borrowListPageSize * (this.borrowListCurrentPage - 1)
             });
             this.UserPageLoading = false;
+
         },
         data() {
             let validateEmail = (rule, value, callback) => {
@@ -90,6 +93,7 @@ window.onload = function () {
                 userUpdateDialogVisible: false,
                 bookDetailsDialogVisible: false,
                 borrowCreateDialogVisible: false,
+                avatarUploadDialogVisible: false,
                 seatPickDialogVisible: false,
                 // 验证码按钮
                 showSendButton: true,
@@ -369,6 +373,12 @@ window.onload = function () {
             },
             seatPickDialogShowHandle() {
                 this.seatPickDialogVisible = true;
+            },
+            avatarUploadDialogHideHandle() {
+                this.avatarUploadDialogVisible = false;
+            },
+            avatarUploadDialogShowHandle() {
+                this.avatarUploadDialogVisible = true;
             },
             // 提交表单
             userUpdateFormSubmitHandle() {
@@ -1030,7 +1040,135 @@ window.onload = function () {
                 this.$refs[formName].clearValidate();
 
             },
+            // 选择文件
+            selectFileHandle() {
+                if (cropper) {
+                    cropper.destroy()
+                }
+                document.querySelector('.m-file-select-bt').value = null;
+                document.querySelector('.m-file-select-bt').click()
+            },
+            fileSelectChangeHandle(eve) {
+                console.log(eve.target.files)
+                let reader = new FileReader();
+                if (eve.target.files[0]) {
+                    //readAsDataURL方法可以将File对象转化为data:URL格式的字符串（base64编码）
+                    reader.readAsDataURL(eve.target.files[0]);
+                    reader.onload = (e) => {
+                        let dataURL = reader.result;
+                        //将img的src改为刚上传的文件的转换格式
+                        document.querySelector('#image').src = dataURL;
+                        this.initCropper("#image")
+                    }
+                    this.avatarUploadDialogShowHandle();
+                }
+            },
+            initCropper(selectors) {
+                cropper = new Cropper(document.querySelector(selectors), {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    minContainerWidth: 500,
+                    minContainerHeight: 500,
+                    dragMode: 'move',
+                    minCropBoxWidth: 100,
+                    minCropBoxHeight: 100,
+                    movable: true,
+                    preview: [document.querySelector(".m-avatar-preview>div:nth-child(1)"),
+                        document.querySelector(".m-avatar-preview>div:nth-child(2)")],
+                });
+                window.cropper = cropper;
+            },
+            imageRotateHandle(deg) {
+                console.log(1)
+                if (cropper)
+                    cropper.rotate(deg);
+            },
+            imageScaleXHandle() {
+                if (cropper) {
+                    if (cropper.sx == -1) {
+                        cropper.scaleX(1)
+                        cropper.sx = 1;
+                    } else {
+                        cropper.scaleX(-1)
+                        cropper.sx = -1;
+                    }
+                }
 
+            },
+            imageScaleYHandle() {
+                if (cropper) {
+                    if (cropper.sy == -1) {
+                        cropper.scaleY(1)
+                        cropper.sy = 1;
+                    } else {
+                        cropper.scaleY(-1)
+                        cropper.sy = -1;
+                    }
+                }
+            },
+            imageResetHandle() {
+                if (cropper)
+                    cropper.reset();
+            },
+            imageCropHandle() {
+                if (cropper) {
+                    this.getCroppedImage(cropper)
+                        .then(res => {
+                            if (res) {
+                                let data = new FormData();
+                                data.append('name', this.user.uid + '_avatar.jpg');
+                                data.append('img', res);
+                                return $.ajax({
+                                    type: 'post',
+                                    url: this.BASE_URL + 'file/image/upload',
+                                    data: data,
+                                    contentType: false,
+                                    processData: false
+                                })
+                            }
+                        })
+                        .then(r => {
+                            let res = JSON.parse(r);
+                            if(res.res == "success"){
+                                this.user.avatar = res.data.url;
+                                this.$message({
+                                    message: '头像上传成功',
+                                    type: 'success',
+                                    duration: 1500,
+                                    onClose: ()=>{
+                                        this.avatarUploadDialogHideHandle();
+                                    }
+                                });
+                            }else {
+                                this.avatarUploadDialogHideHandle();
+                                this.$message({
+                                    message: "头像上传失败",
+                                    type: 'error',
+                                    showClose: true,
+                                    duration: 0,
+                                });
+                            }
+                        })
+
+                }
+            },
+            getCroppedImage(cropper) {
+                return new Promise((resolve, reject) => {
+                    if (cropper) {
+                        cropper.getCroppedCanvas({
+                            maxWidth: 4096,
+                            maxHeight: 4096,
+                            fillColor: '#fff',
+                            imageSmoothingEnabled: true,
+                            imageSmoothingQuality: 'high',
+                        }).toBlob(blob => {
+                            resolve(blob);
+                        }, 'image/jpeg', 1)
+                    } else {
+                        resolve(null);
+                    }
+                })
+            }
         },
         computed: {
             // 渲染在页面中的分页数据

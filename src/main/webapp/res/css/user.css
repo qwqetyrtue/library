@@ -28,7 +28,7 @@ html body {
 }
 
 body {
-    background-image: url("../images/login_bg.png");
+    background-image: url("../resources/login_bg.png");
     background-size: 100% auto;
     background-repeat: no-repeat;
 }
@@ -47,8 +47,11 @@ div {
 
 
 i {
-    color: var(--blue);
     font-size: 1rem;
+}
+
+.m-header i,.m-base-msg i{
+    color: var(--blue);
 }
 
 .el-tabs__content {
@@ -360,3 +363,117 @@ i {
 .m-pick-show-item:hover {
     color: var(--blue);
 }
+
+.m-avatar-upload {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: row;
+    justify-content: flex-start;
+    align-items: start;
+    padding: 10px;
+}
+.m-avatar-upload-dialog {
+    width: 47vw;
+    height: 60vh;
+    margin: 0 auto;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.m-avatar-upload > div {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+.m-avatar-upload > div:first-child {
+    padding: 10px 20px;
+    border-right: 1px solid var(--gray_bg);
+}
+.m-file-select input[type='file']{
+    display: none;
+}
+.m-file-select {
+    width: 150px;
+    height: 50px;
+}
+.m-user-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    background-position: center;
+    background-color: var(--gray_bg);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.m-avatar-upload > div:nth-child(2) > span {
+    color: var(--gray);
+    font-size: var(--base);
+}
+
+.m-avatar-cropper {
+    height: 500px;
+    width: 500px;
+    border-radius: 10px;
+    border: 1px solid var(--gray_bg);
+    overflow: hidden;
+}
+.m-avatar-result {
+    width: calc(100% - 520px);
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    justify-content: start;
+    align-items: center;
+}
+.m-avatar-preview {
+    width: 100%;
+    height: 50%;
+   display: flex;
+    flex-flow: row;
+    justify-content: space-around;
+    align-items: end;
+    margin-bottom: 40px;
+}
+.m-avatar-preview>div:nth-child(1){
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 1px solid var(--gray_bg);
+    overflow: hidden;
+}
+
+.m-avatar-preview>div:nth-child(2){
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 1px solid var(--gray_bg);
+    overflow: hidden;
+}
+
+.m-avatar-func {
+    width: 100%;
+    height: 30%;
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.m-avatar-func > div {
+    margin: 0 10px;
+}
+
+#image {
+    display: block;
+    /* This rule is very important, please don't ignore this */
+    max-width: 100%;
+}
+

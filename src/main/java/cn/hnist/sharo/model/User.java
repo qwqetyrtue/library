@@ -21,6 +21,7 @@ public class User {
   private String postcode;
   private String bloodtype;
   private java.sql.Date logout;
+  private String avatar;
 
 
   public long getId() {
@@ -144,5 +145,13 @@ public class User {
 
   public void setLogout(Date logout) {
     this.logout = logout;
+  }
+
+  public String getAvatar() {
+    return avatar;
+  }
+
+  public void setAvatar(String avatar) {
+    this.avatar = avatar;
   }
 }

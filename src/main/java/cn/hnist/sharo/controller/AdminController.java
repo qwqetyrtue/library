@@ -1,10 +1,7 @@
 package cn.hnist.sharo.controller;
 
 import cn.hnist.sharo.model.*;
-import cn.hnist.sharo.model.mexpand.Book_filtrate;
-import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
-import cn.hnist.sharo.model.mexpand.Filtrate;
-import cn.hnist.sharo.model.mexpand.User_filtrate;
+import cn.hnist.sharo.model.mexpand.*;
 import cn.hnist.sharo.service.AdminService;
 import cn.hnist.sharo.service.UserService;
 import cn.hnist.sharo.unit.ListRes;
@@ -201,5 +198,38 @@ public class AdminController {
             return new Res<>("success",res);
         }else return new Res<>("fail",null);
     }
+
+
+    /** --------------文章管理-------------- **/
+    // 筛选查询借阅
+    @RequestMapping(value = "/papers", method = RequestMethod.POST)
+    public @ResponseBody
+    ListRes<JSONObject> adminPaperListHandle(@RequestBody Paper_filtrate paper_filtrate) {
+        List<?> res = adminService.papersFilter(paper_filtrate);
+        if(res != null){
+            List<JSONObject> papers = (List<JSONObject>)res.get(0);
+            int total = ((List<Integer>)res.get(1)).get(0);
+            return new ListRes<>("success","查询成功",papers,total);
+        }
+        else return new ListRes<>("fail","查询失败",null,-1);
+    }
+
+    @RequestMapping(value = "/papers/paper",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<Paper> adminPaperHandle(@RequestBody Paper paper){
+        Paper res = adminService.paperDetail(paper);
+        if(res != null){
+            return new Res<>("success",res);
+        }else return new Res<>("fail",null);
+    }
+
+    @RequestMapping(value = "/papers/update",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminPaperUpdateHandle(@RequestBody Paper paper){
+        if(adminService.paperUpdate(paper)){
+            return new Res<>("success","修改成功");
+        }else return new Res<>("fail","修改失败");
+    }
+
 }
 

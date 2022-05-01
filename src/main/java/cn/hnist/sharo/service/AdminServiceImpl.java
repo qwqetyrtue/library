@@ -1,14 +1,12 @@
 package cn.hnist.sharo.service;
 
-import cn.hnist.sharo.dao.AdminMapper;
-import cn.hnist.sharo.dao.BookMapper;
-import cn.hnist.sharo.dao.BorrowMapper;
-import cn.hnist.sharo.dao.UserMapper;
+import cn.hnist.sharo.dao.*;
 import cn.hnist.sharo.model.*;
 import cn.hnist.sharo.model.menum.BookState;
 import cn.hnist.sharo.model.menum.BorrowState;
 import cn.hnist.sharo.model.mexpand.Book_filtrate;
 import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
+import cn.hnist.sharo.model.mexpand.Paper_filtrate;
 import cn.hnist.sharo.model.mexpand.User_filtrate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +31,8 @@ public class AdminServiceImpl implements AdminService{
     BorrowMapper borrowMapper;
     @Resource
     UserMapper userMapper;
+    @Resource
+    PaperMapper paperMapper;
 
 
     @Override
@@ -70,10 +70,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public boolean usersUpdate(User user) {
         int affect = userMapper.usersupdate(user);
-        if(affect == 1){
-            return true;
-        }
-        return false;
+        return affect == 1;
     }
 
     @Override
@@ -100,10 +97,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public boolean booksUpdate(Book book) {
         int affect = bookMapper.booksupdate(book);
-        if(affect == 1){
-            return true;
-        }
-        return false;
+        return affect == 1;
     }
 
     @Override
@@ -182,5 +176,30 @@ public class AdminServiceImpl implements AdminService{
                 return true;
             else throw new RuntimeException("修改书籍状态失败");
         }else throw new RuntimeException("修改借阅单失败");
+    }
+
+    @Override
+    public List<?> papersFilter(Paper_filtrate paper_filtrate) {
+        try {
+            return paperMapper.papersfilter(paper_filtrate);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Paper paperDetail(Paper paper) {
+        List<Paper> res = paperMapper.detail(paper);
+        if(res != null && res.size() == 1){
+            return (Paper) res.toArray()[0];
+        }
+        return null;
+    }
+
+    @Override
+    public boolean paperUpdate(Paper paper) {
+        int res = paperMapper.papersupdate(paper);
+        return res == 1;
     }
 }

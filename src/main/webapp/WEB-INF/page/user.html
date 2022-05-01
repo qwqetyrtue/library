@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>欢迎使用图书馆借阅系统</title>
-    <!-- 引入样式 -->
+    <!-- 引入element样式 -->
     <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
+    <!-- 引入cropper.css -->
+    <link rel="stylesheet" href="js/cropper@1.5.12/cropper.min.css">
     <link rel="stylesheet" href="css/user.css">
     <!--引入vue-->
     <script src="js/vue/vue.js"></script>
@@ -12,6 +14,8 @@
     <script src="js/element-ui@2.15.7/lib/index.js"></script>
     <!-- 引入jquery -->
     <script src="js/jquery/jquery@3.6.0.js"></script>
+    <!-- 引入cropper.js -->
+    <script src="js/cropper@1.5.12/cropper.min.js"></script>
     <!--页面js-->
     <script src="js/user.js"></script>
     <style>
@@ -27,9 +31,10 @@
             {{ PageTitle }}
         </div>
         <div class="m-user">
-            <el-avatar size="medium"
+            <el-avatar v-if="user.avatar" size="medium"
+                       :src="user.avatar"></el-avatar>
+            <el-avatar v-else  size="medium"
                        src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png"></el-avatar>
-
             <el-badge class="m-user-msg" :value="12">
                 <i class="el-icon-message-solid">收件箱</i>
             </el-badge>
@@ -71,7 +76,8 @@
                             </el-collapse-item>
                             <el-collapse-item title="座位查询" name="3">
                                 <div class="m-seat-reserve-cont m-room-pick">
-                                    <el-select v-model="libraryFloorSelect" @change="libraryFloorChangeHandle" placeholder="请选择">
+                                    <el-select v-model="libraryFloorSelect" @change="libraryFloorChangeHandle"
+                                               placeholder="请选择">
                                         <el-option label="一层" value="图书馆一楼"></el-option>
                                         <el-option label="二层" value="图书馆二楼"></el-option>
                                         <el-option label="三层" value="图书馆三楼"></el-option>
@@ -103,7 +109,9 @@
                                             </el-table-column>
                                             <el-table-column width="180" label="" :resizable="false">
                                                 <template slot-scope="scope">
-                                                    <el-button @click="showSeatPickHandle(scope.row)" type="primary">选择座位</el-button>
+                                                    <el-button @click="showSeatPickHandle(scope.row)" type="primary">
+                                                        选择座位
+                                                    </el-button>
                                                 </template>
                                             </el-table-column>
                                         </el-table>
@@ -582,7 +590,21 @@
                     </div>
                 </el-tab-pane>
                 <el-tab-pane class="m-tabs_inline" name="修改头像" label="修改头像">
-
+                    <div class="m-avatar-upload">
+                        <div>
+                            <el-button class="m-file-select" @click="selectFileHandle" type="primary">
+                                <input type="file"
+                                       class="m-file-select-bt"
+                                       accept="image/*"
+                                       @change="fileSelectChangeHandle"></input>
+                                <i class="el-icon-picture">选择本地图片</i>
+                            </el-button>
+                        </div>
+                        <div>
+                            <div class="m-user-avatar" :style="{ backgroundImage: 'url(' + user.avatar + ')' }"></div>
+                            <span>当前头像</span>
+                        </div>
+                    </div>
                 </el-tab-pane>
                 <el-tab-pane class="m-tabs_inline" name="修改密码" label="修改密码">
                     <div class="m-passwd-update">
@@ -920,7 +942,8 @@
             </div>
             <div class="m-seat-show">
                 <div class="m-pick-show-cont" ref="pickShow" v-drag v-zoom v-if="seats!=null && seats.length>0">
-                    <div class="m-pick-show-row" v-if="room.seat!=null" v-for="(v,i) in room.seat" :key="room.roomid+''+i">
+                    <div class="m-pick-show-row" v-if="room.seat!=null" v-for="(v,i) in room.seat"
+                         :key="room.roomid+''+i">
                         <template v-if="v!=null" v-for="(vs,j) in v">
                             <el-tag
                                     v-if="vs-1 >= 0 && seats[vs-1]!=null"
@@ -939,6 +962,36 @@
                             </el-tag>
                         </template>
                     </div>
+                </div>
+            </div>
+        </div>
+    </el-dialog>
+    <el-dialog top="5vh" width="50%" custom-class="m-dialog-radius" title="图片裁剪" center
+               :visible.sync="avatarUploadDialogVisible" :close-on-click-modal="false">
+        <div class="m-avatar-upload-dialog">
+            <div class="m-avatar-cropper">
+                <img id="image">
+            </div>
+            <div class="m-avatar-result">
+                <div class="m-avatar-preview">
+                    <div></div>
+                    <div></div>
+                </div>
+                <div class="m-avatar-func">
+                    <el-button-group>
+                        <el-button type="primary" @click="imageRotateHandle(-45)"
+                                   icon="el-icon-refresh-left">逆时旋转</el-button>
+                        <el-button type="primary" @click="imageRotateHandle(45)"
+                                   icon="el-icon-refresh-right">顺时旋转</el-button>
+                    </el-button-group>
+                    <el-button-group>
+                        <el-button type="primary" icon="el-icon-arrow-up" @click="imageScaleXHandle">上下镜像</el-button>
+                        <el-button type="primary" icon="el-icon-arrow-left" @click="imageScaleYHandle">左右镜像</el-button>
+                    </el-button-group>
+                    <el-button-group>
+                        <el-button type="primary" icon="el-icon-refresh" @click="imageResetHandle">重置裁剪</el-button>
+                        <el-button type="primary" icon="el-icon-check" @click="imageCropHandle">上传头像</el-button>
+                    </el-button-group>
                 </div>
             </div>
         </div>

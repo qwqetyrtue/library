@@ -44,9 +44,8 @@
      -->
     <mvc:resources mapping="/css/**" location="/res/css/"/>
     <mvc:resources mapping="/js/**" location="/res/js/"/>
-    <mvc:resources mapping="/images/**" location="/res/images/"/>
     <mvc:resources mapping="/resources/**" location="/res/resources/"/>
-
+    <mvc:resources mapping="/image/**" location="/WEB-INF/file/image/"/>
 
     <!-- 开启mvc注解驱动 -->
     <mvc:annotation-driven>
@@ -73,6 +72,14 @@
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
+
+    <bean id="multipartResolver" class=
+            "org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--上传文件的最大大小，单位为字节 -->
+        <property name="maxUploadSize" value="17367648787"></property>
+        <!-- 设置请求编码格式-->
+        <property name="defaultEncoding" value="UTF-8" />
+    </bean>
 
     <bean name="customObjectMapper" class="cn.hnist.sharo.unit.CustomObjectMapper"/>
 
