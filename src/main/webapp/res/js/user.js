@@ -1069,6 +1069,8 @@ window.onload = function () {
                     viewMode: 1,
                     minContainerWidth: 500,
                     minContainerHeight: 500,
+                    minCanvasWidth: 200,
+                    minCanvasHeight: 200,
                     dragMode: 'move',
                     minCropBoxWidth: 100,
                     minCropBoxHeight: 100,

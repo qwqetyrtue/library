@@ -73,6 +73,7 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
+    <!-- 上传文件配置 -->
     <bean id="multipartResolver" class=
             "org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <!--上传文件的最大大小，单位为字节 -->
@@ -81,9 +82,12 @@
         <property name="defaultEncoding" value="UTF-8" />
     </bean>
 
+    <!-- 自定义ObjectMapper -->
     <bean name="customObjectMapper" class="cn.hnist.sharo.unit.CustomObjectMapper"/>
+    <!-- 全局错误处理类 -->
+    <bean name="ValidationExceptionHandle" class="cn.hnist.sharo.unit.ValidationExceptionHandle"/>
 
-
+    <!-- AOP -->
     <aop:aspectj-autoproxy proxy-target-class="true" />
     <context:component-scan base-package="cn.hnist.sharo.aop"/>
 </beans>

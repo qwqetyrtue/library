@@ -812,3 +812,6 @@ function submitSearch(){
 
 [5分钟搞定图片裁剪，上传](https://cloud.tencent.com/developer/article/1592623?from=15425)
 
+### 26. 后台数据验证 JSR-303 规范
+
+[Hibernate Validator进行优雅的数据验证](https://blog.csdn.net/meser88/article/details/116450450)

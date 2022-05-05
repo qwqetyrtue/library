@@ -1,19 +1,19 @@
 package cn.hnist.sharo.controller;
 
-import cn.hnist.sharo.model.mexpand.Filtrate;
+
 import cn.hnist.sharo.model.mexpand.Update_pwd;
 import cn.hnist.sharo.model.User;
 import cn.hnist.sharo.model.mexpand.User_register;
 import cn.hnist.sharo.unit.EmailVerifyCode;
 import cn.hnist.sharo.unit.Res;
 import cn.hnist.sharo.service.UserService;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
+
 
 @Controller
 @RequestMapping("/user")
@@ -28,7 +28,7 @@ public class UserController {
     // 提交登录请求
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
-    Res<String> userLoginHandle(@RequestBody User user, HttpSession session) {
+    Res<String> userLoginHandle(@RequestBody @Validated(value = User.LoginVi.class) User user, HttpSession session) {
         User login = userService.login(user);
         if (login != null) {
             System.out.println(login.getLogout());

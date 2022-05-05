@@ -81,6 +81,18 @@ public class AdminController {
         }
     }
 
+    // 添加用户信息
+    @RequestMapping(value = "/users/add", method = RequestMethod.POST)
+    public @ResponseBody
+    Res<User> adminUsersAddHandle(@RequestBody User user){
+        User res = adminService.usersAdd(user);
+        if(res != null){
+            return new Res<>("success",res);
+        }else{
+            return new Res<>("fail",null);
+        }
+    }
+
     // 更新用户信息
     @RequestMapping(value = "/users/delete", method = RequestMethod.POST)
     public @ResponseBody
@@ -115,6 +127,17 @@ public class AdminController {
             return new Res<>("success","修改成功");
         }else{
             return new Res<>("fail","修改失败");
+        }
+    }
+
+    // 添加书籍信息
+    @RequestMapping(value = "/books/include", method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminBooksIncludeHandle(@RequestBody Book book){
+        if(adminService.booksInclude(book)){
+            return new Res<>("success","添加成功");
+        }else{
+            return new Res<>("fail","添加失败");
         }
     }
 

@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 
@@ -62,6 +65,10 @@ public class UserServiceImpl implements UserService {
     public User register(User user) {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         user.setCreatedate(java.sql.Date.valueOf(sf.format(new Date())));
+        if(user.getName() == null || user.getName().equals("")) {
+            LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
+            user.setName("用户#"+create.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+        }
         int affect;
         affect  = userMapper.register(user);
         if (affect == 1) {

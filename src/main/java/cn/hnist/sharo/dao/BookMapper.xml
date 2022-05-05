@@ -90,14 +90,18 @@
 
     <!-- 书籍借出 -->
     <update id="lend" parameterType="Book">
-        UPDATE book SET state=#{state} WHERE state='STORE' AND bkid=#{bkid};
+        UPDATE book
+        SET state=#{state}
+        WHERE state = 'STORE'
+          AND bkid = #{bkid};
     </update>
 
     <!-- ........................书籍管理........................ -->
 
     <!-- 筛选查询书籍 -->
     <select id="booksfilter" resultMap="BookMap,BookCountResultMap" parameterType="Book_filtrate">
-        SELECT SQL_CALC_FOUND_ROWS bkid, bkname, price, state, introduce, remark, publisher, storedate, isbn, isbn10, imgs, publishadd, publishdate, page, category, language, chinaclass, binding, atname, atid
+        SELECT SQL_CALC_FOUND_ROWS bkid, bkname, price, state, introduce, remark, publisher, storedate, isbn, isbn10,
+        imgs, publishadd, publishdate, page, category, language, chinaclass, binding, atname, atid
         FROM book_author
         WHERE
         <choose>
@@ -119,7 +123,7 @@
             AND atname LIKE CONCAT('%',#{atname},'%')
         </if>
         <if test="isbn !=null and isbn !=''">
-            AND isbn LIKE CONCAT('%',#{isbn},'%'),
+            AND isbn LIKE CONCAT('%',#{isbn},'%')
         </if>
         <if test="isbn10 !=null and isbn10 !=''">
             AND isbn10 LIKE CONCAT('%',#{isbn10},'%')
@@ -157,7 +161,9 @@
 
     <!-- 根据名字查询作者 -->
     <select id="authorsbyname" parameterType="Author" resultType="Author">
-        SELECT DISTINCT name,atid  FROM author WHERE name LIKE CONCAT('%',#{name},'%');
+        SELECT DISTINCT name, atid
+        FROM author
+        WHERE name LIKE CONCAT('%', #{name}, '%');
     </select>
 
     <!-- 修改书籍信息 -->
@@ -224,6 +230,15 @@
         </set>
         WHERE bkid=#{bkid}
     </update>
+
+    <!-- 添加书籍信息 -->
+    <insert id="booksinclude" parameterType="Book">
+        INSERT INTO book (bkid, name, atid, price, state, introduce, remark, publisher, storedate, isbn, isbn10,
+                          imgs, publishadd, publishdate, page, category, language, chinaclass, binding)
+        VALUES (#{bkid}, #{name}, #{atid}, #{price}, #{state}, #{introduce}, #{remark}, #{publisher}, #{storedate},
+                #{isbn}, #{isbn10}, #{imgs}, #{publishadd}, #{publishdate}, #{page}, #{category}, #{language},
+                #{chinaclass},#{binding})
+    </insert>
 
     <!-- 将书籍移出书库 -->
     <update id="booksdelete" parameterType="Book">

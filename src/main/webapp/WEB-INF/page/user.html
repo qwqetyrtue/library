@@ -568,7 +568,9 @@
                                         <i class="el-icon-view"></i>
                                         血型
                                     </template>
-                                    {{user.bloodtype + "型"}}
+                                    <template v-if="user.bloodtype">
+                                        {{user.bloodtype + "型"}}
+                                    </template>
                                 </el-descriptions-item>
                                 <el-descriptions-item>
                                     <template slot="label">

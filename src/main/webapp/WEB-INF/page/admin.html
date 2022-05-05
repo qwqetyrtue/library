@@ -254,7 +254,10 @@
                                     align="center">
                                 <template slot="header">
                                     <el-row type="flex" align="middle">
-                                        <el-col :span="24">操作</el-col>
+                                        <el-col :span="12">操作</el-col>
+                                        <el-col :span="12">
+                                            <el-button type="text" icon="el-icon-circle-plus-outline" @click="userMsgAddHandle"></el-button>
+                                        </el-col>
                                     </el-row>
                                 </template>
                                 <template slot-scope="scope">
@@ -299,12 +302,12 @@
                     <div class="m-user-msg-drawer">
                         <el-scrollbar ref="userUpdateScrollbar" class="m-scrollbar">
                             <el-form :model="userUpdateForm" :rules="rules_userUpdateForm"
-                                     ref="userUpdateForm" label-position="left"
+                                     ref="userUpdateForm1" label-position="left"
                                      label-width="90px">
                                 <el-form-item label="账号" prop="id">
                                     <el-input placeholder="请输入账号" v-model="userUpdateForm.uid"></el-input>
                                 </el-form-item>
-                                <el-form-item label="密码" prop="email">
+                                <el-form-item label="密码" prop="password">
                                     <el-input placeholder="请输入密码" v-model="userUpdateForm.password"></el-input>
                                 </el-form-item>
                                 <el-form-item label="昵称" prop="name">
@@ -315,7 +318,7 @@
                                 </el-form-item>
                             </el-form>
                             <el-form :model="userUpdateForm" :rules="rules_userUpdateForm"
-                                     ref="userUpdateForm" label-position="left"
+                                     ref="userUpdateForm2" label-position="left"
                                      label-width="90px">
                                 <el-form-item label="性别">
                                     <el-select v-model="userUpdateForm.gender" placeholder="请选择性别">
@@ -361,6 +364,81 @@
                                 <el-col :span="8">
                                     <el-button type="text" @click="userUpdateFormResetHandle">重置</el-button>
                                     <el-button type="primary" @click="userUpdateFormSubmitHandle">提交修改</el-button>
+                                </el-col>
+                            </el-row>
+                        </el-scrollbar>
+                    </div>
+                </el-drawer>
+                <el-drawer
+                        :wrapper-closable="false"
+                        title="添加用户"
+                        :visible.sync="userAddDrawerVisible"
+                        direction="rtl">
+                    <div class="m-user-msg-drawer">
+                        <el-scrollbar ref="userAddScrollbar" class="m-scrollbar">
+                            <el-form :model="userAddForm" :rules="rules_userAddForm"
+                                     ref="userAddForm1" label-position="left"
+                                     label-width="90px">
+                                <el-form-item label="账号" prop="uid">
+                                    <el-input placeholder="请输入账号" v-model="userAddForm.uid"></el-input>
+                                </el-form-item>
+                                <el-form-item label="密码" prop="password">
+                                    <el-input placeholder="请输入密码" v-model="userAddForm.password"></el-input>
+                                </el-form-item>
+                                <el-form-item label="昵称" prop="name">
+                                    <el-input placeholder="请输入昵称" v-model="userAddForm.name"></el-input>
+                                </el-form-item>
+                                <el-form-item label="邮箱" prop="email">
+                                    <el-input placeholder="请输入邮箱地址" v-model="userAddForm.email"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-form :model="userAddForm" :rules="rules_userAddForm"
+                                     ref="userAddForm2" label-position="left"
+                                     label-width="90px">
+                                <el-form-item label="性别" prop="gender">
+                                    <el-select v-model="userAddForm.gender" placeholder="请选择性别">
+                                        <el-option label="男" value="MALE"></el-option>
+                                        <el-option label="女" value="FEMALE"></el-option>
+                                        <el-option label="隐藏" value="HIDE"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="出生年月" prop="birth">
+                                    <el-date-picker
+                                            v-model="userAddForm.birth"
+                                            value-format="yyyy-MM-dd"
+                                            format="yyyy-MM-dd"
+                                            type="date"
+                                            placeholder="选择日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="居住地" prop="presentadd">
+                                    <el-input type="textarea" resize="none" :rows="2" placeholder="请输入居住地"
+                                              v-model="userAddForm.presentadd"></el-input>
+                                </el-form-item>
+                                <el-form-item label="联系地址" prop="homeadd">
+                                    <el-input type="textarea" resize="none" :rows="2" placeholder="请输入联系地址"
+                                              v-model="userAddForm.homeadd"></el-input>
+                                </el-form-item>
+                                <el-form-item label="电话号码" prop="call">
+                                    <el-input placeholder="请输入电话号码" v-model="userAddForm.call"></el-input>
+                                </el-form-item>
+                                <el-form-item label="邮政编码" prop="postcode">
+                                    <el-input placeholder="请输入邮政编码" v-model="userAddForm.postcode"></el-input>
+                                </el-form-item>
+                                <el-form-item label="血型" prop="bloodtype">
+                                    <el-select v-model="userAddForm.bloodtype" placeholder="请选择血型">
+                                        <el-option label="A型" value="A"></el-option>
+                                        <el-option label="B型" value="B"></el-option>
+                                        <el-option label="AB型" value="AB"></el-option>
+                                        <el-option label="O型" value="O"></el-option>
+                                        <el-option label="RH型" value="RH"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+                            <el-row type="flex" justify="end" align="middle">
+                                <el-col :span="8">
+                                    <el-button type="text" @click="userAddFormResetHandle">重置</el-button>
+                                    <el-button type="primary" @click="userAddFormSubmitHandle">添加用户</el-button>
                                 </el-col>
                             </el-row>
                         </el-scrollbar>
@@ -596,7 +674,10 @@
                                     align="center">
                                 <template slot="header">
                                     <el-row type="flex" align="middle">
-                                        <el-col :span="24">操作</el-col>
+                                        <el-col :span="12">操作</el-col>
+                                        <el-col :span="12">
+                                            <el-button type="text" icon="el-icon-circle-plus-outline" @click="bookMsgAddHandle"></el-button>
+                                        </el-col>
                                     </el-row>
                                 </template>
                                 <template slot-scope="scope">
@@ -709,7 +790,7 @@
                                 <el-form-item label="语言" prop="language">
                                     <el-input placeholder="请输入语言分类" v-model="bookUpdateForm.language"></el-input>
                                 </el-form-item>
-                                <el-form-item label="整个图书分类号" prop="chinaclass">
+                                <el-form-item label="图书分类号" prop="chinaclass">
                                     <el-input placeholder="请输入中国图书分类号" v-model="bookUpdateForm.chinaclass"></el-input>
                                 </el-form-item>
                                 <el-form-item label="装订" prop="binding">
@@ -751,6 +832,135 @@
                                 <el-col :span="8">
                                     <el-button type="text" @click="bookUpdateFormResetHandle">重置</el-button>
                                     <el-button type="primary" @click="bookUpdateFormSubmitHandle">提交修改</el-button>
+                                </el-col>
+                            </el-row>
+                        </el-scrollbar>
+                    </div>
+                </el-drawer>
+                <el-drawer
+                        :wrapper-closable="false"
+                        title="添加书籍"
+                        :visible.sync="bookAddDrawerVisible"
+                        direction="rtl">
+                    <div class="m-book-msg-drawer">
+                        <el-scrollbar ref="bookAddScrollbar" class="m-scrollbar">
+                            <el-form :model="bookAddForm" :rules="rules_bookAddForm"
+                                     ref="bookAddForm1" label-position="left"
+                                     label-width="90px">
+                                <el-form-item label="书籍id" prop="bkid">
+                                    <el-input placeholder="请输入书籍id" v-model="bookAddForm.bkid"></el-input>
+                                </el-form-item>
+                                <el-form-item label="书名" prop="name">
+                                    <el-input placeholder="请输入书名" v-model="bookAddForm.name"></el-input>
+                                </el-form-item>
+                                <el-form-item label="作者" prop="atid">
+                                    <el-select
+                                            v-model="bookAddForm.author"
+                                            filterable
+                                            remote
+                                            reserve-keyword
+                                            placeholder="请输入关键词"
+                                            :remote-method="addBookAuthorRemoteHandle"
+                                            :loading="addBookAuthorSelectLoading">
+                                        <el-option
+                                                v-for="item in addBookAuthorSelectOption"
+                                                :key="item.atid"
+                                                :label="item.name"
+                                                :value="item.atid">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="价格" prop="price">
+                                    <el-input placeholder="请输入价格" v-model="bookAddForm.price"></el-input>
+                                </el-form-item>
+                                <el-form-item label="出版社" prop="publisher">
+                                    <el-input placeholder="请输入出版社" v-model="bookAddForm.publisher"></el-input>
+                                </el-form-item>
+                                <el-form-item label="状态" prop="state">
+                                    <el-select v-model="bookAddForm.state" placeholder="请选择状态">
+                                        <el-option label="库中" value="STORE"></el-option>
+                                        <el-option label="未入库" value="NOTINCLUDE"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="入库时间" prop="storedate">
+                                    <el-date-picker
+                                            v-show="bookAddForm.state == 'STORE'"
+                                            v-model="bookAddForm.storedate"
+                                            value-format="yyyy-MM-dd"
+                                            format="yyyy-MM-dd"
+                                            type="date"
+                                            placeholder="选择日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="ISBN" prop="isbn">
+                                    <el-input placeholder="请输入ISBN码" v-model="bookAddForm.isbn"></el-input>
+                                </el-form-item>
+                                <el-form-item label="ISBN(10)" prop="isbn10">
+                                    <el-input placeholder="请输入ISBN(10位)码" v-model="bookAddForm.isbn10"></el-input>
+                                </el-form-item>
+                                <el-form-item label="出版地址" prop="publishadd">
+                                    <el-input type="textarea" resize="none" :rows="2" placeholder="请输入出版地址"
+                                              v-model="bookAddForm.publishadd"></el-input>
+                                </el-form-item>
+                                <el-form-item label="出版时间" prop="publishdate">
+                                    <el-date-picker
+                                            v-model="bookAddForm.publishdate"
+                                            value-format="yyyy-MM-dd"
+                                            format="yyyy-MM-dd"
+                                            type="date"
+                                            placeholder="选择日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="页数" prop="page">
+                                    <el-input placeholder="请输入页数" v-model="bookAddForm.page"></el-input>
+                                </el-form-item>
+                                <el-form-item label="分类" prop="category">
+                                    <el-input placeholder="请输入分类" v-model="bookAddForm.category"></el-input>
+                                </el-form-item>
+                                <el-form-item label="语言" prop="language">
+                                    <el-input placeholder="请输入语言分类" v-model="bookAddForm.language"></el-input>
+                                </el-form-item>
+                                <el-form-item label="图书分类号" prop="chinaclass">
+                                    <el-input placeholder="请输入中国图书分类号" v-model="bookAddForm.chinaclass"></el-input>
+                                </el-form-item>
+                                <el-form-item label="装订" prop="binding">
+                                    <el-input placeholder="请输入装订" v-model="bookAddForm.binding"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-form :model="bookAddForm" :rules="rules_bookAddForm"
+                                     ref="bookAddForm" label-position="top"
+                                     label-width="90px">
+                                <el-form-item label="图书简介">
+                                    <el-input type="textarea" resize="vertical" :autosize="true" placeholder="请输入图书简介"
+                                              v-model="bookAddForm.introduce"></el-input>
+                                </el-form-item>
+                                <el-form-item label="备注">
+                                    <el-input type="textarea" resize="vertical" :rows="5" :autosize="{ minRows: 5,}"
+                                              placeholder="请输入备注"
+                                              v-model="bookAddForm.remark"></el-input>
+                                </el-form-item>
+                                <el-form-item label="图片">
+                                    <el-row class="m-book-msg-drawer-imgs" v-for="(v,i) in bookAddForm.imgsArr"
+                                            :key="i" type="flex" align="middle" justify="space-between">
+                                        <el-col :span="18">
+                                            <el-input placeholder="请输入图片链接"
+                                                      v-model="bookAddForm.imgsArr[i]"></el-input>
+                                        </el-col>
+                                        <el-col :offset="1" :span="5">
+                                            <el-button @click.prevent="removeAddBookImgsHandle(i)">删除图片</el-button>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-button @click="addAddBookImgsHandle">添加图片</el-button>
+                                        <el-button @click="resetAddBookImgsHandle">重置</el-button>
+                                    </el-row>
+                                </el-form-item>
+                                <!--图片-->
+                            </el-form>
+                            <el-row type="flex" justify="end" align="middle">
+                                <el-col :span="8">
+                                    <el-button type="text" @click="bookAddFormResetHandle">重置</el-button>
+                                    <el-button type="primary" @click="bookAddFormSubmitHandle">添加书籍</el-button>
                                 </el-col>
                             </el-row>
                         </el-scrollbar>

@@ -22,6 +22,8 @@ public interface AdminService {
     String usersDelete(User user);
     // 更新用户信息
     boolean usersUpdate(User user);
+    // 添加用户信息
+    User usersAdd(User user);
 
 
     // 查询书籍
@@ -30,6 +32,8 @@ public interface AdminService {
     String booksDelete(Book book);
     // 更新书籍信息
     boolean booksUpdate(Book book);
+    // 添加书籍信息
+    boolean booksInclude(Book book);
     // 根据名字模糊查询作者
     List<Author> authorsByName(Author author);
 
@@ -54,4 +58,6 @@ public interface AdminService {
     Paper paperDetail(Paper paper);
 
     boolean paperUpdate(Paper paper);
+
+
 }

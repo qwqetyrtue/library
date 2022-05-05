@@ -27,8 +27,11 @@ public interface BookMapper {
     List<?> booksfilter(Book_filtrate book_filtrate);
     // 更新书籍
     int booksupdate(Book book);
+    // 添加书籍
+    int booksinclude(Book book);
     // 移除书籍
     int booksdelete(Book book);
     // 根据作者名称查询作者
     List<Author> authorsbyname(Author author);
+
 }

@@ -74,6 +74,19 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
+    public User usersAdd(User user) {
+        if(user.getName() == null || user.getName().equals("")) {
+            LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
+            Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            user.setName("用户#"+create.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+        }
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        user.setCreatedate(java.sql.Date.valueOf(sf.format(new Date())));
+        int affect = userMapper.usersadd(user);
+        return affect == 1?user:null;
+    }
+
+    @Override
     public List<?> booksFilter(Book_filtrate book_filtrate) {
         try {
             return bookMapper.booksfilter(book_filtrate);
@@ -97,6 +110,12 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public boolean booksUpdate(Book book) {
         int affect = bookMapper.booksupdate(book);
+        return affect == 1;
+    }
+
+    @Override
+    public boolean booksInclude(Book book) {
+        int affect = bookMapper.booksinclude(book);
         return affect == 1;
     }
 

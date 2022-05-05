@@ -12,14 +12,37 @@
 
     <!-- 用户登录查询 -->
     <select id="login" parameterType="User" resultType="User">
-        SELECT uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, postcode, bloodtype,logout,avatar
+        SELECT uid,
+               gender,
+               birth,
+               homeadd,
+               presentadd,
+               email,
+               `Call`,
+               name,
+               createdate,
+               postcode,
+               bloodtype,
+               logout,
+               avatar
         FROM user
         WHERE uid = #{uid}
           AND password = #{password}
     </select>
 
     <select id="check" parameterType="User" resultType="User">
-        SELECT uid, gender, birth, homeadd, presentadd, email, `call`, name, createdate, postcode, bloodtype,avatar
+        SELECT uid,
+               gender,
+               birth,
+               homeadd,
+               presentadd,
+               email,
+               `Call`,
+               name,
+               createdate,
+               postcode,
+               bloodtype,
+               avatar
         FROM user
         WHERE uid = #{uid}
     </select>
@@ -148,4 +171,9 @@
     </update>
 
 
+    <insert id="usersadd" parameterType="User">
+        INSERT INTO user (uid, gender, birth, homeadd, presentadd, email, `Call`, name, createdate, password,
+                          postcode, bloodtype)
+        VALUES (#{uid},#{gender},#{birth},#{homeadd},#{presentadd},#{email},#{call},#{name},#{createdate},#{password},#{postcode},#{bloodtype})
+    </insert>
 </mapper>
