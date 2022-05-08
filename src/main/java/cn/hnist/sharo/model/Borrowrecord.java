@@ -15,8 +15,7 @@ public class Borrowrecord {
   private java.sql.Timestamp returntime;
   private BorrowState state;
   private String bkid;
-  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-  private java.sql.Timestamp limittime;
+  private int time;
   private String remark;
   private String mid;
 
@@ -83,16 +82,6 @@ public class Borrowrecord {
     this.bkid = bkid;
   }
 
-
-  public java.sql.Timestamp getLimittime() {
-    return limittime;
-  }
-
-  public void setLimittime(java.sql.Timestamp limittime) {
-    this.limittime = limittime;
-  }
-
-
   public String getRemark() {
     return remark;
   }
@@ -107,5 +96,13 @@ public class Borrowrecord {
 
   public void setMid(String mid) {
     this.mid = mid;
+  }
+
+  public int getTime() {
+    return time;
+  }
+
+  public void setTime(int time) {
+    this.time = time;
   }
 }

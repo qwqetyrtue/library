@@ -2,10 +2,17 @@ package cn.hnist.sharo.model.mexpand;
 
 import cn.hnist.sharo.model.User;
 
+import javax.validation.constraints.NotBlank;
+
+
 public class Update_pwd {
+    @NotBlank(message = "uid不能为空")
     private String uid;
+    @NotBlank(message = "新密码不能为空")
     private String password;
+    @NotBlank(message = "旧密码不能为空")
     private String oldPassword;
+    @NotBlank(message = "验证码不能为空")
     private String verifyCode;
 
     public User getUser() {

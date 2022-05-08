@@ -489,7 +489,7 @@ window.onload = function () {
                             res = {state: "已归还", type: "success"};
                             break;
                         case "OVERDUE":
-                            res = {state: "预期", type: "warning"};
+                            res = {state: "逾期", type: "warning"};
                             break;
                         case "ACCIDENT":
                             res = {state: "事故", type: "danger"};

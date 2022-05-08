@@ -18,6 +18,9 @@ public class Borrow_filtrate {
     private java.sql.Timestamp limittime;
     private java.sql.Timestamp limittime_upper;
     private java.sql.Timestamp limittime_lower;
+    private int time;
+    private int time_upper;
+    private int time_lower;
     private String mid;
     private boolean remark;
 
@@ -167,5 +170,29 @@ public class Borrow_filtrate {
 
     public void setRemark(boolean remark) {
         this.remark = remark;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public int getTime_upper() {
+        return time_upper;
+    }
+
+    public void setTime_upper(int time_upper) {
+        this.time_upper = time_upper;
+    }
+
+    public int getTime_lower() {
+        return time_lower;
+    }
+
+    public void setTime_lower(int time_lower) {
+        this.time_lower = time_lower;
     }
 }

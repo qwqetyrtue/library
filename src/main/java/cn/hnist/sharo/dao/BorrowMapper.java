@@ -30,4 +30,5 @@ public interface BorrowMapper {
     int borrowdelete(Borrowrecord borrowrecord);
     // 更新借阅单
     int borrowupdate(Borrowrecord borrowrecord);
+
 }

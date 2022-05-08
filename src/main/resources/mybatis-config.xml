@@ -19,7 +19,6 @@
         <typeAlias alias="Update_bkid" type="cn.hnist.sharo.model.mexpand.Update_bkid"/>
         <typeAlias alias="Filtrate" type="cn.hnist.sharo.model.mexpand.Filtrate"/>
         <typeAlias alias="Book_filtrate" type="cn.hnist.sharo.model.mexpand.Book_filtrate"/>
-        <typeAlias alias="Borrow_create" type="cn.hnist.sharo.model.mexpand.Borrow_create"/>
         <typeAlias alias="User_register" type="cn.hnist.sharo.model.mexpand.User_register"/>
         <typeAlias alias="User_filtrate" type="cn.hnist.sharo.model.mexpand.User_filtrate"/>
         <typeAlias alias="Borrow_filtrate" type="cn.hnist.sharo.model.mexpand.Borrow_filtrate"/>

@@ -1268,6 +1268,110 @@
                         </el-scrollbar>
                     </div>
                 </el-drawer>
+                <el-drawer
+                        :wrapper-closable="false"
+                        title="用户信息"
+                        :visible.sync="borrowMsgDrawerVisible"
+                        direction="rtl"
+                        :before-close="borrowMsgBeforeCloseHandle">
+                    <div class="m-borrow-msg-drawer">
+                        <el-scrollbar ref="borrowUpdateScrollbar" class="m-scrollbar">
+                            <el-form :model="borrowUpdateForm" :rules="rules_borrowUpdateForm"
+                                     ref="borrowUpdateForm" label-position="left"
+                                     label-width="90px">
+                                <el-form-item label="借阅号" prop="borrowid">
+                                    <el-input placeholder="请输入借阅" v-model="borrowUpdateForm.borrowid"></el-input>
+                                </el-form-item>
+                                <el-form-item label="借阅人" prop="email">
+                                    <el-select
+                                            v-model="borrowUpdateForm.user"
+                                            filterable
+                                            remote
+                                            reserve-keyword
+                                            placeholder="请输入关键词"
+                                            :remote-method="borrowUserRemoteHandle"
+                                            :loading="borrowUserSelectLoading">
+                                        <el-option
+                                                v-for="item in borrowUserSelectOption"
+                                                :key="item.uid"
+                                                :label="item.name"
+                                                :value="item.uid">
+                                            <span style="float: left">{{ item.name }}</span>
+                                            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.uid
+                                                }}</span>
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="借阅书籍" prop="name">
+                                    <el-select
+                                            v-model="borrowUpdateForm.book"
+                                            filterable
+                                            remote
+                                            reserve-keyword
+                                            placeholder="请输入关键词"
+                                            :remote-method="borrowBookRemoteHandle"
+                                            :loading="borrowBookSelectLoading">
+                                        <el-option
+                                                v-for="item in borrowBookSelectOption"
+                                                :key="item.bkid"
+                                                :label="item.name"
+                                                :value="item.bkid">
+                                            <span style="float: left">{{ item.name }}</span>
+                                            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.bkid
+                                                }}</span>
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+                            <el-form :model="borrowUpdateForm" :rules="rules_borrowUpdateForm"
+                                     ref="borrowUpdateForm" label-position="left"
+                                     label-width="90px">
+                                <el-form-item label="创建时间">
+                                    <el-date-picker
+                                            placeholder="创建时间"
+                                            type="datetime"
+                                            format="yyyy-MM-dd HH:mm:ss"
+                                            value-format="yyyy-MM-dd HH:mm:ss"
+                                            v-model="borrowUpdateForm.createtime">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="归还时间">
+                                    <el-date-picker
+                                            placeholder="归还时间"
+                                            type="datetime"
+                                            format="yyyy-MM-dd HH:mm:ss"
+                                            value-format="yyyy-MM-dd HH:mm:ss"
+                                            v-model="borrowUpdateForm.returntime">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="归还期限">
+                                    <el-date-picker
+                                            placeholder="归还期限"
+                                            type="datetime"
+                                            format="yyyy-MM-dd HH:mm:ss"
+                                            value-format="yyyy-MM-dd HH:mm:ss"
+                                            v-model="borrowUpdateForm.limittime">
+                                    </el-date-picker>
+                                </el-form-item>
+                            </el-form>
+                            <el-form :model="borrowUpdateForm" :rules="rules_borrowUpdateForm"
+                                     ref="borrowUpdateForm" label-position="top"
+                                     label-width="90px">
+                                <el-form-item label="备注">
+                                    <el-input type="textarea" resize="vertical" :autosize="{ minRows: 4}"
+                                              placeholder="请输入备注"
+                                              v-model="borrowUpdateForm.remark"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-row type="flex" justify="end" align="middle">
+                                <el-col :span="8">
+                                    <el-button type="text" @click="borrowUpdateFormResetHandle">重置</el-button>
+                                    <el-button type="primary" @click="borrowUpdateFormSubmitHandle">提交修改</el-button>
+                                </el-col>
+                            </el-row>
+                        </el-scrollbar>
+                    </div>
+                </el-drawer>
             </div>
         </el-tab-pane>
         <el-tab-pane class="m-tabs" name="reserveM">

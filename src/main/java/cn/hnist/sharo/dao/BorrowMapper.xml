@@ -10,8 +10,8 @@
     </resultMap>
 
     <insert id="create" parameterType="Borrowrecord">
-        INSERT INTO borrowrecord (borrowid, uid, createtime, state, bkid, limittime, remark)
-        VALUES (#{borrowid}, #{uid}, #{createtime}, #{state}, #{bkid}, #{limittime}, #{remark})
+        INSERT INTO borrowrecord (borrowid, uid, createtime, state, bkid, time, remark)
+        VALUES (#{borrowid}, #{uid}, #{createtime}, #{state}, #{bkid}, #{time}, #{remark})
     </insert>
 
     <select id="filtrate" parameterType="Borrow_filtrate" resultMap="BorrowMap,BorrowCountResultMap">
@@ -111,8 +111,8 @@
             <if test="returntime!=null">
                 returntime=#{returntime},
             </if>
-            <if test="limittime!=null">
-                limittime=#{limittime},
+            <if test="time!=null and time &gt; 0 ">
+                time=#{time},
             </if>
             <if test="state!=null">
                 state=#{state},
@@ -127,9 +127,6 @@
         WHERE borrowid=#{borrowid}
     </update>
 
-    <update id="borrowfinish" parameterType="borrowrecord">
-        UPDATE borrowrecord SET state='return',returntime=#{returntime} WHERE borrowid=#{borrowid}
-    </update>
 
     <!-- 根据名字查询用户 -->
     <select id="usersbyname" parameterType="User" resultType="User">

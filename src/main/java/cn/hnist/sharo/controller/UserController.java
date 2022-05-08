@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 
 @Controller
@@ -52,10 +53,15 @@ public class UserController {
     // 修改密码
     @RequestMapping(value = "/updatepwd", method = RequestMethod.POST)
     public @ResponseBody
-    Res<String> userUpdatePasswordHandle(@RequestBody Update_pwd update_pwd, HttpSession session) {
-        String verifyCode = session.getAttribute("verifyCode").toString();
-        if(verifyCode == null) return new Res<String>("fail", "未发送验证码");
-        else if(!verifyCode.equals(update_pwd.getVerifyCode()))
+    Res<String> userUpdatePasswordHandle(@Valid @RequestBody Update_pwd update_pwd, HttpSession session) {
+        String verifyCode;
+        try{
+            verifyCode = session.getAttribute("verifyCode").toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Res<String>("fail", "未发送验证码");
+        }
+        if(!verifyCode.equals(update_pwd.getVerifyCode()))
             return new Res<>("fail", "验证码错误");
         if (userService.updatepwd(update_pwd))
             return new Res<>("success", "修改成功");
@@ -102,9 +108,15 @@ public class UserController {
     // 注册用户
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
-    Res<String> userRegisterHandle(@RequestBody User_register user_register, HttpSession session) {
-        String verifyCode = session.getAttribute("verifyCode").toString();
-        String email = session.getAttribute("email").toString();
+    Res<String> userRegisterHandle(@Valid @RequestBody User_register user_register, HttpSession session) {
+        String verifyCode,email;
+        try {
+            verifyCode = session.getAttribute("verifyCode").toString();
+            email = session.getAttribute("email").toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Res<>("fail", "未发送验证码");
+        }
         if (!user_register.getEmail().equals(email) || !user_register.getVerifyCode().equalsIgnoreCase(verifyCode))
             return new Res<>("fail", "注册失败,邮箱错误或验证码错误");
         User user = new User();

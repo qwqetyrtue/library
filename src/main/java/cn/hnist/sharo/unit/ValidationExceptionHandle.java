@@ -15,6 +15,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 
 @RestControllerAdvice
 public class ValidationExceptionHandle {
@@ -25,22 +26,21 @@ public class ValidationExceptionHandle {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Res<String> handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         // 错误信息校验
-        Boolean fieldErrorUnobtainable = (e == null || e.getBindingResult() == null
-                || CollectionUtils.isEmpty(e.getBindingResult().getAllErrors()) || e.getBindingResult().getAllErrors().get(0) == null);
+        boolean fieldErrorUnobtainable = e == null || CollectionUtils.isEmpty(e.getBindingResult().getAllErrors()) || e.getBindingResult().getAllErrors().get(0) == null;
         if (fieldErrorUnobtainable) {
-            return new Res<>("fail",null);
+            return new Res<>("fail","未知错误");
         }
 
         // 获取错误信息
         List<ObjectError> fieldError = e.getBindingResult().getAllErrors();
-        StringBuilder stringBuilder = new StringBuilder();
+        StringJoiner stringJoiner = new StringJoiner(",");
 
         for(ObjectError each : fieldError){
-            stringBuilder.append(each.getDefaultMessage());
+            stringJoiner.add(each.getDefaultMessage());
         }
 
         // 返回
-        return new Res<>("fail",stringBuilder.toString());
+        return new Res<>("fail",stringJoiner.toString());
     }
 
 

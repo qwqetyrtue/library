@@ -1,13 +1,10 @@
 package cn.hnist.sharo.controller;
 
 import cn.hnist.sharo.model.Borrowrecord;
-import cn.hnist.sharo.model.User;
-import cn.hnist.sharo.model.mexpand.Borrow_create;
 import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
 import cn.hnist.sharo.service.BorrowService;
 import cn.hnist.sharo.unit.ListRes;
 import cn.hnist.sharo.unit.Res;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,9 +27,9 @@ public class BorrowController {
 
     @RequestMapping(value = "/create",method = RequestMethod.POST)
     public @ResponseBody
-    Res<String> borrowCreateHandle(@RequestBody Borrow_create borrow_create){
+    Res<String> borrowCreateHandle(@RequestBody Borrowrecord borrowrecord){
         try{
-            if(borrowService.create(borrow_create)){
+            if(borrowService.create(borrowrecord)){
                 return new Res<>("success","借阅成功");
             }
         }catch (Exception e){

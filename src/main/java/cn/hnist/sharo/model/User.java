@@ -4,7 +4,7 @@ package cn.hnist.sharo.model;
 import cn.hnist.sharo.model.menum.Gender;
 
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.sql.Date;
 
@@ -12,13 +12,10 @@ public class User {
 
   // 登录验证组
   public interface LoginVi {};
-  // 注册验证组
-  public interface RegisterVi {};
 
   private long id;
 
-  @Pattern(regexp = "/^[a-zA-Z][a-zA-Z0-9_]{8,10}$/",groups = RegisterVi.class)
-  @NotNull(groups = {LoginVi.class},message = "登录账号不能为空")
+  @NotBlank(groups = {LoginVi.class},message = "登录账号不能为空")
   private String uid;
 
   private Gender gender;
@@ -29,7 +26,6 @@ public class User {
 
   private String presentadd;
 
-  @Pattern(regexp = "/^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$/",groups = RegisterVi.class)
   private String email;
 
   private String call;
@@ -38,9 +34,7 @@ public class User {
 
   private java.sql.Date createdate;
 
-
-  @Pattern(regexp = "/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,10}$/",groups = RegisterVi.class)
-  @NotNull(groups = {LoginVi.class},message = "登录密码不能为空")
+  @NotBlank(groups = {LoginVi.class},message = "登录密码不能为空")
   private String password;
 
   private String postcode;

@@ -41,6 +41,12 @@ public class FileController {
         String dir = req.getServletContext().getRealPath("/WEB-INF/file/image");
         try {
             String fileName = fileService.avatarUpdate(name, file,dir,uid);
+
+            // 更新session
+            User u = new User();
+            u.setUid(uid);
+            session.setAttribute("user",userService.checkMsg(u));
+
             JSONObject res = new JSONObject();
             res.put("name",fileName);
             res.put("url","image/"+fileName);

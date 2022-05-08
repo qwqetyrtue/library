@@ -141,7 +141,7 @@ public class AdminController {
         }
     }
 
-    // 更新书籍信息
+    // 删除书籍
     @RequestMapping(value = "/books/delete", method = RequestMethod.POST)
     public @ResponseBody
     Res<String> adminBooksDeleteHandle(@RequestBody Book book){
@@ -197,7 +197,12 @@ public class AdminController {
             if(adminService.borrowsFinish(borrowrecord))
                 return new Res<>("success","归还成功");
         }catch (Exception e){
-            return new Res<>("fail",e.getMessage());
+            if(e.getClass().equals(RuntimeException.class))
+                return new Res<>("fail",e.getMessage());
+            else {
+                e.printStackTrace();
+                return new Res<>("fail","未知错误");
+            }
         }
         return new Res<>("fail","归还失败");
     }
