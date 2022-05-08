@@ -3,10 +3,16 @@ package cn.hnist.sharo.model;
 
 import cn.hnist.sharo.model.menum.Gender;
 
+import javax.validation.constraints.NotBlank;
+
 public class Admin {
 
+  public interface LoginVi {};
+
   private long id;
+  @NotBlank(message = "管理员账户不能为空",groups = {LoginVi.class})
   private String mid;
+  @NotBlank(message = "密码不能为空",groups = {LoginVi.class})
   private String password;
   private String name;
   private String email;

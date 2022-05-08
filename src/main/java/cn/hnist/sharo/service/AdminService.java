@@ -5,6 +5,7 @@ import cn.hnist.sharo.model.mexpand.Book_filtrate;
 import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
 import cn.hnist.sharo.model.mexpand.Paper_filtrate;
 import cn.hnist.sharo.model.mexpand.User_filtrate;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Repository;
 
 import javax.servlet.http.HttpSession;
@@ -44,12 +45,12 @@ public interface AdminService {
     List<User> usersByName(User user);
     // 根据名字查询书籍
     List<Book> booksByName(Book book);
-    // 删除借阅单
-    boolean borrowDelete(Borrowrecord borrowrecord);
     // 修改借阅单
     boolean borrowUpdate(Borrowrecord borrowrecord);
     // 归还书籍
-    boolean borrowsFinish(Borrowrecord borrowrecord);
+    boolean borrowFinish(Borrowrecord borrowrecord);
+    // 添加借阅单
+    JSONObject borrowCreate(Borrowrecord borrowrecord);
 
 
     // 查询文章

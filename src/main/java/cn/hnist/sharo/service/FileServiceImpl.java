@@ -69,7 +69,7 @@ public class FileServiceImpl implements FileService{
         // 重命名
         Instant instant = Instant.now();
         // 获取秒级时间戳
-        long currentMilli = instant.toEpochMilli();
+        long currentMilli = instant.getEpochSecond();
         return currentMilli + "_" + originName;
     }
 

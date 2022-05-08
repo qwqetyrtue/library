@@ -8,6 +8,7 @@ import cn.hnist.sharo.model.mexpand.Book_filtrate;
 import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
 import cn.hnist.sharo.model.mexpand.Paper_filtrate;
 import cn.hnist.sharo.model.mexpand.User_filtrate;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,8 +78,8 @@ public class AdminServiceImpl implements AdminService{
     public User usersAdd(User user) {
         if(user.getName() == null || user.getName().equals("")) {
             LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
-            Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
-            user.setName("用户#"+create.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+            Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
+            user.setName("用户#"+create.toInstant(ZoneOffset.of("+8")).getEpochSecond());
         }
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         user.setCreatedate(java.sql.Date.valueOf(sf.format(new Date())));
@@ -160,15 +161,6 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public boolean borrowDelete(Borrowrecord borrowrecord) {
-        int res = borrowMapper.borrowdelete(borrowrecord);
-        if(res == 1){
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public boolean borrowUpdate(Borrowrecord borrowrecord) {
         int res = borrowMapper.borrowupdate(borrowrecord);
         if(res == 1){
@@ -179,9 +171,9 @@ public class AdminServiceImpl implements AdminService{
 
     @Transactional
     @Override
-    public boolean borrowsFinish(Borrowrecord borrowrecord) {
+    public boolean borrowFinish(Borrowrecord borrowrecord) {
         LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
-        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
         // 转换为 Timestamp 类型对象
         Timestamp timestamp = new Timestamp(creatTimestamp);
         borrowrecord.setReturntime(timestamp);
@@ -195,6 +187,25 @@ public class AdminServiceImpl implements AdminService{
                 return true;
             else throw new RuntimeException("修改书籍状态失败");
         }else throw new RuntimeException("修改借阅单失败");
+    }
+
+    @Override
+    public JSONObject borrowCreate(Borrowrecord borrowrecord) throws RuntimeException{
+        LocalDateTime create = borrowrecord.getCreatetime().toLocalDateTime();
+        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
+        borrowrecord.setBorrowid(borrowrecord.getUid() + '_' + creatTimestamp);
+        if (borrowMapper.create(borrowrecord) == 1) {
+            Book book = new Book();
+            book.setBkid(borrowrecord.getBkid());
+            book.setState(BookState.LEND);
+            if (bookMapper.lend(book) == 1) {
+                List<JSONObject> res = borrowMapper.detail(borrowrecord);
+                if(res != null && res.size() == 1){
+                    return (JSONObject) res.toArray()[0];
+                }return null;
+            }
+            else throw new RuntimeException("书籍已借出或未入库");
+        }else throw new RuntimeException("书籍不存在");
     }
 
     @Override

@@ -7,6 +7,7 @@ import cn.hnist.sharo.model.Borrowrecord;
 import cn.hnist.sharo.model.menum.BookState;
 import cn.hnist.sharo.model.menum.BorrowState;
 import cn.hnist.sharo.model.mexpand.Borrow_filtrate;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,7 @@ public class BorrowServiceImpl implements BorrowService {
     @Override
     public boolean create(Borrowrecord borrowrecord) throws RuntimeException{
         LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
-        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
         borrowrecord.setBorrowid(borrowrecord.getUid() + '_' + creatTimestamp);
         borrowrecord.setCreatetime(new Timestamp(creatTimestamp));
         borrowrecord.setState(BorrowState.BORROW);
@@ -54,4 +55,15 @@ public class BorrowServiceImpl implements BorrowService {
             return null;
         }
     }
+
+    @Override
+    public JSONObject detail(Borrowrecord borrowrecord) {
+        List<JSONObject> res =  borrowMapper.detail(borrowrecord);
+        if(res!=null && res.size() == 1){
+            return (JSONObject) res.toArray()[0];
+        }
+        return null;
+    }
+
+
 }

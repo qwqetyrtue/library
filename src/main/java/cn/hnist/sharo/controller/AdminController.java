@@ -10,6 +10,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,9 +33,24 @@ public class AdminController {
         this.userService = userService;
     }
 
+    /**
+     * 管理员登录接口
+     * @description <p>
+     * 成功: 返回成功,设置session
+     * 失败: 返回失败
+     * MethodArgumentNotValidException: 账号或密码为空 全局处理
+     * 已经登录: aop处理
+     * </p>
+     * @url /admin/login
+     * @param admin {mid,password}
+     * @param session session
+     * @return Res<String>
+     * @author sharo
+     * @date 2022/5/8
+     */
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public @ResponseBody
-    Res<String> adminLoginHandle(@RequestBody Admin admin, HttpSession session){
+    Res<String> adminLoginHandle(@Validated(Admin.LoginVi.class) @RequestBody Admin admin, HttpSession session){
         Admin login = adminService.login(admin);
         if(login != null){
             session.setAttribute("admin",login);
@@ -42,6 +59,18 @@ public class AdminController {
         return new Res<>("fail","登陆失败");
     }
 
+    /**
+     * 查询当前管理员个人信息
+     * @description <p>
+     * 成功: 返回管理员信息
+     * 未登录: aop处理
+     * </p>
+     * @url /admin/admin
+     * @param session session
+     * @return Res<Admin>
+     * @author sharo
+     * @date 2022/5/8
+     */
     @RequestMapping(value = "/admin",method = RequestMethod.POST)
     public @ResponseBody
     Res<Admin> adminCheckHandle(HttpSession session){
@@ -49,6 +78,18 @@ public class AdminController {
         return new Res<>("success",login);
     }
 
+    /**
+     * 管理员退出登录
+     * @description <p>
+     *  成功: 销毁session中的admin,返回成功
+     *  未登录: aop处理
+     * </p>
+     * @url /admin/outlogin
+     * @param session session
+     * @return Res<String>
+     * @author sharo
+     * @date 2022/5/8
+     */
     @RequestMapping(value = "/outlogin",method = RequestMethod.POST)
     public @ResponseBody
     Res<String> adminOutLoginHandle(HttpSession session){
@@ -56,8 +97,20 @@ public class AdminController {
         return new Res<>("success","退出登录");
     }
 
-    /** --------------用户管理-------------- **/
-    // 筛选查询用户
+    /* --------------用户管理-------------- */
+
+    /**
+     * 筛选查询用户
+     * @description <p>
+     * 成功: 返回分页的用户列表
+     * 失败: null
+     * </p>
+     * @url /admin/users
+     * @param user_filtrate
+     * @return ListRes<User>
+     * @author sharo
+     * @date 2022/5/8
+     */
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public @ResponseBody
     ListRes<User> adminUsersListHandle(@RequestBody User_filtrate user_filtrate) {
@@ -176,7 +229,7 @@ public class AdminController {
         else return new ListRes<>("fail","查询失败",null,-1);
     }
 
-    // 筛选查询借阅
+    // 修改借阅记录
     @RequestMapping(value = "/borrows/update", method = RequestMethod.POST)
     public @ResponseBody
     Res<String> adminBorrowsUpdateHandle(@RequestBody Borrowrecord borrowrecord) {
@@ -187,6 +240,24 @@ public class AdminController {
         }
     }
 
+    // 添加借阅记录
+    @RequestMapping(value = "/borrows/create", method = RequestMethod.POST)
+    public @ResponseBody
+    Res<JSONObject> adminBorrowsCreateHandle(@RequestBody Borrowrecord borrowrecord) {
+        try{
+            JSONObject add =  adminService.borrowCreate(borrowrecord);
+            if(add != null){
+                return new Res<>("success",add);
+            }else{
+                return new Res<>("fail",null);
+            }
+        }catch (Exception e){
+            JSONObject res = new JSONObject();
+            res.put("error",e.getMessage());
+            return new Res<>("fail",res);
+        }
+    }
+
     // 借阅书籍归还
     @RequestMapping(value = "/borrows/finish",method = RequestMethod.POST)
     public @ResponseBody
@@ -194,7 +265,7 @@ public class AdminController {
         try {
             Admin admin = (Admin) session.getAttribute("admin");
             borrowrecord.setMid(admin.getMid());
-            if(adminService.borrowsFinish(borrowrecord))
+            if(adminService.borrowFinish(borrowrecord))
                 return new Res<>("success","归还成功");
         }catch (Exception e){
             if(e.getClass().equals(RuntimeException.class))

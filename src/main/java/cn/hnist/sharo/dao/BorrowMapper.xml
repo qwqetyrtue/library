@@ -15,7 +15,8 @@
     </insert>
 
     <select id="filtrate" parameterType="Borrow_filtrate" resultMap="BorrowMap,BorrowCountResultMap">
-        SELECT SQL_CALC_FOUND_ROWS borrowid, uid, createtime, returntime, state, bkid, mid, limittime, remark, bkname, timeleft, time
+        SELECT SQL_CALC_FOUND_ROWS borrowid, uid, createtime, returntime, state, bkid, mid, limittime, remark, bkname,
+        timeleft, time
         FROM borrow_book_user
         WHERE
         uid = #{uid}
@@ -44,11 +45,31 @@
         SELECT FOUND_ROWS() as total;
     </select>
 
+    <select id="detail" parameterType="Borrowrecord" resultType="JSONObject">
+        SELECT borrowid,
+               uid,
+               createtime,
+               returntime,
+               state,
+               bkid,
+               time,
+               remark,
+               mname,
+               mid,
+               uname,
+               bkname,
+               timeleft,
+               limittime
+        FROM borrow_book_user
+        WHERE borrowid = #{borrowid}
+    </select>
+
 
     <!-- ........................借阅管理........................ -->
     <!-- 筛选查询借阅单 -->
     <select id="borrowsfilter" resultMap="BorrowMap,BorrowCountResultMap" parameterType="Borrow_filtrate">
-        SELECT SQL_CALC_FOUND_ROWS borrowid, uid, createtime, returntime,mid,mname, state, bkid, limittime, remark, uname, bkname, timeleft, time
+        SELECT SQL_CALC_FOUND_ROWS borrowid, uid, createtime, returntime,mid,mname, state, bkid, limittime, remark,
+        uname, bkname, timeleft, time
         FROM borrow_book_user
         WHERE
         <choose>
@@ -130,11 +151,15 @@
 
     <!-- 根据名字查询用户 -->
     <select id="usersbyname" parameterType="User" resultType="User">
-        SELECT uid,name FROM user WHERE name LIKE CONCAT('%',#{name},'%')
+        SELECT uid, name
+        FROM user
+        WHERE name LIKE CONCAT('%', #{name}, '%')
     </select>
 
     <!-- 根据名字查询书籍 -->
     <select id="booksbyname" parameterType="Book" resultType="Book">
-        SELECT bkid,name FROM book WHERE name LIKE CONCAT('%',#{name},'%')
+        SELECT bkid, name
+        FROM book
+        WHERE name LIKE CONCAT('%', #{name}, '%')
     </select>
 </mapper>

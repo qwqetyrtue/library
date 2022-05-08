@@ -1095,7 +1095,6 @@ window.onload = function () {
                         cropper.sx = -1;
                     }
                 }
-
             },
             imageScaleYHandle() {
                 if (cropper) {

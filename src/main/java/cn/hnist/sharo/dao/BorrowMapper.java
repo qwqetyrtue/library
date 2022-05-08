@@ -18,6 +18,8 @@ public interface BorrowMapper {
     int create(Borrowrecord borrowrecord);
     // 查询借阅单
     List<?> filtrate(Borrow_filtrate borrow_filtrate);
+    // 查询借阅详情
+    List<JSONObject> detail(Borrowrecord borrowrecord);
 
 
     // 查询借阅单

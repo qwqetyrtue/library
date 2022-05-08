@@ -231,6 +231,8 @@ window.onload = function () {
                     menuValue: "userM",
                     resourceValue: "paperM",
                     AdminPageLoading: false,
+                    borrowTimeMax: 60,
+                    borrowTimeMin: 1,
                     /** --------------用户列表源数据-------------- **/
                     userList: [],
                     userListBg: 0,
@@ -398,10 +400,14 @@ window.onload = function () {
                     submitBorrowSearchBTLoading: false,
                     // drawer显示
                     borrowMsgDrawerVisible: false,
+                    borrowAddMsgDrawerVisible: false,
                     // 修改用户表单
                     borrowUpdateForm: {},
                     borrowUpdateForm_cp: {},
                     rules_borrowUpdateForm: {},
+                    // 添加用户表单
+                    borrowAddForm: {},
+                    rules_borrowAddForm: {},
                     // 搜索表单
                     borrowSearchConfigForm: {
                         borrowid: "",
@@ -416,6 +422,10 @@ window.onload = function () {
                     borrowUserSelectOption: [],
                     borrowBookSelectLoading: false,
                     borrowBookSelectOption: [],
+                    addBorrowUserSelectLoading: false,
+                    addBorrowUserSelectOption: [],
+                    addBorrowBookSelectLoading: false,
+                    addBorrowBookSelectOption: [],
                     /** --------------文章列表源数据-------------- **/
                     paperList: [],
                     paperListBg: 0,
@@ -1596,10 +1606,17 @@ window.onload = function () {
                             })
                     } else this.borrowListCurrentPage = val;
                 },
+                // 修改按键handle
                 borrowMsgUpdateHandle(row) {
                     this.borrowUpdateForm_cp = row;
+                    console.log(this.borrowUpdateForm_cp)
                     this.borrowUpdateFormResetHandle();
                     this.borrowMsgDrawerShowHandle();
+                },
+                // 添加借阅按键handle
+                borrowMsgAddHandle(){
+                    this.borrowAddFormResetHandle();
+                    this.borrowAddMsgDrawerShowHandle();
                 },
                 // drawer显示/隐藏
                 borrowMsgDrawerHideHandle() {
@@ -1608,11 +1625,17 @@ window.onload = function () {
                 borrowMsgDrawerShowHandle() {
                     this.borrowMsgDrawerVisible = true;
                 },
+                borrowAddMsgDrawerHideHandle() {
+                    this.borrowAddMsgDrawerVisible = false;
+                },
+                borrowAddMsgDrawerShowHandle() {
+                    this.borrowAddMsgDrawerVisible = true;
+                },
                 // drawer关闭前触发
                 borrowMsgBeforeCloseHandle(done) {
                     done();
                 },
-                // 表单提交
+                // 更新提交
                 borrowUpdateFormSubmitHandle() {
                     this.$confirm('是否提交修改信息?', '提示', {
                         confirmButtonText: '提交',
@@ -1643,38 +1666,41 @@ window.onload = function () {
                         });
                     });
                 },
-                // 删除提交
-                borrowMsgDeleteHandle(row) {
-                    this.$confirm('是否确认删除选中用户的信息?', '提示', {
-                        confirmButtonText: '删除',
+                // 添加提交
+                borrowAddFormSubmitHandle() {
+                    this.$confirm('是否提交修改信息?', '提示', {
+                        confirmButtonText: '提交',
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        this.reqBorrowDeleteSubmit(row)
+                        console.log("修改")
+                        this.reqBorrowAddSubmit()
                             .then(res => {
                                 if (res) {
                                     this.$message({
                                         type: 'success',
-                                        message: '删除成功!'
+                                        message: '添加成功!'
                                     });
                                 } else {
                                     this.$message({
-                                        message: '修改失败',
+                                        message: '添加失败',
                                         type: 'error',
                                         duration: 1500,
                                     });
                                 }
                             })
-                    }).catch(() => {
+                    }).catch((err) => {
+                        console.log(err)
                         this.$message({
                             type: 'info',
                             message: '操作取消'
                         });
                     });
                 },
-                // 重置用户更新表单
+                // 重置借阅记录更新表单
                 borrowUpdateFormResetHandle() {
-                    this.borrowUpdateForm = JSON.parse(JSON.stringify(this.borrowUpdateForm_cp))
+                    let {borrowid,uid,bkid,createtime,returntime,time,remark} = this.borrowUpdateForm_cp;
+                    this.borrowUpdateForm = {borrowid,uid,bkid,createtime,returntime,time,remark};
                     this.borrowBookSelectOption = []
                     this.borrowBookSelectOption.push({bkid: this.borrowUpdateForm.bkid, name: this.borrowUpdateForm.bkname})
                     this.$set(this.borrowUpdateForm, "book", this.borrowUpdateForm.bkid);
@@ -1683,25 +1709,24 @@ window.onload = function () {
                     this.borrowUserSelectOption.push({uid: this.borrowUpdateForm.uid, name: this.borrowUpdateForm.uname})
                     this.$set(this.borrowUpdateForm, "user", this.borrowUpdateForm.uid);
                 },
+                // 重置借阅记录添加表单
+                borrowAddFormResetHandle() {
+                    this.borrowAddForm = {
+                        time: 0,
+                        state: "BORROW"
+                    };
+                },
                 // 提交修改请求
                 reqBorrowUpdateSubmit() {
                     let data = JSON.parse(JSON.stringify(this.borrowUpdateForm));
                     data.uid = data.user;
                     data.bkid = data.book;
+                    delete data.user;
+                    delete data.book;
                     if (data.createtime != '')
                         data.createtime = new Date(data.createtime).valueOf();
                     if (data.returntime != '')
                         data.returntime = new Date(data.returntime).valueOf();
-                    if (data.limittime != '')
-                        data.limittime = new Date(data.limittime).valueOf();
-                    delete data.user;
-                    delete data.book;
-                    delete data.uname;
-                    delete data.bkname;
-                    delete data.time;
-                    delete data.timeleft;
-                    delete data.mname;
-                    delete data.mid;
                     console.log(data)
                     return $.ajax({
                         type: 'post',
@@ -1718,6 +1743,46 @@ window.onload = function () {
                                 }
                                 return true;
                             } else throw new Error();
+                        })
+                        .catch(err => {
+                            this.borrowListLoading = false;
+                            console.log(err)
+                            this.$message({
+                                message: '出现未知错误',
+                                type: 'error',
+                                showClose: true,
+                                duration: 0,
+                            });
+                        })
+                },
+                // 提交添加请求
+                reqBorrowAddSubmit(){
+                    let data = JSON.parse(JSON.stringify(this.borrowAddForm));
+                    data.uid = data.user;
+                    data.bkid = data.book;
+                    delete data.user;
+                    delete data.book;
+                    if (data.createtime != '')
+                        data.createtime = new Date(data.createtime).valueOf();
+                    console.log(data)
+                    return $.ajax({
+                        type: 'post',
+                        url: this.BASE_URL + 'admin/borrows/create',
+                        data: JSON.stringify(data),
+                        contentType: "application/json;charset=UTF-8",
+                    })
+                        .then(r => {
+                            let res = JSON.parse(r);
+                            if (res.res == "success") {
+                                this.borrowList.push(res.data);
+                                this.borrowListTotalSize += 1;
+                                return true;
+                            } else this.$message({
+                                message: res.data.error,
+                                type: 'error',
+                                showClose: true,
+                                duration: 0,
+                            });
                         })
                         .catch(err => {
                             this.borrowListLoading = false;
@@ -1821,6 +1886,56 @@ window.onload = function () {
                             })
                     } else {
                         this.borrowBookSelectOption = [];
+                    }
+                },
+                addBorrowUserRemoteHandle(query) {
+                    if (query !== '') {
+                        this.addBorrowUserSelectLoading = true;
+                        $.ajax({
+                            type: 'post',
+                            url: this.BASE_URL + 'admin/borrows/users',
+                            data: JSON.stringify({name: query}),
+                            contentType: "application/json;charset=UTF-8",
+                        })
+                            .then(r => {
+                                let res = JSON.parse(r);
+                                if (res.res == "success") {
+                                    this.addBorrowUserSelectOption = res.data;
+                                    this.addBorrowUserSelectLoading = false;
+                                    return true;
+                                } else throw new Error();
+                            })
+                            .catch(err => {
+                                console.log(err)
+                                throw err;
+                            })
+                    } else {
+                        this.addBorrowUserSelectOption = [];
+                    }
+                },
+                addBorrowBookRemoteHandle(query) {
+                    if (query !== '') {
+                        this.borrowBookSelectLoading = true;
+                        $.ajax({
+                            type: 'post',
+                            url: this.BASE_URL + 'admin/borrows/books',
+                            data: JSON.stringify({name: query}),
+                            contentType: "application/json;charset=UTF-8",
+                        })
+                            .then(r => {
+                                let res = JSON.parse(r);
+                                if (res.res == "success") {
+                                    this.addBorrowBookSelectOption = res.data;
+                                    this.addBorrowBookSelectLoading = false;
+                                    return true;
+                                } else throw new Error();
+                            })
+                            .catch(err => {
+                                console.log(err)
+                                throw err;
+                            })
+                    } else {
+                        this.addBorrowBookSelectOption = [];
                     }
                 },
                 /** --------------文章列表-------------- **/

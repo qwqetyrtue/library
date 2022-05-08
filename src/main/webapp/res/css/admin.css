@@ -84,7 +84,7 @@ i {
     align-items: center;
     min-width: 1440px;
     min-height: 510px;
-    background:linear-gradient(to bottom,#009ffc 0%,#1DA1F2 60%,#ffffff 60%,#ffffff 100%);
+    background:linear-gradient(to bottom,#009ffc 0%,#1DA1F2 45%,#ffffff 45%,#ffffff 100%);
 }
 
 .m-menu .el-tabs__header.is-left .el-tabs__item {
@@ -239,6 +239,9 @@ i {
 
 .m-user-msg-drawer .el-input, .m-book-msg-drawer .el-input, .m-borrow-msg-drawer .el-input {
     width: 250px;
+}
+.el-input-number {
+    width: auto;
 }
 
 .m-book-msg-drawer-imgs {
