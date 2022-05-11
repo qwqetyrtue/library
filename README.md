@@ -815,3 +815,41 @@ function submitSearch(){
 ### 26. 后台数据验证 JSR-303 规范
 
 [Hibernate Validator进行优雅的数据验证](https://blog.csdn.net/meser88/article/details/116450450)
+
+### 27. 解决`/user` 和`/user/` 根路径不同导致`静态资源`和`ajax请求路径`错误问题
+
+1. 方法一 设置`controller`,将 `/user/` 重定向到`/user`
+
+   ```java
+     @RequestMapping(value = "/index",method = RequestMethod.GET)
+       public String indexHandle(){
+           return "index";
+       }
+    @RequestMapping(value = "/index/",method = RequestMethod.GET)
+       public String indexReHandle(){
+           return "redirect:/index";
+       }
+   ```
+
+   
+
+2. 在页面加载时,设置`window.BASE_URL`,设置`base标签`,后台路径使用`window.BASE_URL + path`
+
+   ```html
+   <!-- 项目前缀 -->
+   <script th:inline="javascript">
+      window.BASE_URL = [[${#request.getContextPath()}]] + '/';
+   </script>
+   <base th:href="${#request.getContextPath()}+'/'">
+   ```
+
+   ```js
+   $.ajax({
+       type: 'post',
+       url: window.BASE_URL + 'api/test',
+       data: JSON.stringify({data:data}),
+       contentType: "application/json;charset=UTF-8",
+   })
+   ```
+
+   

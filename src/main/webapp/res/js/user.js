@@ -5,7 +5,7 @@ window.onload = function () {
         el: ".m-container",
         created() {
             let paths = document.location.pathname.split('/');
-            this.BASE_URL = paths.length == 3 ? '/' + paths[1] + '/' : '';
+            this.BASE_URL = paths.length >= 3 ? '/' + paths[1] + '/' : '';
         },
         async mounted() {
             this.UserPageLoading = true;
@@ -311,7 +311,7 @@ window.onload = function () {
                 switch (command) {
                     case "outlogin" :
                         $.ajax({
-                            url: this.BASE_URL + 'user/outlogin',
+                            url: window.BASE_URL + window.paths.userOutLogin,
                             type: "post",
                         })
                             .then(res => {
@@ -387,7 +387,7 @@ window.onload = function () {
                     if (valid) {
                         $.ajax({
                             type: 'post',
-                            url: this.BASE_URL + 'user/update',
+                            url: window.BASE_URL + window.paths.userUpdate,
                             data: JSON.stringify(v.userUpdateForm),
                             contentType: "application/json;charset=UTF-8",
                         })
@@ -438,7 +438,7 @@ window.onload = function () {
                     if (valid) {
                         $.ajax({
                             type: 'post',
-                            url: this.BASE_URL + 'user/updatepwd',
+                            url: window.BASE_URL + window.paths.userUpdatePwd,
                             data: JSON.stringify({
                                 uid: this.user.uid,
                                 password: this.passwordUpdateForm.password,
@@ -459,7 +459,7 @@ window.onload = function () {
                                         duration: 1500,
                                         onClose: () => {
                                             $.ajax({
-                                                url: this.BASE_URL + 'user/outlogin',
+                                                url: window.BASE_URL + window.paths.userOutLogin,
                                                 type: "post",
                                             })
                                                 .then(res => {
@@ -498,7 +498,7 @@ window.onload = function () {
             passwordVerifyCodeSendHandle(ev) {
                 this.verifySendBTLoading = true;
                 $.ajax({
-                    url: this.BASE_URL + 'user/sendverifycode',
+                    url: window.BASE_URL + window.paths.userSendVerifyCode,
                     type: "post",
                     contentType: "application/json;charset=UTF-8",
                     data: JSON.stringify({
@@ -561,7 +561,7 @@ window.onload = function () {
                 }, 3000)
                 $.ajax({
                     type: 'post',
-                    url: this.BASE_URL + 'book/isbn',
+                    url: window.BASE_URL + window.paths.bookISBN,
                     data: JSON.stringify({"isbn": this.bookReserveForm.isbn}),
                     contentType: "application/json;charset=UTF-8"
                 })
@@ -583,7 +583,7 @@ window.onload = function () {
                 }
                 $.ajax({
                     type: 'post',
-                    url: this.BASE_URL + 'book/details',
+                    url: window.BASE_URL + window.paths.bookDetails,
                     data: JSON.stringify({"bkid": row.bkid}),
                     contentType: "application/json;charset=UTF-8"
                 })
@@ -606,7 +606,7 @@ window.onload = function () {
                 let v = this;
                 $.ajax({
                     type: 'post',
-                    url: this.BASE_URL + 'borrow/create',
+                    url: window.BASE_URL + window.paths.borrowCreate,
                     data: JSON.stringify({
                         bkid: v.borrowForm.bkid,
                         uid: v.user.uid,
@@ -848,7 +848,7 @@ window.onload = function () {
             reqUserMsg() {
                 return $.ajax({
                     type: 'post',
-                    url: this.BASE_URL + 'user/user',
+                    url: window.BASE_URL + window.paths.user,
                 })
                     .then(r => {
                         let res = JSON.parse(r);
@@ -879,7 +879,7 @@ window.onload = function () {
                 }
                 return $.ajax({
                     type: 'post',
-                    url: this.BASE_URL + 'book/filtrate',
+                    url: window.BASE_URL + window.paths.bookFiltrate,
                     data: JSON.stringify({...filtrate, ...paging}),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -914,7 +914,7 @@ window.onload = function () {
                 } else filtrate = {uid: this.user.uid};
                 return $.ajax({
                     type: 'post',
-                    url: this.BASE_URL + 'borrow/filtrate',
+                    url: window.BASE_URL + window.paths.borrowFiltrate,
                     data: JSON.stringify({...filtrate, ...paging}),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -946,7 +946,7 @@ window.onload = function () {
                 }
                 return $.ajax({
                     type: 'post',
-                    url: this.BASE_URL + 'room/rooms',
+                    url: window.BASE_URL + window.paths.rooms,
                     data: JSON.stringify({...filtrate}),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -970,7 +970,7 @@ window.onload = function () {
             reqSeats(row) {
                 return $.ajax({
                     type: 'post',
-                    url: this.BASE_URL + 'seat/room',
+                    url: window.BASE_URL + window.paths.seats,
                     data: JSON.stringify({roomid: row.roomid}),
                     contentType: "application/json;charset=UTF-8",
                 })
@@ -1121,7 +1121,7 @@ window.onload = function () {
                                 data.append('img', res);
                                 return $.ajax({
                                     type: 'post',
-                                    url: this.BASE_URL + 'file/image/upload',
+                                    url: window.BASE_URL + window.paths.imageUpdate,
                                     data: data,
                                     contentType: false,
                                     processData: false
@@ -1227,4 +1227,20 @@ window.onload = function () {
             }
         },
     })
+}
+
+window.paths = {
+    userOutLogin : 'user/outlogin',
+    userUpdate: 'user/update',
+    userUpdatePwd: 'user/updatepwd',
+    userSendVerifyCode: 'user/sendverifycode',
+    bookISBN: 'book/isbn',
+    bookDetails: 'book/details',
+    borrowCreate: 'borrow/create',
+    user: 'user/user',
+    bookFiltrate: 'book/filtrate',
+    borrowFiltrate: 'borrow/filtrate',
+    rooms: 'room/rooms',
+    seats: 'seat/room',
+    imageUpdate: 'file/image/upload',
 }

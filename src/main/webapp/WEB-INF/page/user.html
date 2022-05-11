@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>欢迎使用图书馆借阅系统</title>
+    <!-- 项目前缀 -->
+    <script th:inline="javascript">
+        window.BASE_URL = [[${#request.getContextPath()}]] + '/';
+    </script>
+    <base th:href="${#request.getContextPath()}+'/'">
     <!-- 引入element样式 -->
-    <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
+    <link rel="stylesheet" th:href="@{'/js/element-ui@2.15.7/lib/theme-chalk/index.css'}">
     <!-- 引入cropper.css -->
-    <link rel="stylesheet" href="js/cropper@1.5.12/cropper.min.css">
-    <link rel="stylesheet" href="css/user.css">
+    <link rel="stylesheet" th:href="@{'/js/cropper@1.5.12/cropper.min.css'}">
+    <link rel="stylesheet" th:href="@{'/css/user.css'}">
     <!--引入vue-->
-    <script src="js/vue/vue.js"></script>
+    <script th:src="@{'/js/vue/vue.js'}"></script>
     <!-- 引入组件库 -->
-    <script src="js/element-ui@2.15.7/lib/index.js"></script>
+    <script th:src="@{'/js/element-ui@2.15.7/lib/index.js'}"></script>
     <!-- 引入jquery -->
-    <script src="js/jquery/jquery@3.6.0.js"></script>
+    <script th:src="@{'/js/jquery/jquery@3.6.0.js'}"></script>
     <!-- 引入cropper.js -->
-    <script src="js/cropper@1.5.12/cropper.min.js"></script>
+    <script th:src="@{'/js/cropper@1.5.12/cropper.min.js'}"></script>
     <!--页面js-->
-    <script src="js/user.js"></script>
+    <script th:src="@{'/js/user.js'}"></script>
     <style>
         [v-cloak] {
             display: none;

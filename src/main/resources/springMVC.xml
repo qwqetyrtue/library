@@ -90,4 +90,13 @@
     <!-- AOP -->
     <aop:aspectj-autoproxy proxy-target-class="true" />
     <context:component-scan base-package="cn.hnist.sharo.aop"/>
+
+    <!--关于拦截器的配置-->
+<!--    <mvc:interceptors>-->
+<!--        <mvc:interceptor>-->
+<!--            <mvc:mapping path="/user"/>-->
+<!--            &lt;!&ndash;bean配置的就是拦截器&ndash;&gt;-->
+<!--            <bean class="cn.hnist.sharo.interceptor.UserNotLoginInterceptor"/>-->
+<!--        </mvc:interceptor>-->
+<!--    </mvc:interceptors>-->
 </beans>

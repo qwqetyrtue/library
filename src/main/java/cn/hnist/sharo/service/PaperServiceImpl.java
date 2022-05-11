@@ -3,6 +3,7 @@ package cn.hnist.sharo.service;
 import cn.hnist.sharo.dao.PaperMapper;
 import cn.hnist.sharo.model.Paper;
 import cn.hnist.sharo.model.mexpand.Paper_filtrate;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,18 +18,18 @@ public class PaperServiceImpl implements PaperService{
 
 
     @Override
-    public Paper detail(Paper paper) {
-        List<Paper> res = paperMapper.detail(paper);
+    public JSONObject detail(Paper paper) {
+        List<JSONObject> res = paperMapper.detail(paper);
         if(res != null && res.size() == 1){
-            return (Paper) res.toArray()[0];
+            return (JSONObject) res.toArray()[0];
         }
         return null;
     }
 
     @Override
-    public List<Paper> select() {
+    public List<Paper> selectByClassify(Paper paper) {
         try{
-            return paperMapper.select();
+            return paperMapper.selectbyclassify(paper);
         }catch (Exception e){
             e.printStackTrace();
             return null;

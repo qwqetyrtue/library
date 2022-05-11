@@ -219,10 +219,10 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Paper paperDetail(Paper paper) {
-        List<Paper> res = paperMapper.detail(paper);
+    public JSONObject paperDetail(Paper paper) {
+        List<JSONObject> res = paperMapper.detail(paper);
         if(res != null && res.size() == 1){
-            return (Paper) res.toArray()[0];
+            return (JSONObject) res.toArray()[0];
         }
         return null;
     }

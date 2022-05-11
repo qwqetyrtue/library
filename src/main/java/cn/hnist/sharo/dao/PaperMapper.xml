@@ -9,17 +9,18 @@
     </resultMap>
 
 
-    <select id="detail" parameterType="Paper" resultType="Paper">
-        SELECT pid, title, content, mid, state, createtime, updatetime, classify, digest
-        FROM paper
-        WHERE pid=#{pid}
+    <select id="detail" parameterType="Paper" resultType="JSONObject">
+        SELECT pid, title, content, paper.mid, state, createtime, updatetime, classify, digest,admin.name as mname
+        FROM paper,admin
+        WHERE pid=#{pid} and paper.mid=admin.mid
     </select>
 
-    <select id="select" resultType="Paper">
+    <select id="selectbyclassify" resultType="Paper" parameterType="Paper">
         SELECT pid, title, mid, state, createtime, updatetime, classify, digest
         FROM paper
+        WHERE classify=#{classify}
         ORDER BY createtime DESC
-        LIMIT 10;
+        LIMIT 5;
     </select>
 
 

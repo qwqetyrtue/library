@@ -315,8 +315,8 @@ public class AdminController {
 
     @RequestMapping(value = "/papers/paper",method = RequestMethod.POST)
     public @ResponseBody
-    Res<Paper> adminPaperHandle(@RequestBody Paper paper){
-        Paper res = adminService.paperDetail(paper);
+    Res<JSONObject> adminPaperHandle(@RequestBody Paper paper){
+        JSONObject res = adminService.paperDetail(paper);
         if(res != null){
             return new Res<>("success",res);
         }else return new Res<>("fail",null);

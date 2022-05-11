@@ -2,16 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>x x x 图书馆</title>
+    <title>LIB图书馆</title>
+    <!-- 项目前缀 -->
+    <script th:inline="javascript">
+        window.BASE_URL = [[${#request.getContextPath()}]] + '/';
+    </script>
+    <base th:href="${#request.getContextPath()}+'/'">
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" th:href="@{'/js/element-ui@2.15.7/lib/theme-chalk/index.css'}">
+    <link rel="stylesheet" th:href="@{'/css/index.css'}">
     <!--引入vue-->
-    <script src="js/vue/vue.js"></script>
+    <script th:src="@{'/js/vue/vue.js'}"></script>
+    <!-- 引入jquery -->
+    <script th:src="@{'/js/jquery/jquery@3.6.0.js'}"></script>
     <!-- 引入组件库 -->
-    <script src="js/element-ui@2.15.7/lib/index.js"></script>
+    <script th:src="@{'/js/element-ui@2.15.7/lib/index.js'}"></script>
     <!--页面js-->
-    <script src="js/index.js"></script>
+    <script th:src="@{'/js/index.js'}"></script>
     <style>
         [v-cloak] {
             display: none;
@@ -21,13 +28,15 @@
 <body>
 <div class="m-container" v-cloak>
     <div class="m-header">
-        <div class="m-header-bg" ref="mHeaderBg"></div>
+        <div class="m-header-bg">
+            <div></div>
+        </div>
         <div class="m-header-nav">
             <el-menu
                     :default-active="menuIndex"
                     mode="horizontal"
                     @select="menuSelectHandle"
-                    background-color="#0391DB"
+                    background-color="#0099CC"
                     text-color="#fff"
                     active-text-color="#035F91">
                 <el-menu-item index="">首页</el-menu-item>
@@ -39,7 +48,7 @@
         <div class="m-header-slide">
             <el-carousel :interval="4000" type="card" height="470px">
                 <el-carousel-item class="m-slide-cont" v-for="item in 4" :key="item"
-                                  :style="{backgroundImage:'url(http://localhost:8080/library/images/banner0'+item+'.png)'}">
+                                  :style="{backgroundImage:'url(image/banner0'+item+'.png)'}">
                 </el-carousel-item>
             </el-carousel>
         </div>
@@ -48,7 +57,7 @@
         <div class="m-body-news">
             <div class="m-body-news-title">
                 <div>
-                    <i class="el-icon-s-unfold"> 新闻中心</i>
+                    <i class="el-icon-s-unfold"> {{board.news.title}}</i>
                 </div>
                 <i class="el-icon-arrow-right"></i>
             </div>
@@ -56,20 +65,23 @@
                 <div class="m-body-news-slide">
                     <el-carousel :interval="4000" arrow="hidden" height="300px">
                         <el-carousel-item class="m-slide-cont" v-for="item in 6" :key="item"
-                                          :style="{backgroundImage:'url(http://localhost:8080/library/images/ban0'+item+'.jpg)'}">
+                                          :style="{backgroundImage:'url(image/ban0'+item+'.jpg)'}">
 
                         </el-carousel-item>
                     </el-carousel>
                 </div>
                 <div class="m-body-news-cont">
-                    <div class="m-body-news-one" v-for="i in 5">
+                    <div v-if="!news[0]">
+                        <el-empty description="暂无更多..."></el-empty>
+                    </div>
+                    <div v-else class="m-body-news-one" v-for="(each,i) in news" :key="'news'+i">
                         <div class="m-body-news-one-date">
-                            <div>2016-10</div>
-                            <div>19</div>
+                            <div>{{each.createdate[0]}}-{{each.createdate[1]}}</div>
+                            <div>{{each.createdate[2]}}</div>
                         </div>
                         <div class="m-body-news-one-cont">
-                            <div><i class="el-icon-caret-right"></i><span>聊城大学网络信息中心领导来我校</span></div>
-                            <div><span>各单位：为做好我校2016年校内财务预算工作，请各位单位根据不赖不赖不赖不赖不赖不赖</span></div>
+                            <div><i class="el-icon-caret-right"></i><span>{{each.title}}</span></div>
+                            <div><span>{{each.digest}}</span></div>
                         </div>
                     </div>
                 </div>
@@ -79,21 +91,25 @@
             <div class="m-body-parts">
                 <div class="m-body-part-title">
                     <div>
-                        <i class="el-icon-s-unfold"> 最新资讯</i>
+                        <i class="el-icon-s-unfold"> {{board.massage.title}}</i>
                     </div>
                     <i class="el-icon-arrow-right"></i>
                 </div>
                 <div class="m-body-part-cont">
                     <el-scrollbar class="m-scrollbar">
-                        <el-collapse v-model="newsIndex" accordion>
-                            <el-collapse-item :name="i" v-for="i in 5" :key="i">
+                        <div v-if="!massage[0]">
+                            <el-empty description="暂无更多..."></el-empty>
+                        </div>
+                        <el-collapse v-else v-model="newsIndex" accordion>
+                            <el-collapse-item :name="i" v-for="(each,i) in massage" :key="'massage'+i">
                                 <div class="m-body-part-one" slot="title">
                                     <i class="el-icon-notebook-1"></i>
-                                    <span>公益植树添新绿，喜迎党的二十大——图书馆教工党支部牵手新闻学院学生党支部开展植树</span>
+                                    <span>{{each.title}}</span>
                                 </div>
-                                <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-                                <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-                                <el-button type="text" @click="paperDetailCheckHandle">查看详情</el-button>
+                                <div>
+                                    {{each.digest}}
+                                </div>
+                                <el-button type="text" @click="paperDetailCheckHandle(each.pid)">查看详情</el-button>
                             </el-collapse-item>
                         </el-collapse>
                     </el-scrollbar>
@@ -102,21 +118,23 @@
             <div class="m-body-parts">
                 <div class="m-body-part-title">
                     <div>
-                        <i class="el-icon-s-unfold"> 通知公告</i>
+                        <i class="el-icon-s-unfold"> {{board.notice.title}}</i>
                     </div>
                     <a href="/List.html"><i class="el-icon-arrow-right"></i></a>
                 </div>
                 <div class="m-body-part-cont">
                     <el-scrollbar class="m-scrollbar">
-                        <el-collapse v-model="noticeIndex" accordion>
-                            <el-collapse-item :name="i" v-for="i in 5" :key="i">
+                        <div v-if="!notice[0]">
+                            <el-empty description="暂无更多..."></el-empty>
+                        </div>
+                        <el-collapse v-else v-model="noticeIndex" accordion>
+                            <el-collapse-item :name="i" v-for="(each,i) in notice" :key="'notice'+i">
                                 <div class="m-body-part-one" slot="title">
                                     <i class="el-icon-notebook-1"></i>
-                                    <span>公益植树添新绿，喜迎党的二十大——图书馆教工党支部牵手新闻学院学生党支部开展植树</span>
+                                    <span>{{each.title}}</span>
                                 </div>
-                                <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-                                <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-                                <el-button type="text" @click="paperDetailCheckHandle">查看详情</el-button>
+                                <div>{{each.digest}}</div>
+                                <el-button type="text" @click="paperDetailCheckHandle(each.pid)">查看详情</el-button>
                             </el-collapse-item>
                         </el-collapse>
                     </el-scrollbar>

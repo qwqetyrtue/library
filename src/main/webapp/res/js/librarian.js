@@ -3,7 +3,7 @@ window.onload = function (){
         el: '.m-container',
         created() {
             let paths = document.location.pathname.split('/');
-            this.BASE_URL = paths.length == 3 ? '/' + paths[1] + '/' : '';
+            this.BASE_URL = paths.length >= 3 ? '/' + paths[1] + '/' : '';
         },
         async mounted() {
         },
@@ -33,7 +33,7 @@ window.onload = function (){
                 this.$refs.adminForm.validate((valid)=>{
                     if(valid){
                         $.ajax({
-                            url: this.BASE_URL + 'admin/login',
+                            url: window.BASE_URL + window.paths.adminLogin,
                             type: "post",
                             contentType: "application/json;charset=UTF-8",
                             data: JSON.stringify({'mid': this.adminForm.user, 'password': this.adminForm.password}),
@@ -68,4 +68,8 @@ window.onload = function (){
             }
         }
     })
+}
+
+window.paths = {
+    adminLogin: 'admin/login'
 }

@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>管理员登录</title>
+    <!-- 项目前缀 -->
+    <script th:inline="javascript">
+        window.BASE_URL = [[${#request.getContextPath()}]] + '/';
+    </script>
+    <base th:href="${#request.getContextPath()}+'/'">
     <!--图标库-->
-    <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="css/librarian.css" type="text/css"/>
+    <link rel="stylesheet" th:href="@{'/js/element-ui@2.15.7/lib/theme-chalk/index.css'}">
+    <link rel="stylesheet" th:href="@{'/css/librarian.css'}" />
     <!-- 先引入 Vue -->
-    <script type="text/javascript" src="js/vue/vue.js"></script>
+    <script type="text/javascript" th:src="@{'/js/vue/vue.js'}"></script>
     <!-- 引入组件库 -->
-    <script type="text/javascript" src="js/element-ui@2.15.7/lib/index.js"></script>
+    <script type="text/javascript" th:src="@{'/js/element-ui@2.15.7/lib/index.js'}"></script>
     <!-- 引入jquery -->
-    <script type="text/javascript" src="js/jquery/jquery@3.6.0.js"></script>
-    <script type="text/javascript" src="js/librarian.js"></script>
+    <script type="text/javascript" th:src="@{'/js/jquery/jquery@3.6.0.js'}"></script>
+    <script type="text/javascript" th:src="@{'/js/librarian.js'}"></script>
     <style>
         [v-cloak] {
             display: none;

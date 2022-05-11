@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文章详情</title>
+    <!-- 项目前缀 -->
+    <script th:inline="javascript">
+        window.BASE_URL = [[${#request.getContextPath()}]] + '/';
+    </script>
+    <base th:href="${#request.getContextPath()}+'/'">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" th:href="@{'/js/element-ui@2.15.7/lib/theme-chalk/index.css'}">
+    <link rel="stylesheet" th:href="@{'/css/paper.css'}">
+    <!--引入vue-->
+    <script th:src="@{'/js/vue/vue.js'}"></script>
+    <!-- 引入jquery -->
+    <script th:src="@{'/js/jquery/jquery@3.6.0.js'}"></script>
+    <!-- 引入组件库 -->
+    <script th:src="@{'/js/element-ui@2.15.7/lib/index.js'}"></script>
+    <!-- 引入 wangEditor.css -->
+    <link th:href="@{'/js/wangeditoreditor@5.0.1/dist/css/style.css'}" rel="stylesheet">
+    <!-- 引入 wangEditor.js -->
+    <script th:src="@{'/js/wangeditoreditor@5.0.1/dist/index.js'}"></script>
+    <!--页面js-->
+    <script th:src="@{'/js/paper.js'}"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="m-container" v-cloak>
+    <el-scrollbar class="m-scrollbar">
+        <div class="m-paper">
+            <div class="m-header">
+                <div class="m-header-bg">
+                    <div></div>
+                </div>
+            </div>
+            <div class="m-content">
+                <el-skeleton class="m-content-digest" :loading="paperLoading" animated :count="1">
+                    <template slot="template">
+                        <div class="m-digest-title">
+                            <el-skeleton-item variant="h1" style="width:1050px;height: 40px;margin: 25px 0"></el-skeleton-item>
+                            <el-skeleton-item variant="button" class="m-back-button"
+                                              style="width:90px;"></el-skeleton-item>
+                        </div>
+                        <div class="m-digest-msg">
+                            <div class="m-digest-mname">
+                                <el-skeleton-item variant="text" style="width:85px;"></el-skeleton-item>
+                            </div>
+                            <div class="m-digest-time">
+                                <div>
+                                    <el-skeleton-item variant="text" style="width:135px;"></el-skeleton-item>
+                                </div>
+                                <div>
+                                    <el-skeleton-item variant="text" style="width:135px;"></el-skeleton-item>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template>
+                        <div class="m-digest-title">
+                            <el-tooltip class="item" effect="dark" :content="'pid:'+paper.pid" placement="bottom-end">
+                                <h1>{{paper.title}}</h1>
+                            </el-tooltip>
+                            <el-button class="m-back-button" @click="backButtonHandle" type="primary">返回首页</el-button>
+                        </div>
+                        <div class="m-digest-msg">
+                            <div class="m-digest-mname">
+                                —— {{paper.mname}}
+                            </div>
+                            <div class="m-digest-time">
+                                <div>
+                                    发布时间: {{paper.createtime}}
+                                </div>
+                                <div>
+                                    更新时间: {{paper.updatetime}}
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </el-skeleton>
+                <div class="m-content-paper">
+                    <div id="editor-container">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </el-scrollbar>
+</div>
+</body>
+</html>

@@ -56,7 +56,7 @@ public interface AdminService {
     // 查询文章
     List<?> papersFilter(Paper_filtrate paper_filtrate);
 
-    Paper paperDetail(Paper paper);
+    JSONObject paperDetail(Paper paper);
 
     boolean paperUpdate(Paper paper);
 

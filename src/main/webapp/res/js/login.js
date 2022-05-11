@@ -3,7 +3,7 @@ window.onload = function () {
         el: ".m-container",
         created() {
             let paths = document.location.pathname.split('/');
-            this.BASE_URL = paths.length == 3 ? '/' + paths[1] + '/': '';
+            this.BASE_URL = paths.length >= 3 ? '/' + paths[1] + '/': '';
         },
         async mounted() {
 
@@ -127,7 +127,7 @@ window.onload = function () {
                     if (valid) {
                         let v = this;
                         $.ajax({
-                            url: this.BASE_URL + 'user/login',
+                            url: window.BASE_URL + window.paths.userLogin,
                             type: "post",
                             contentType: "application/json;charset=UTF-8",
                             data: JSON.stringify({'uid': v.loginForm.user, 'password': v.loginForm.password}),
@@ -140,7 +140,7 @@ window.onload = function () {
                                         type: 'success',
                                         duration: 1500,
                                         onClose: () => {
-                                            location.href = this.BASE_URL + 'user'
+                                            location.href = window.BASE_URL + 'user'
                                         }
                                     })
                                 } else {
@@ -183,7 +183,7 @@ window.onload = function () {
             // 检测uid是否合法
             checkUidLegalReq() {
                 return $.ajax({
-                    url: this.BASE_URL + 'user/checkuid',
+                    url: window.BASE_URL + window.paths.userCheckUid,
                     type: "post",
                     contentType: "application/json;charset=UTF-8",
                     data: JSON.stringify({
@@ -197,7 +197,7 @@ window.onload = function () {
                 this.$refs.verifyEmailForm.validateField('email', (err) => {
                     if (err != '请输入正确的邮箱' && err != '请输入邮箱') {
                         $.ajax({
-                            url: this.BASE_URL + 'user/sendverifycode',
+                            url: window.BASE_URL + window.paths.sendVerifyCode,
                             type: "post",
                             contentType: "application/json;charset=UTF-8",
                             data: JSON.stringify({
@@ -255,7 +255,7 @@ window.onload = function () {
                 this.$refs.verifyEmailForm.validateField('verifyCode', (err) => {
                     if (err != '请输入验证码') {
                         $.ajax({
-                            url: this.BASE_URL + 'user/register',
+                            url: window.BASE_URL + window.paths.userRegister,
                             type: "post",
                             contentType: "application/json;charset=UTF-8",
                             data: JSON.stringify({
@@ -274,7 +274,7 @@ window.onload = function () {
                                         type: 'success',
                                         duration: 1500,
                                         onClose: () => {
-                                            location.href = this.BASE_URL +  'user'
+                                            location.href = window.BASE_URL +  'user'
                                         }
                                     })
                                 } else {
@@ -302,4 +302,11 @@ window.onload = function () {
             }
         }
     })
+}
+
+window.paths = {
+    userLogin: 'user/login',
+    userCheckUid: 'user/checkuid',
+    sendVerifyCode: 'user/sendverifycode',
+    userRegister: 'user/register',
 }

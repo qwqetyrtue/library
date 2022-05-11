@@ -138,7 +138,7 @@ window.onload = function () {
             el: ".m-container",
             created() {
                 let paths = document.location.pathname.split('/');
-                this.BASE_URL = paths.length == 3 ? '/' + paths[1] + '/' : '';
+                this.BASE_URL = paths.length >= 3 ? '/' + paths[1] + '/' : '';
             },
             async mounted() {
                 this.AdminPageLoading = true;
@@ -523,7 +523,7 @@ window.onload = function () {
                 reqAdminMsg() {
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/admin',
+                        url: window.BASE_URL + window.paths.adminMsg,
                     })
                         .then(r => {
                             let res = JSON.parse(r);
@@ -546,7 +546,7 @@ window.onload = function () {
                 adminOutLoginHandle() {
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/outlogin',
+                        url: window.BASE_URL +window.paths.adminOutLogin,
                     })
                         .then(r => {
                             let res = JSON.parse(r);
@@ -557,7 +557,7 @@ window.onload = function () {
                                     showClose: true,
                                     duration: 1500,
                                     onClose: () => {
-                                        location.href = this.BASE_URL + "librarian"
+                                        location.href = "librarian"
                                     }
                                 });
                                 return true;
@@ -608,7 +608,7 @@ window.onload = function () {
                     this.userListLoading = true;
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/users',
+                        url: window.BASE_URL +window.paths.userList,
                         data: JSON.stringify({...paging, ...filtrate}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -884,7 +884,7 @@ window.onload = function () {
                 reqUserUpdateSubmit() {
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/users/update',
+                        url:window.BASE_URL + window.paths.userUpdate,
                         data: JSON.stringify(this.userUpdateForm),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -911,7 +911,7 @@ window.onload = function () {
                 reqUserAddSubmit() {
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/users/add',
+                        url:window.BASE_URL + window.paths.userAdd ,
                         data: JSON.stringify(this.userAddForm),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -936,7 +936,7 @@ window.onload = function () {
                 reqUserDeleteSubmit(row) {
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/users/delete',
+                        url:window.BASE_URL + window.paths.userDelete,
                         data: JSON.stringify(row),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -985,7 +985,7 @@ window.onload = function () {
                     this.bookListLoading = true;
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/books',
+                        url:window.BASE_URL + window.paths.bookList,
                         data: JSON.stringify({...paging, ...filtrate}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1296,7 +1296,7 @@ window.onload = function () {
                     console.log(data);
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/books/update',
+                        url:window.BASE_URL + window.paths.bookUpdate,
                         data: JSON.stringify(data),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1338,7 +1338,7 @@ window.onload = function () {
                     console.log(book);
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/books/include',
+                        url:window.BASE_URL + window.paths.bookAdd,
                         data: JSON.stringify(book),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1366,7 +1366,7 @@ window.onload = function () {
                 reqBookDeleteSubmit(row) {
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/books/delete',
+                        url:window.BASE_URL + window.paths.bookDelete,
                         data: JSON.stringify(row),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1392,7 +1392,7 @@ window.onload = function () {
                 reqBookAuthor(name) {
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/books/authors',
+                        url:window.BASE_URL + window.paths.bookAuthor,
                         data: JSON.stringify({name: name}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1471,7 +1471,7 @@ window.onload = function () {
                     this.borrowListLoading = true;
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/borrows',
+                        url:window.BASE_URL + window.paths.borrowList,
                         data: JSON.stringify({...paging, ...filtrate}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1730,7 +1730,7 @@ window.onload = function () {
                     console.log(data)
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/borrows/update',
+                        url:window.BASE_URL + window.paths.borrowUpdate,
                         data: JSON.stringify(data),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1767,7 +1767,7 @@ window.onload = function () {
                     console.log(data)
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/borrows/create',
+                        url:window.BASE_URL + window.paths.borrowAdd,
                         data: JSON.stringify(data),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1798,7 +1798,7 @@ window.onload = function () {
                 reqBorrowDeleteSubmit(row) {
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/borrows/delete',
+                        url:window.BASE_URL + window.paths.borrowDelete,
                         data: JSON.stringify(row),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1826,7 +1826,7 @@ window.onload = function () {
                         this.borrowUserSelectLoading = true;
                         $.ajax({
                             type: 'post',
-                            url: this.BASE_URL + 'admin/borrows/users',
+                            url:window.BASE_URL + window.paths.borrowUser,
                             data: JSON.stringify({name: query}),
                             contentType: "application/json;charset=UTF-8",
                         })
@@ -1860,7 +1860,7 @@ window.onload = function () {
                         this.borrowBookSelectLoading = true;
                         $.ajax({
                             type: 'post',
-                            url: this.BASE_URL + 'admin/borrows/books',
+                            url:window.BASE_URL + window.paths.borrowBook,
                             data: JSON.stringify({name: query}),
                             contentType: "application/json;charset=UTF-8",
                         })
@@ -1893,7 +1893,7 @@ window.onload = function () {
                         this.addBorrowUserSelectLoading = true;
                         $.ajax({
                             type: 'post',
-                            url: this.BASE_URL + 'admin/borrows/users',
+                            url:window.BASE_URL + window.paths.borrowUser,
                             data: JSON.stringify({name: query}),
                             contentType: "application/json;charset=UTF-8",
                         })
@@ -1918,7 +1918,7 @@ window.onload = function () {
                         this.borrowBookSelectLoading = true;
                         $.ajax({
                             type: 'post',
-                            url: this.BASE_URL + 'admin/borrows/books',
+                            url: window.BASE_URL +window.paths.borrowBook,
                             data: JSON.stringify({name: query}),
                             contentType: "application/json;charset=UTF-8",
                         })
@@ -1947,7 +1947,7 @@ window.onload = function () {
                     this.paperListLoading = true;
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/papers',
+                        url:window.BASE_URL + window.paths.paperList,
                         data: JSON.stringify({...paging, ...filtrate}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -2030,7 +2030,7 @@ window.onload = function () {
                 reqPaper(value) {
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/papers/paper',
+                        url:window.BASE_URL + window.paths.paper,
                         data: JSON.stringify({pid: value}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -2056,7 +2056,7 @@ window.onload = function () {
                         })
                     return $.ajax({
                         type: 'post',
-                        url: this.BASE_URL + 'admin/papers/update',
+                        url:window.BASE_URL + window.paths.paperUpdate,
                         data: JSON.stringify({pid: this.paperEditNow, content: value}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -2174,7 +2174,7 @@ window.onload = function () {
                     }).then(() => {
                         $.ajax({
                             type: 'post',
-                            url: this.BASE_URL + 'admin/borrows/finish',
+                            url:window.BASE_URL + window.paths.borrowFinish,
                             data: JSON.stringify({
                                 bkid: row.bkid,
                                 borrowid: row.borrowid
@@ -2260,4 +2260,37 @@ window.onload = function () {
             }
         }
     )
+}
+
+window.paths = {
+    // admin
+    adminMsg: 'admin/admin',
+    adminOutLogin: 'admin/outlogin',
+    // user
+    userList: 'admin/users',
+    userUpdate: 'admin/users/update',
+    userAdd: 'admin/users/add',
+    userDelete: 'admin/users/delete',
+    // book
+    bookList: 'admin/books',
+    bookUpdate: 'admin/books/update',
+    bookAdd: 'admin/books/include',
+    bookDelete: 'admin/books/delete',
+    // borrow
+    borrowList: 'admin/borrows',
+    borrowUpdate: 'admin/borrows/update',
+    borrowAdd: 'admin/borrows/create',
+    borrowDelete: 'admin/borrows/delete',
+    borrowFinish: 'admin/borrows/finish',
+    // paper
+    paperList: 'admin/papers',
+    paper: 'admin/papers/paper',
+    paperUpdate: 'admin/papers/update',
+    paperAdd: 'admin/borrows/create',
+    paperDelete: 'admin/borrows/delete',
+    // other
+    bookAuthor: 'admin/books/authors',
+    borrowUser: 'admin/borrows/users',
+    borrowBook: 'admin/borrows/books',
+
 }

@@ -3,6 +3,7 @@ package cn.hnist.sharo.controller;
 import cn.hnist.sharo.model.Paper;
 import cn.hnist.sharo.service.PaperService;
 import cn.hnist.sharo.unit.Res;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,10 +23,10 @@ public class PaperController {
         this.paperService = paperService;
     }
 
-    @RequestMapping(value = "/select",method = RequestMethod.POST)
+    @RequestMapping(value = "/type",method = RequestMethod.POST)
     public @ResponseBody
-    Res<List<Paper>> paperSelectHandle(){
-        List<Paper> res = paperService.select();
+    Res<List<Paper>> paperTypeHandle(@RequestBody Paper paper){
+        List<Paper> res = paperService.selectByClassify(paper);
         if(res != null)
             return new Res<>("success",res);
         return new Res<>("fail",null);
@@ -33,8 +34,8 @@ public class PaperController {
 
     @RequestMapping(value = "/detail",method = RequestMethod.POST)
     public @ResponseBody
-    Res<Paper> paperDetailHandle(@RequestBody Paper paper){
-        Paper res = paperService.detail(paper);
+    Res<JSONObject> paperDetailHandle(@RequestBody Paper paper){
+        JSONObject res = paperService.detail(paper);
         if(res != null)
             return new Res<>("success",res);
         return new Res<>("fail",null);
