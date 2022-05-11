@@ -309,7 +309,7 @@
                             <el-form :model="userUpdateForm" :rules="rules_userUpdateForm"
                                      ref="userUpdateForm1" label-position="left"
                                      label-width="90px">
-                                <el-form-item label="账号" prop="id">
+                                <el-form-item label="账号" prop="uid">
                                     <el-input placeholder="请输入账号" v-model="userUpdateForm.uid"></el-input>
                                 </el-form-item>
                                 <el-form-item label="密码" prop="password">
@@ -325,14 +325,14 @@
                             <el-form :model="userUpdateForm" :rules="rules_userUpdateForm"
                                      ref="userUpdateForm2" label-position="left"
                                      label-width="90px">
-                                <el-form-item label="性别">
+                                <el-form-item label="性别" prop="gender">
                                     <el-select v-model="userUpdateForm.gender" placeholder="请选择性别">
                                         <el-option label="男" value="MALE"></el-option>
                                         <el-option label="女" value="FEMALE"></el-option>
                                         <el-option label="隐藏" value="HIDE"></el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-form-item label="出生年月">
+                                <el-form-item label="出生年月" prop="birth">
                                     <el-date-picker
                                             v-model="userUpdateForm.birth"
                                             value-format="yyyy-MM-dd"
@@ -341,21 +341,21 @@
                                             placeholder="选择日期">
                                     </el-date-picker>
                                 </el-form-item>
-                                <el-form-item label="居住地">
+                                <el-form-item label="现居地" prop="presentadd">
                                     <el-input type="textarea" resize="none" :rows="2" placeholder="请输入居住地"
                                               v-model="userUpdateForm.presentadd"></el-input>
                                 </el-form-item>
-                                <el-form-item label="联系地址">
+                                <el-form-item label="家乡" prop="homeadd">
                                     <el-input type="textarea" resize="none" :rows="2" placeholder="请输入联系地址"
                                               v-model="userUpdateForm.homeadd"></el-input>
                                 </el-form-item>
-                                <el-form-item label="电话号码" prop="call">
+                                <el-form-item label="电话号码" prop="call" >
                                     <el-input placeholder="请输入电话号码" v-model="userUpdateForm.call"></el-input>
                                 </el-form-item>
-                                <el-form-item label="邮政编码">
+                                <el-form-item label="邮政编码" prop="postcode">
                                     <el-input placeholder="请输入邮政编码" v-model="userUpdateForm.postcode"></el-input>
                                 </el-form-item>
-                                <el-form-item label="血型">
+                                <el-form-item label="血型" prop="bloodtype">
                                     <el-select v-model="userUpdateForm.bloodtype" placeholder="请选择血型">
                                         <el-option label="A型" value="A"></el-option>
                                         <el-option label="B型" value="B"></el-option>
@@ -732,10 +732,10 @@
                                 <el-form-item label="书籍id" prop="bkid">
                                     <el-input placeholder="请输入书籍id" v-model="bookUpdateForm.bkid"></el-input>
                                 </el-form-item>
-                                <el-form-item label="书名" prop="name">
+                                <el-form-item label="书名" prop="bkname">
                                     <el-input placeholder="请输入书名" v-model="bookUpdateForm.bkname"></el-input>
                                 </el-form-item>
-                                <el-form-item label="作者" prop="atid">
+                                <el-form-item label="作者" prop="author">
                                     <el-select
                                             v-model="bookUpdateForm.author"
                                             filterable
@@ -858,7 +858,7 @@
                                 <el-form-item label="书名" prop="name">
                                     <el-input placeholder="请输入书名" v-model="bookAddForm.name"></el-input>
                                 </el-form-item>
-                                <el-form-item label="作者" prop="atid">
+                                <el-form-item label="作者" prop="author">
                                     <el-select
                                             v-model="bookAddForm.author"
                                             filterable
@@ -1427,17 +1427,21 @@
                                                 :key="editorShow?1:2"
                                                 v-loading="paperListLoading"
                                                 :data="paperListPaging"
+                                                ref="paperList"
                                                 border
                                                 stripe
-                                                :default-sort="{prop: 'createtime', order: 'descending'}">
+                                                @expand-change="paperListExpandHandle"
+                                                :default-sort="{prop: 'title', order: 'descending'}">
                                             <el-table-column
                                                     type="selection"
-                                                    width="55">
+                                                    width="55"
+                                                    v-if="!editorShow">
                                             </el-table-column>
-                                            <el-table-column type="expand"
-                                                             v-if="editorShow">
+                                            <el-table-column  v-if="editorShow" type="expand">
                                                 <template slot-scope="props">
-                                                    <el-form label-position="left" inline class="m-table-expand">
+                                                    <el-form label-position="left"
+                                                             inline
+                                                             class="m-table-expand">
                                                         <el-form-item label="文章ID">
                                                             <span>{{props.row.pid}}</span>
                                                         </el-form-item>
@@ -1452,15 +1456,17 @@
                                                         </el-form-item>
                                                         <el-form-item label="标题">
                                                             <el-input type="textarea" resize="vertical"
-                                                                      :autosize="true"
+                                                                      :autosize="true" readonly
                                                                       placeholder="请输入图书简介"
-                                                                      :value="props.row.title" readonly></el-input>
+                                                                      :value="props.row.title">
+                                                            </el-input>
                                                         </el-form-item>
                                                         <el-form-item label="摘要">
                                                             <el-input type="textarea" resize="vertical"
-                                                                      :autosize="true"
+                                                                      :autosize="true" readonly
                                                                       placeholder="请输入图书简介"
-                                                                      :value="props.row.digest" readonly></el-input>
+                                                                      :value="props.row.digest">
+                                                            </el-input>
                                                         </el-form-item>
                                                     </el-form>
                                                 </template>
@@ -1472,6 +1478,12 @@
                                             </el-table-column>
                                             <el-table-column
                                                     v-if="!editorShow"
+                                                    prop="digest"
+                                                    label="摘要"
+                                                    width="500">
+                                            </el-table-column>
+                                            <el-table-column
+                                                    v-if="!editorShow"
                                                     prop="mid"
                                                     label="发布者ID"
                                                     width="120">
@@ -1480,7 +1492,7 @@
                                                     v-if="!editorShow"
                                                     prop="pid"
                                                     label="文章ID"
-                                                    width="90">
+                                                    width="120">
                                             </el-table-column>
                                             <el-table-column
                                                     prop="classify"
@@ -1505,6 +1517,30 @@
                                                     width="170">
                                             </el-table-column>
                                             <el-table-column
+                                                    v-if="!editorShow"
+                                                    fixed="right"
+                                                    width="120"
+                                                    align="center">
+                                                <template slot="header">
+                                                    <el-row type="flex" align="middle">
+                                                        <el-col :span="12">操作</el-col>
+                                                        <el-col :span="12">
+                                                            <el-button type="text" icon="el-icon-circle-plus-outline" @click="paperMsgAddHandle"></el-button>
+                                                        </el-col>
+                                                    </el-row>
+                                                </template>
+                                                <template slot-scope="scope">
+                                                    <el-button type="text" @click="paperMsgUpdateHandle(scope.row)" size="small">
+                                                        修改
+                                                    </el-button>
+                                                    <el-button type="text" size="small"
+                                                               @click="paperContentEditHandle(scope.row)">
+                                                        编辑内容
+                                                    </el-button>
+                                                </template>
+                                            </el-table-column>
+                                            <el-table-column
+                                                    v-else
                                                     width="90"
                                                     align="center">
                                                 <template slot="header">
@@ -1559,6 +1595,106 @@
                         图片管理
                     </el-tab-pane>
                 </el-tabs>
+                <el-drawer
+                        :wrapper-closable="false"
+                        title="文章信息"
+                        :visible.sync="paperMsgDrawerVisible"
+                        direction="rtl">
+                    <div class="m-paper-msg-drawer">
+                        <el-scrollbar ref="paperUpdateScrollbar" class="m-scrollbar">
+                            <el-form :model="paperUpdateForm" :rules="rules_paperUpdateForm"
+                                     ref="paperUpdateForm_1" label-position="left"
+                                     label-width="90px">
+                                <el-form-item label="文章ID">
+                                    <span>{{paperUpdateForm.pid}}</span>
+                                </el-form-item>
+                                <el-form-item label="发布者ID" prop="mid">
+                                    <span>{{paperUpdateForm.mid}}</span>
+                                </el-form-item>
+                                <el-form-item label="创建时间" prop="createtime">
+                                    <span>{{paperUpdateForm.createtime}}</span>
+                                </el-form-item>
+                                <el-form-item label="更新时间" prop="updatetime">
+                                    <span>{{paperUpdateForm.updatetime}}</span>
+                                </el-form-item>
+                                <el-form-item label="标题" prop="title">
+                                    <el-input type="textarea" resize="vertical"
+                                              :autosize="true"
+                                              placeholder="请输入图书简介"
+                                              v-model:value="paperUpdateForm.title">
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="摘要" prop="digest">
+                                    <el-input type="textarea" resize="vertical"
+                                              :autosize="true"
+                                              placeholder="请输入图书简介"
+                                              v-model:value="paperUpdateForm.digest" >
+                                    </el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-row type="flex" justify="end" align="middle">
+                                <el-col :span="8">
+                                    <el-button type="text" @click="paperUpdateFormResetHandle">重置</el-button>
+                                    <el-button type="primary" @click="paperUpdateFormSubmitHandle">提交修改</el-button>
+                                </el-col>
+                            </el-row>
+                        </el-scrollbar>
+                    </div>
+                </el-drawer>
+                <el-drawer
+                        :wrapper-closable="false"
+                        title="添加文章"
+                        :visible.sync="paperAddMsgDrawerVisible"
+                        direction="rtl">
+                    <div class="m-paper-msg-drawer">
+                        <el-scrollbar ref="paperAddScrollbar" class="m-scrollbar">
+                            <el-form :model="paperAddForm" :rules="rules_paperAddForm"
+                                     ref="paperAddForm_1" label-position="left"
+                                     label-width="90px">
+                                <el-form-item label="发布者ID">
+                                    <span>{{paperAddForm.mid}}</span>
+                                </el-form-item>
+                                <el-form-item label="标题" prop="title">
+                                    <el-input type="textarea" resize="vertical"
+                                              :autosize="{ minRows: 4}"
+                                              placeholder="请输入图书简介"
+                                              v-model:value="paperAddForm.title">
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="摘要" prop="digest">
+                                    <el-input type="textarea" resize="vertical"
+                                              :autosize="{ minRows: 4}"
+                                              placeholder="请输入图书简介"
+                                              v-model:value="paperAddForm.digest" >
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="分类" prop="classify">
+                                    <el-select v-model="paperAddForm.classify"
+                                               filterable
+                                               allow-create
+                                               default-first-option placeholder="请选择">
+                                        <el-option label="新闻" value="新闻"></el-option>
+                                        <el-option label="公告" value="公告"></el-option>
+                                        <el-option label="资讯" value="资讯"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="状态" prop="state">
+                                    <el-select v-model="paperAddForm.state" placeholder="请选择">
+                                        <el-option label="草稿" value="EDIT"></el-option>
+                                        <el-option label="发布" value="PUBLISH"></el-option>
+                                        <el-option label="事故" value="ACCIDENT"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+                            <el-row type="flex" justify="end" align="middle">
+                                <el-col :span="8">
+                                    <el-button type="text" @click="paperAddFormResetHandle">重置</el-button>
+                                    <el-button type="primary" @click="paperAddFormSubmitHandle">提交修改</el-button>
+                                </el-col>
+                            </el-row>
+                        </el-scrollbar>
+                    </div>
+                </el-drawer>
             </div>
         </el-tab-pane>
     </el-tabs>

@@ -72,9 +72,11 @@ div {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5px 0;
+    padding: 5px 0 10px 0;
 }
-
+.m-header-nav .el-menu {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+}
 .el-menu.el-menu--horizontal,span, .el-form-item__content, h1, button, input, .el-massage,i{
     border: none;
     user-select: none;
@@ -225,6 +227,10 @@ div {
 .m-body-news-one-cont {
     width: calc(100% - 70px);
     height: 100%;
+    cursor: pointer;
+}
+.m-body-news-one-cont:hover {
+    text-decoration: underline 2px solid #0099CC;
 }
 
 .m-body-news-one-cont i {

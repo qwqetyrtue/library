@@ -237,7 +237,7 @@ window.onload = function () {
                     userList: [],
                     userListBg: 0,
                     userListEnd: 0,
-                    userListLoading: false,
+                    userListLoading: true,
                     userListCurrentPage: 1,
                     userListPageSizes: [5, 10, 20, 50, 100],
                     userListPageSize: 5,
@@ -252,8 +252,11 @@ window.onload = function () {
                     userUpdateForm: {},
                     userUpdateForm_cp: {},
                     rules_userUpdateForm: {
-                        pid: [
-                            {required: true, message: '昵称不能为空'},
+                        uid: [
+                            {required: true, message: 'uid不能为空', trigger: 'blur'},
+                        ],
+                        password: [
+                            {required: true, message: '密码不能为空', trigger: 'blur'},
                         ],
                         email: [
                             {validator: validateEmail, trigger: 'blur'}
@@ -267,7 +270,7 @@ window.onload = function () {
                     userAddForm: {},
                     rules_userAddForm: {
                         uid: [
-                            {required: true, message: '昵称不能为空'},
+                            {required: true, message: 'uid不能为空'},
                         ],
                         password: [
                             {required: true, message: '密码不能为空'},
@@ -308,7 +311,7 @@ window.onload = function () {
                     bookList: [],
                     bookListBg: 0,
                     bookListEnd: 0,
-                    bookListLoading: false,
+                    bookListLoading: true,
                     bookListCurrentPage: 1,
                     bookListPageSizes: [5, 10, 20, 50, 100],
                     bookListPageSize: 5,
@@ -325,37 +328,37 @@ window.onload = function () {
                     bookUpdateForm_cp: {},
                     rules_bookUpdateForm: {
                         bkid: [
-                            {required: true, message: '昵称不能为空'},
+                            {required: true, message: 'bkid不能为空', trigger: 'blur'},
                         ],
-                        name: [
-                            {required: true, message: '昵称不能为空'},
+                        bkname: [
+                            {required: true, message: '书名不能为空', trigger: 'blur'},
                         ],
-                        atid: [
-                            {required: true, message: '昵称不能为空'},
+                        author: [
+                            {required: true, message: '作者不能为空', trigger: 'blur'},
                         ],
                         price: [
-                            {required: true, message: '昵称不能为空'},
+                            {required: true, message: '价格不能为空', trigger: 'blur'},
                         ],
                         state: [
-                            {required: true, message: '昵称不能为空'},
+                            {required: true, message: '状态不能为空', trigger: 'blur'},
                         ],
                     },
                     bookAddForm: {},
                     rules_bookAddForm: {
                         bkid: [
-                            {required: true, message: '昵称不能为空'},
+                            {required: true, message: 'bkid不能为空', trigger: 'blur'},
                         ],
-                        name: [
-                            {required: true, message: '昵称不能为空'},
+                        bkname: [
+                            {required: true, message: '书名不能为空', trigger: 'blur'},
                         ],
-                        atid: [
-                            {required: true, message: '昵称不能为空'},
+                        author: [
+                            {required: true, message: '作者不能为空', trigger: 'blur'},
                         ],
                         price: [
-                            {required: true, message: '昵称不能为空'},
+                            {required: true, message: '价格不能为空', trigger: 'blur'},
                         ],
                         state: [
-                            {required: true, message: '昵称不能为空'},
+                            {required: true, message: '状态不能为空', trigger: 'blur'},
                         ],
                     },
                     // 搜索表单
@@ -389,7 +392,7 @@ window.onload = function () {
                     borrowList: [],
                     borrowListBg: 0,
                     borrowListEnd: 0,
-                    borrowListLoading: false,
+                    borrowListLoading: true,
                     borrowListCurrentPage: 1,
                     borrowListPageSizes: [5, 10, 20, 50, 100],
                     borrowListPageSize: 5,
@@ -430,7 +433,7 @@ window.onload = function () {
                     paperList: [],
                     paperListBg: 0,
                     paperListEnd: 0,
-                    paperListLoading: false,
+                    paperListLoading: true,
                     paperListCurrentPage: 1,
                     paperListPageSizes: [5, 10, 20, 50, 100],
                     paperListPageSize: 5,
@@ -441,8 +444,14 @@ window.onload = function () {
                     submitPaperSearchBTLoading: false,
                     paperSlide: false,
                     editorShow: false,
+                    paperMsgDrawerVisible: false,
+                    paperAddMsgDrawerVisible: false,
                     paperEditNow: "",
-
+                    paperUpdateForm: {},
+                    paperUpdateForm_cp: {},
+                    rules_paperUpdateForm: {},
+                    paperAddForm: {},
+                    rules_paperAddForm: {},
                 }
             },
             methods: {
@@ -546,7 +555,7 @@ window.onload = function () {
                 adminOutLoginHandle() {
                     return $.ajax({
                         type: 'post',
-                        url: window.BASE_URL +window.paths.adminOutLogin,
+                        url: window.BASE_URL + window.paths.adminOutLogin,
                     })
                         .then(r => {
                             let res = JSON.parse(r);
@@ -608,7 +617,7 @@ window.onload = function () {
                     this.userListLoading = true;
                     return $.ajax({
                         type: 'post',
-                        url: window.BASE_URL +window.paths.userList,
+                        url: window.BASE_URL + window.paths.userList,
                         data: JSON.stringify({...paging, ...filtrate}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -875,16 +884,16 @@ window.onload = function () {
                 },
                 userAddFormResetHandle() {
                     this.userAddForm = {}
-                    if(this.$refs["userAddForm1"])
+                    if (this.$refs["userAddForm1"])
                         this.$refs["userAddForm1"].clearValidate();
-                    if(this.$refs["userAddForm2"])
-                    this.$refs["userAddForm2"].clearValidate();
+                    if (this.$refs["userAddForm2"])
+                        this.$refs["userAddForm2"].clearValidate();
                 },
                 // 提交修改请求
                 reqUserUpdateSubmit() {
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.userUpdate,
+                        url: window.BASE_URL + window.paths.userUpdate,
                         data: JSON.stringify(this.userUpdateForm),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -911,7 +920,7 @@ window.onload = function () {
                 reqUserAddSubmit() {
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.userAdd ,
+                        url: window.BASE_URL + window.paths.userAdd,
                         data: JSON.stringify(this.userAddForm),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -936,7 +945,7 @@ window.onload = function () {
                 reqUserDeleteSubmit(row) {
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.userDelete,
+                        url: window.BASE_URL + window.paths.userDelete,
                         data: JSON.stringify(row),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -985,7 +994,7 @@ window.onload = function () {
                     this.bookListLoading = true;
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.bookList,
+                        url: window.BASE_URL + window.paths.bookList,
                         data: JSON.stringify({...paging, ...filtrate}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1252,7 +1261,7 @@ window.onload = function () {
                         imgsArr: [],
                         state: 'NOTINCLUDE'
                     };
-                    if(this.$refs["bookAddForm1"])
+                    if (this.$refs["bookAddForm1"])
                         this.$refs["bookAddForm1"].clearValidate();
                 },
                 // 重置图片列表
@@ -1296,7 +1305,7 @@ window.onload = function () {
                     console.log(data);
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.bookUpdate,
+                        url: window.BASE_URL + window.paths.bookUpdate,
                         data: JSON.stringify(data),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1338,7 +1347,7 @@ window.onload = function () {
                     console.log(book);
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.bookAdd,
+                        url: window.BASE_URL + window.paths.bookAdd,
                         data: JSON.stringify(book),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1366,7 +1375,7 @@ window.onload = function () {
                 reqBookDeleteSubmit(row) {
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.bookDelete,
+                        url: window.BASE_URL + window.paths.bookDelete,
                         data: JSON.stringify(row),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1392,7 +1401,7 @@ window.onload = function () {
                 reqBookAuthor(name) {
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.bookAuthor,
+                        url: window.BASE_URL + window.paths.bookAuthor,
                         data: JSON.stringify({name: name}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1471,7 +1480,7 @@ window.onload = function () {
                     this.borrowListLoading = true;
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.borrowList,
+                        url: window.BASE_URL + window.paths.borrowList,
                         data: JSON.stringify({...paging, ...filtrate}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1614,7 +1623,7 @@ window.onload = function () {
                     this.borrowMsgDrawerShowHandle();
                 },
                 // 添加借阅按键handle
-                borrowMsgAddHandle(){
+                borrowMsgAddHandle() {
                     this.borrowAddFormResetHandle();
                     this.borrowAddMsgDrawerShowHandle();
                 },
@@ -1699,8 +1708,8 @@ window.onload = function () {
                 },
                 // 重置借阅记录更新表单
                 borrowUpdateFormResetHandle() {
-                    let {borrowid,uid,bkid,createtime,returntime,time,remark} = this.borrowUpdateForm_cp;
-                    this.borrowUpdateForm = {borrowid,uid,bkid,createtime,returntime,time,remark};
+                    let {borrowid, uid, bkid, createtime, returntime, time, remark} = this.borrowUpdateForm_cp;
+                    this.borrowUpdateForm = {borrowid, uid, bkid, createtime, returntime, time, remark};
                     this.borrowBookSelectOption = []
                     this.borrowBookSelectOption.push({bkid: this.borrowUpdateForm.bkid, name: this.borrowUpdateForm.bkname})
                     this.$set(this.borrowUpdateForm, "book", this.borrowUpdateForm.bkid);
@@ -1730,7 +1739,7 @@ window.onload = function () {
                     console.log(data)
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.borrowUpdate,
+                        url: window.BASE_URL + window.paths.borrowUpdate,
                         data: JSON.stringify(data),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1756,7 +1765,7 @@ window.onload = function () {
                         })
                 },
                 // 提交添加请求
-                reqBorrowAddSubmit(){
+                reqBorrowAddSubmit() {
                     let data = JSON.parse(JSON.stringify(this.borrowAddForm));
                     data.uid = data.user;
                     data.bkid = data.book;
@@ -1767,7 +1776,7 @@ window.onload = function () {
                     console.log(data)
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.borrowAdd,
+                        url: window.BASE_URL + window.paths.borrowAdd,
                         data: JSON.stringify(data),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1798,7 +1807,7 @@ window.onload = function () {
                 reqBorrowDeleteSubmit(row) {
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.borrowDelete,
+                        url: window.BASE_URL + window.paths.borrowDelete,
                         data: JSON.stringify(row),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -1826,7 +1835,7 @@ window.onload = function () {
                         this.borrowUserSelectLoading = true;
                         $.ajax({
                             type: 'post',
-                            url:window.BASE_URL + window.paths.borrowUser,
+                            url: window.BASE_URL + window.paths.borrowUser,
                             data: JSON.stringify({name: query}),
                             contentType: "application/json;charset=UTF-8",
                         })
@@ -1860,7 +1869,7 @@ window.onload = function () {
                         this.borrowBookSelectLoading = true;
                         $.ajax({
                             type: 'post',
-                            url:window.BASE_URL + window.paths.borrowBook,
+                            url: window.BASE_URL + window.paths.borrowBook,
                             data: JSON.stringify({name: query}),
                             contentType: "application/json;charset=UTF-8",
                         })
@@ -1893,7 +1902,7 @@ window.onload = function () {
                         this.addBorrowUserSelectLoading = true;
                         $.ajax({
                             type: 'post',
-                            url:window.BASE_URL + window.paths.borrowUser,
+                            url: window.BASE_URL + window.paths.borrowUser,
                             data: JSON.stringify({name: query}),
                             contentType: "application/json;charset=UTF-8",
                         })
@@ -1918,7 +1927,7 @@ window.onload = function () {
                         this.borrowBookSelectLoading = true;
                         $.ajax({
                             type: 'post',
-                            url: window.BASE_URL +window.paths.borrowBook,
+                            url: window.BASE_URL + window.paths.borrowBook,
                             data: JSON.stringify({name: query}),
                             contentType: "application/json;charset=UTF-8",
                         })
@@ -1947,7 +1956,7 @@ window.onload = function () {
                     this.paperListLoading = true;
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.paperList,
+                        url: window.BASE_URL + window.paths.paperList,
                         data: JSON.stringify({...paging, ...filtrate}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -2030,7 +2039,7 @@ window.onload = function () {
                 reqPaper(value) {
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.paper,
+                        url: window.BASE_URL + window.paths.paper,
                         data: JSON.stringify({pid: value}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -2056,7 +2065,7 @@ window.onload = function () {
                         })
                     return $.ajax({
                         type: 'post',
-                        url:window.BASE_URL + window.paths.paperUpdate,
+                        url: window.BASE_URL + window.paths.paperUpdate,
                         data: JSON.stringify({pid: this.paperEditNow, content: value}),
                         contentType: "application/json;charset=UTF-8",
                     })
@@ -2064,6 +2073,48 @@ window.onload = function () {
                             let res = JSON.parse(r);
                             if (res.res == "success") {
                                 origin = editor.getHtml();
+                                return true;
+                            } else throw new Error();
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            throw  err;
+                        })
+                },
+                reqPaperUpdate() {
+                    return $.ajax({
+                        type: 'post',
+                        url: window.BASE_URL + window.paths.paperUpdate,
+                        data: JSON.stringify(this.paperUpdateForm),
+                        contentType: "application/json;charset=UTF-8",
+                    })
+                        .then(r => {
+                            let res = JSON.parse(r);
+                            if (res.res == "success") {
+                                this.reqPaperList({
+                                    limit: this.paperListPageSize,
+                                    offset: this.paperListPageSize * (this.paperListCurrentPage - 1)
+                                })
+                                return true;
+                            } else throw new Error();
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            throw  err;
+                        })
+                },
+                reqPaperAdd(){
+                    return $.ajax({
+                        type: 'post',
+                        url: window.BASE_URL + window.paths.paperAdd,
+                        data: JSON.stringify(this.paperAddForm),
+                        contentType: "application/json;charset=UTF-8",
+                    })
+                        .then(r => {
+                            let res = JSON.parse(r);
+                            if (res.res == "success") {
+                                this.paperList.push(res.data);
+                                this.paperListTotalSize += 1;
                                 return true;
                             } else throw new Error();
                         })
@@ -2098,6 +2149,29 @@ window.onload = function () {
                                 duration: 0,
                             });
                         })
+                },
+                paperMsgDrawerShowHandle(){
+                    this.paperMsgDrawerVisible = true;
+                },
+                paperMsgDrawerHideHandle(){
+                    this.paperMsgDrawerVisible = false;
+                },
+                paperAddMsgDrawerShowHandle(){
+                    this.paperAddMsgDrawerVisible = true;
+                },
+                paperAddMsgDrawerHideHandle(){
+                    this.paperAddMsgDrawerVisible = true;
+                },
+                // 修改按键handle
+                paperMsgUpdateHandle(row) {
+                    this.paperUpdateForm_cp = row;
+                    this.paperUpdateFormResetHandle();
+                    this.paperMsgDrawerShowHandle();
+                },
+                // 添加借阅按键handle
+                paperMsgAddHandle() {
+                    this.paperAddFormResetHandle();
+                    this.paperAddMsgDrawerShowHandle();
                 },
                 // 提交文章查询
                 submitPaperSearchHandle() {
@@ -2164,6 +2238,60 @@ window.onload = function () {
                             });
                         })
                 },
+                // 文章列表展开
+                paperListExpandHandle(row, expandRows) {
+                    // 打开两个,调用toggleRowExpansion关闭第一个
+                    if (expandRows.length === 2) {
+                        this.$refs.paperList.toggleRowExpansion(expandRows[0], false);
+                    }
+                },
+                paperUpdateFormResetHandle() {
+                    this.paperUpdateForm = JSON.parse(JSON.stringify(this.paperUpdateForm_cp))
+                },
+                paperUpdateFormSubmitHandle() {
+                    this.reqPaperUpdate()
+                        .then(res => {
+                            if (res)
+                                this.$message({
+                                    message: '保存成功',
+                                    type: 'success',
+                                    duration: 1500,
+                                });
+                        })
+                        .catch(err => {
+                            this.$message({
+                                message: err.message ? err.message : '保存失败',
+                                type: 'error',
+                                showClose: true,
+                                duration: 0,
+                            });
+                        })
+                },
+                paperAddFormResetHandle(){
+                    this.paperAddForm = {
+                        mid: this.admin.mid,
+                        state: 'EDIT'
+                    }
+                },
+                paperAddFormSubmitHandle() {
+                    this.reqPaperAdd()
+                        .then(res => {
+                            if (res)
+                                this.$message({
+                                    message: '添加成功',
+                                    type: 'success',
+                                    duration: 1500,
+                                });
+                        })
+                        .catch(err => {
+                            this.$message({
+                                message: err.message ? err.message : '添加失败',
+                                type: 'error',
+                                showClose: true,
+                                duration: 0,
+                            });
+                        })
+                },
                 /** ------------------------------ **/
                 // 归还书籍操作
                 bookRestoreHandle(row) {
@@ -2174,7 +2302,7 @@ window.onload = function () {
                     }).then(() => {
                         $.ajax({
                             type: 'post',
-                            url:window.BASE_URL + window.paths.borrowFinish,
+                            url: window.BASE_URL + window.paths.borrowFinish,
                             data: JSON.stringify({
                                 bkid: row.bkid,
                                 borrowid: row.borrowid
@@ -2262,6 +2390,7 @@ window.onload = function () {
     )
 }
 
+// 请求路径
 window.paths = {
     // admin
     adminMsg: 'admin/admin',
@@ -2286,8 +2415,8 @@ window.paths = {
     paperList: 'admin/papers',
     paper: 'admin/papers/paper',
     paperUpdate: 'admin/papers/update',
-    paperAdd: 'admin/borrows/create',
-    paperDelete: 'admin/borrows/delete',
+    paperAdd: 'admin/papers/create',
+    paperDelete: 'admin/papers/delete',
     // other
     bookAuthor: 'admin/books/authors',
     borrowUser: 'admin/borrows/users',

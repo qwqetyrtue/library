@@ -28,8 +28,8 @@ html body {
 }
 
 body {
-    background-image: url("../resources/login_bg.png");
-    background-size: 100% auto;
+    background-image: url('http://localhost:8080/library/resources/login_bg.png');
+    background-size: 100% 100%;
     background-repeat: no-repeat;
 }
 

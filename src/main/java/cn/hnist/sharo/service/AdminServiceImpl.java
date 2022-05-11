@@ -232,4 +232,15 @@ public class AdminServiceImpl implements AdminService{
         int res = paperMapper.papersupdate(paper);
         return res == 1;
     }
+
+    @Override
+    public boolean paperCreate(Paper paper) {
+        LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
+        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
+        paper.setCreatetime(new Timestamp(creatTimestamp));
+        paper.setUpdatetime(new Timestamp(creatTimestamp));
+        paper.setPid(creatTimestamp.toString());
+        int res = paperMapper.paperscreate(paper);
+        return res == 1;
+    }
 }

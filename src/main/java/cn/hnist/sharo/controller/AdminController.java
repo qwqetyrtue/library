@@ -330,5 +330,13 @@ public class AdminController {
         }else return new Res<>("fail","修改失败");
     }
 
+    @RequestMapping(value = "/papers/create",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminPaperCreateHandle(@Validated(Paper.CreateVi.class) @RequestBody Paper paper){
+        if(adminService.paperCreate(paper)){
+            return new Res<>("success","添加成功");
+        }else return new Res<>("fail","添加失败");
+    }
+
 }
 

@@ -60,5 +60,5 @@ public interface AdminService {
 
     boolean paperUpdate(Paper paper);
 
-
+    boolean paperCreate(Paper paper);
 }

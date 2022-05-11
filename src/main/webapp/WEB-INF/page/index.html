@@ -59,7 +59,7 @@
                 <div>
                     <i class="el-icon-s-unfold"> {{board.news.title}}</i>
                 </div>
-                <i class="el-icon-arrow-right"></i>
+                <a href="news"><i class="el-icon-arrow-right"></i></a>
             </div>
             <div>
                 <div class="m-body-news-slide">
@@ -79,7 +79,7 @@
                             <div>{{each.createdate[0]}}-{{each.createdate[1]}}</div>
                             <div>{{each.createdate[2]}}</div>
                         </div>
-                        <div class="m-body-news-one-cont">
+                        <div class="m-body-news-one-cont" @click="paperDetailCheckHandle(each.pid)">
                             <div><i class="el-icon-caret-right"></i><span>{{each.title}}</span></div>
                             <div><span>{{each.digest}}</span></div>
                         </div>
@@ -93,7 +93,7 @@
                     <div>
                         <i class="el-icon-s-unfold"> {{board.massage.title}}</i>
                     </div>
-                    <i class="el-icon-arrow-right"></i>
+                    <a href="massage"><i class="el-icon-arrow-right"></i></a>
                 </div>
                 <div class="m-body-part-cont">
                     <el-scrollbar class="m-scrollbar">
@@ -120,7 +120,7 @@
                     <div>
                         <i class="el-icon-s-unfold"> {{board.notice.title}}</i>
                     </div>
-                    <a href="/List.html"><i class="el-icon-arrow-right"></i></a>
+                    <a href="notice"><i class="el-icon-arrow-right"></i></a>
                 </div>
                 <div class="m-body-part-cont">
                     <el-scrollbar class="m-scrollbar">
@@ -146,25 +146,24 @@
         <div class="m-foot_main">
             <span>
                 <a href="#">联系我们</a><span>|</span> <a href="#">法律声明</a><span>|</span> <a
-                    href="/login.html">后台管理</a><span>|</span>
-                <a href="#">旧版网站</a>
+                    href="library">后台管理</a><span>|</span>
             </span>
             <span>
                 <label>
-                    版权所有：XXX大学信息中心
+                    版权所有：LIB图书馆
                 </label>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <label>
-                    联系电话：XXX
+                    联系电话：XXX-XXXXXXX
                 </label>
             </span>
             <span>
                 <label>
-                    地址：XXX
+                    地址：湖南省岳阳市岳阳楼区奇家岭街道
                 </label>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <label>
-                    苏ICP备-XXX
+                    湘ICP备-XXX
                 </label>
             </span>
         </div>

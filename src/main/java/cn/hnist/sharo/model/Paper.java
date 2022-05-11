@@ -4,17 +4,26 @@ package cn.hnist.sharo.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import javax.validation.constraints.NotBlank;
+
 public class Paper {
 
+  public interface CreateVi {};
+
   private String pid;
+  @NotBlank(groups = {CreateVi.class},message = "标题不能为空")
   private String title;
   private String content;
+  @NotBlank(groups = {CreateVi.class},message = "创建者不能为空")
   private String mid;
+  // state ----------------要创建员工枚举类--------------------------
+  @NotBlank(groups = {CreateVi.class},message = "状态不能为空")
   private String state;
   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
   private java.sql.Timestamp createtime;
   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
   private java.sql.Timestamp updatetime;
+  @NotBlank(groups = {CreateVi.class},message = "分类不能为空")
   private String classify;
   private String digest;
 

@@ -75,7 +75,7 @@
         UPDATE paper
         <set>
             <if test="title != null and title != ''">
-                titile=#{title},
+                title=#{title},
             </if>
             <if test="content != null and content != ''">
                 content=#{content},
@@ -95,4 +95,9 @@
         </set>
         WHERE pid=#{pid}
     </update>
+
+    <insert id="paperscreate" parameterType="Paper">
+       INSERT INTO paper (pid, title, mid, state, createtime, updatetime, classify, digest)
+       VALUES (#{pid}, #{title}, #{mid}, #{state}, #{createtime}, #{updatetime}, #{classify}, #{digest})
+    </insert>
 </mapper>

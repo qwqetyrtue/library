@@ -3,18 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>通知公告</title>
+    <!-- 项目前缀 -->
+    <script th:inline="javascript">
+        window.BASE_URL = [[${#request.getContextPath()}]] + '/';
+    </script>
+    <base th:href="${#request.getContextPath()}+'/'">
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="js/element-ui@2.15.7/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="css/notice.css">
+    <link rel="stylesheet" th:href="@{'/js/element-ui@2.15.7/lib/theme-chalk/index.css'}">
+    <link rel="stylesheet" th:href="@{'/css/notice.css'}">
     <!--引入vue-->
-    <script src="js/vue/vue.js"></script>
+    <script th:src="@{'/js/vue/vue.js'}"></script>
     <!-- 引入组件库 -->
-    <script src="js/element-ui@2.15.7/lib/index.js"></script>
+    <script th:src="@{'/js/element-ui@2.15.7/lib/index.js'}"></script>
     <!--页面js-->
-    <script src="js/notice.js"></script>
+    <script th:src="@{'/js/notice.js'}"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<div class="m-container">
+<div class="m-container" v-cloak>
     <div class="m-header">
         <div class="m-header-bg">
             <div></div>

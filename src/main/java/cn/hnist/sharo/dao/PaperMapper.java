@@ -19,4 +19,6 @@ public interface PaperMapper {
     List<Paper> papersfilter(Paper_filtrate paper_filtrate);
 
     int papersupdate(Paper paper);
+
+    int paperscreate(Paper paper);
 }
