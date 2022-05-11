@@ -852,4 +852,27 @@ function submitSearch(){
    })
    ```
 
-   
+
+
+
+### 28. 使用`getEpochSecond()` 导致`datatiem`时间错误
+
++ 错误
+
+  ```java
+  LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
+  Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).getEpochSecond()
+  new Timestamp(creatTimestamp)
+  // 这样出来的Timestamp存储错误的,new Timestamp(creatTimestamp) 需要的精度较高应该使用 .toEpochMilli();      
+  ```
+
++ 正确
+
+  ```java
+  LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
+  Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+  new Timestamp(creatTimestamp)
+  ```
+
+  
+

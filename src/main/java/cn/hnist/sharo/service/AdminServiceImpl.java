@@ -173,7 +173,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public boolean borrowFinish(Borrowrecord borrowrecord) {
         LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
-        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
+        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
         // 转换为 Timestamp 类型对象
         Timestamp timestamp = new Timestamp(creatTimestamp);
         borrowrecord.setReturntime(timestamp);
@@ -192,8 +192,8 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public JSONObject borrowCreate(Borrowrecord borrowrecord) throws RuntimeException{
         LocalDateTime create = borrowrecord.getCreatetime().toLocalDateTime();
-        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
-        borrowrecord.setBorrowid(borrowrecord.getUid() + '_' + creatTimestamp);
+        Long creatTimestamp_sec = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
+        borrowrecord.setBorrowid(borrowrecord.getUid() + '_' + creatTimestamp_sec);
         if (borrowMapper.create(borrowrecord) == 1) {
             Book book = new Book();
             book.setBkid(borrowrecord.getBkid());
@@ -236,10 +236,11 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public boolean paperCreate(Paper paper) {
         LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
-        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
+        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Long creatTimestamp_sec = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
         paper.setCreatetime(new Timestamp(creatTimestamp));
         paper.setUpdatetime(new Timestamp(creatTimestamp));
-        paper.setPid(creatTimestamp.toString());
+        paper.setPid(creatTimestamp_sec.toString());
         int res = paperMapper.paperscreate(paper);
         return res == 1;
     }

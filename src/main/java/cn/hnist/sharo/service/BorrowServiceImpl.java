@@ -31,8 +31,9 @@ public class BorrowServiceImpl implements BorrowService {
     @Override
     public boolean create(Borrowrecord borrowrecord) throws RuntimeException{
         LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
-        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
-        borrowrecord.setBorrowid(borrowrecord.getUid() + '_' + creatTimestamp);
+        Long creatTimestamp_sec = create.toInstant(ZoneOffset.of("+8")).getEpochSecond();
+        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        borrowrecord.setBorrowid(borrowrecord.getUid() + '_' + creatTimestamp_sec);
         borrowrecord.setCreatetime(new Timestamp(creatTimestamp));
         borrowrecord.setState(BorrowState.BORROW);
 
