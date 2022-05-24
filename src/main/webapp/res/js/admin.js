@@ -228,12 +228,39 @@ window.onload = function () {
                 return {
                     BASE_URL: "",
                     admin: {},
+                    userHeader: {
+                        uid: {prop: "uid", label: "UID"},
+                        logout: {prop: "logout", label: "账号状态"},
+                        name: {prop: "name", label: "昵称"},
+                        gender: {prop: "gender", label: "性别"},
+                        createdate: {prop: "createdate", label: "创建时间"},
+                        birth: {prop: "birth", label: "出生年月"},
+                        email: {prop: "email", label: "邮箱"},
+                        call: {prop: "call", label: "电话"},
+                        postcode: {prop: "postcode", label: "邮政编码"},
+                        bloodtype: {prop: "bloodtype", label: "血型"},
+                        homeadd: {prop: "homeadd", label: "家乡"},
+                        presentadd: {prop: "presentadd", label: "现居地"}
+                    },
                     menuValue: "userM",
                     resourceValue: "paperM",
                     AdminPageLoading: false,
                     borrowTimeMax: 60,
                     borrowTimeMin: 1,
-                    /** --------------用户列表源数据-------------- **/
+                    /**
+                     * --------------导出服务--------------
+                     */
+                    exportDialogVisible: false,
+                    exportItem: [],
+                    exportDataItem: [],
+                    exportDictionary: {},
+                    exportTarget: null,
+                    exportFilter: {},
+                    exportRange: "全部",
+                    exportNoHeader: false,
+                    /**
+                     * --------------用户列表源数据--------------
+                     */
                     userList: [],
                     userListBg: 0,
                     userListEnd: 0,
@@ -307,7 +334,9 @@ window.onload = function () {
                         postcode: false,
                         bloodtype: false
                     },
-                    /** --------------书籍列表源数据-------------- **/
+                    /**
+                     * --------------书籍列表源数据--------------
+                     */
                     bookList: [],
                     bookListBg: 0,
                     bookListEnd: 0,
@@ -388,7 +417,9 @@ window.onload = function () {
                     bookAuthorSelectOption: [],
                     addBookAuthorSelectLoading: false,
                     addBookAuthorSelectOption: [],
-                    /** --------------借阅列表源数据-------------- **/
+                    /**
+                     * --------------借阅列表源数据--------------
+                     */
                     borrowList: [],
                     borrowListBg: 0,
                     borrowListEnd: 0,
@@ -429,7 +460,9 @@ window.onload = function () {
                     addBorrowUserSelectOption: [],
                     addBorrowBookSelectLoading: false,
                     addBorrowBookSelectOption: [],
-                    /** --------------文章列表源数据-------------- **/
+                    /**
+                     * --------------文章列表源数据--------------
+                     */
                     paperList: [],
                     paperListBg: 0,
                     paperListEnd: 0,
@@ -439,6 +472,12 @@ window.onload = function () {
                     paperListPageSize: 5,
                     paperListPageHideWhenSingle: false,
                     paperListTotalSize: 0,
+                    paperSearchConfigForm: {
+                        state: "PUBLISH",
+                    },
+                    paperSearchConfigChecked: {
+                        base: false,
+                    },
                     // 按键防止连点
                     refreshPaperBTLoading: false,
                     submitPaperSearchBTLoading: false,
@@ -455,7 +494,9 @@ window.onload = function () {
                 }
             },
             methods: {
-                /*禁选菜单栏第一个*/
+                /**
+                 * 禁选菜单栏第一个
+                 */
                 tabsMsgHandle(activeName, oldActiveName) {
                     console.log(activeName)
                     if (activeName == "0")
@@ -594,7 +635,141 @@ window.onload = function () {
                             break;
                     }
                 },
-                /** --------------用户列表-------------- **/
+                /**
+                 * --------------导出服务--------------
+                 */
+                // 获取导出数据项
+                getDateItem(table) {
+                    let header = this[table + "Header"];
+                    this.exportDataItem = [];
+                    this.exportDictionary = {};
+                    for (each in header) {
+                        this.exportDataItem.push({key: header[each].prop, label: header[each].label})
+                        this.$set(this.exportDictionary, header[each].prop, header[each].label);
+                    }
+                },
+                // 获取查询条件
+                getSearchFilter(table) {
+                    let filtrate = {};
+                    switch (table) {
+                        case "user":
+                            for (let each in this.userSearchConfigChecked) {
+                                if (each === "base") {
+                                    if (this.userSearchConfigChecked[each]) {
+                                        filtrate.uid = this.userSearchConfigForm.uid;
+                                        filtrate.name = this.userSearchConfigForm.name;
+                                        filtrate.call = this.userSearchConfigForm.call;
+                                    }
+                                } else if (this.userSearchConfigChecked[each]) {
+                                    filtrate[each] = this.userSearchConfigForm[each];
+                                }
+                            }
+                            break;
+                        case "book":
+                            break;
+                        case "borrow":
+                            break;
+                    }
+                    return filtrate;
+                },
+                // 获取导出字典
+                getExportDirectory() {
+                    let res = [];
+                    for (each in this.exportItem) {
+                        let value = this.exportItem[each];
+                        let key = this.exportDictionary[value];
+                        res.push({value, key});
+                    }
+                    return res;
+                },
+                // 打开导出dialog
+                openExportDialogHandle(table) {
+                    this.exportTarget = table;
+                    this.getDateItem(table);
+                    this.exportFilter = this.getSearchFilter(table);
+                    this.exportDialogVisible = true;
+                },
+                // 导出
+                exportHandle() {
+                    console.log("导出" + this.exportTarget + "表");
+                    console.log(this.getExportDirectory());
+                    console.log(this.exportFilter)
+                    console.log(this.exportRange)
+                    let limit;
+                    let offset;
+                    let dictionary = this.getExportDirectory();
+                    let hasHeader = !this.exportNoHeader;
+                    let filtrate = this.exportFilter;
+                    if (this.exportRange === "全部") {
+                        limit = -1;
+                    } else {
+                        limit = this[this.exportTarget + 'ListPageSize'];
+                        offset = this[this.exportTarget + 'ListPageSize'] * (this[this.exportTarget + 'ListCurrentPage'] - 1);
+                    }
+                    let sheetName = this.exportTarget;
+                    switch (this.exportTarget) {
+                        case "user":
+                            $.ajax({
+                                type: 'post',
+                                url: window.BASE_URL + window.paths.userListXls,
+                                data: JSON.stringify({
+                                    filtrate: {...filtrate,limit,offset},
+                                    dictionary,
+                                    sheetName,
+                                    hasHeader,
+                                }),
+                                contentType: "application/json;charset=UTF-8",
+                                xhrFields: {
+                                    responseType: "blob",
+                                },
+                            })
+                                .then((res, statusTest, xhr) => {
+                                    window.xhrr = xhr;
+                                    console.log(xhr, res == xhr.responseText)
+                                    let disposition = xhr.getResponseHeader("Content-Disposition");
+                                    let fileName = disposition.slice(disposition.indexOf("fileName=") + 9);
+                                    const blob = new Blob([res], {type: "application/vnd.ms-excel"});
+                                    // 创建一个超链接，将文件流赋进去，然后实现这个超链接的单击事件
+                                    const elink = document.createElement('a');
+                                    elink.download = fileName;
+                                    elink.style.display = 'none';
+                                    elink.href = URL.createObjectURL(blob);
+                                    document.body.appendChild(elink);
+                                    elink.click();
+                                    URL.revokeObjectURL(elink.href); // 释放URL 对象
+                                    document.body.removeChild(elink);
+                                })
+                            break;
+                        case "book":
+                            $.ajax({
+                                type: 'post',
+                                url: window.BASE_URL + "file/export/test",
+                                contentType: "application/json;charset=UTF-8",
+                                xhrFields: {
+                                    responseType: "blob",
+                                },
+                            })
+                                .then(res => {
+                                    const blob = new Blob([res], {type: 'application/vnd.ms-excel'});
+                                    console.log(blob.size)
+                                    // 创建一个超链接，将文件流赋进去，然后实现这个超链接的单击事件
+                                    const elink = document.createElement('a');
+                                    elink.download = "test.xls";
+                                    elink.style.display = 'none';
+                                    elink.href = URL.createObjectURL(blob);
+                                    document.body.appendChild(elink);
+                                    elink.click();
+                                    URL.revokeObjectURL(elink.href); // 释放URL 对象
+                                    document.body.removeChild(elink);
+                                })
+                            break;
+                        case "borrow":
+                            break;
+                    }
+                },
+                /**
+                 * --------------用户列表--------------
+                 */
                 // 请求用户数据 flag为真不启用筛选
                 reqUserList(paging, flag) {
                     this.userListBg = paging.offset;
@@ -607,6 +782,7 @@ window.onload = function () {
                                 if (this.userSearchConfigChecked[each]) {
                                     filtrate.uid = this.userSearchConfigForm.uid;
                                     filtrate.name = this.userSearchConfigForm.name;
+                                    filtrate.call = this.userSearchConfigForm.call;
                                 }
                             } else if (this.userSearchConfigChecked[each]) {
                                 filtrate[each] = this.userSearchConfigForm[each];
@@ -971,7 +1147,9 @@ window.onload = function () {
                             });
                         })
                 },
-                /** --------------书籍列表-------------- **/
+                /**
+                 * --------------书籍列表--------------
+                 */
                 // 请求用户数据 flag为真不启用筛选
                 reqBookList(paging, flag) {
                     this.bookListBg = paging.offset;
@@ -1221,7 +1399,7 @@ window.onload = function () {
                 },
                 // 删除提交
                 bookMsgDeleteHandle(row) {
-                    this.$confirm('是否确认删除选中用户的信息?', '提示', {
+                    this.$confirm('是否确认删除选中书籍的信息?', '提示', {
                         confirmButtonText: '删除',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -1456,7 +1634,9 @@ window.onload = function () {
                         this.addBookAuthorSelectOption = [];
                     }
                 },
-                /** --------------借阅列表-------------- **/
+                /**
+                 * --------------借阅列表--------------
+                 */
                 // 请求用户数据 flag为真不启用筛选
                 reqBorrowList(paging, flag) {
                     this.borrowListBg = paging.offset;
@@ -1947,12 +2127,16 @@ window.onload = function () {
                         this.addBorrowBookSelectOption = [];
                     }
                 },
-                /** --------------文章列表-------------- **/
+                /**
+                 * --------------文章列表--------------
+                 */
                 // 分页修改
                 reqPaperList(paging, flag) {
                     this.paperListBg = paging.offset;
                     this.paperListEnd = paging.offset + paging.limit;
-                    let filtrate = null
+                    let filtrate = {};
+                    if (this.paperSearchConfigChecked.base)
+                        filtrate.state = this.paperSearchConfigForm.state;
                     this.paperListLoading = true;
                     return $.ajax({
                         type: 'post',
@@ -2103,7 +2287,7 @@ window.onload = function () {
                             throw  err;
                         })
                 },
-                reqPaperAdd(){
+                reqPaperAdd() {
                     return $.ajax({
                         type: 'post',
                         url: window.BASE_URL + window.paths.paperAdd,
@@ -2150,16 +2334,16 @@ window.onload = function () {
                             });
                         })
                 },
-                paperMsgDrawerShowHandle(){
+                paperMsgDrawerShowHandle() {
                     this.paperMsgDrawerVisible = true;
                 },
-                paperMsgDrawerHideHandle(){
+                paperMsgDrawerHideHandle() {
                     this.paperMsgDrawerVisible = false;
                 },
-                paperAddMsgDrawerShowHandle(){
+                paperAddMsgDrawerShowHandle() {
                     this.paperAddMsgDrawerVisible = true;
                 },
-                paperAddMsgDrawerHideHandle(){
+                paperAddMsgDrawerHideHandle() {
                     this.paperAddMsgDrawerVisible = true;
                 },
                 // 修改按键handle
@@ -2267,7 +2451,7 @@ window.onload = function () {
                             });
                         })
                 },
-                paperAddFormResetHandle(){
+                paperAddFormResetHandle() {
                     this.paperAddForm = {
                         mid: this.admin.mid,
                         state: 'EDIT'
@@ -2292,7 +2476,9 @@ window.onload = function () {
                             });
                         })
                 },
-                /** ------------------------------ **/
+                /**
+                 * ------------------------------
+                 */
                 // 归还书籍操作
                 bookRestoreHandle(row) {
                     this.$confirm('是否确认要归还选中书籍?', '确认', {
@@ -2357,7 +2543,6 @@ window.onload = function () {
                     console.log("yes")
                     this[name] = !this[name];
                 },
-                // 初始化富文本编辑器
             },
             computed: {
                 // 渲染在页面中的分页数据
@@ -2397,6 +2582,7 @@ window.paths = {
     adminOutLogin: 'admin/outlogin',
     // user
     userList: 'admin/users',
+    userListXls: 'admin/users/xls',
     userUpdate: 'admin/users/update',
     userAdd: 'admin/users/add',
     userDelete: 'admin/users/delete',

@@ -1,15 +1,17 @@
 package cn.hnist.sharo.controller;
 
-import cn.hnist.sharo.model.Paper;
 import cn.hnist.sharo.service.PaperService;
 import cn.hnist.sharo.unit.Res;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 @Controller
 public class PageController {
@@ -93,5 +95,14 @@ public class PageController {
     public @ResponseBody
     Res<String> notFoundPostHandle(){
         return new Res<>("fail","错误的请求地址 code:404");
+    }
+
+    // 显示当前时间
+    @RequestMapping(value = "/now",method = RequestMethod.GET)
+    public @ResponseBody
+    String nowHandle(){
+        LocalDateTime create = LocalDateTime.now(ZoneId.of(ZoneId.SHORT_IDS.get("CTT"))).withNano(0);
+        Long creatTimestamp = create.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        return new Timestamp(creatTimestamp).toString();
     }
 }

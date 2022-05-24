@@ -4,7 +4,7 @@ package cn.hnist.sharo.controller;
 import cn.hnist.sharo.model.mexpand.Update_pwd;
 import cn.hnist.sharo.model.User;
 import cn.hnist.sharo.model.mexpand.User_register;
-import cn.hnist.sharo.unit.EmailVerifyCode;
+import cn.hnist.sharo.unit.EmailUtils;
 import cn.hnist.sharo.unit.Res;
 import cn.hnist.sharo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,8 +84,8 @@ public class UserController {
     @RequestMapping(value = "/sendverifycode", method = RequestMethod.POST)
     public @ResponseBody
     Res<String> userSendVerifyCodeHandle(@RequestBody User_register user_register, HttpSession session) {
-        String verifyCode = EmailVerifyCode.smsCode();
-        if (EmailVerifyCode.sendCode(verifyCode, user_register.getEmail())) {
+        String verifyCode = EmailUtils.smsCode();
+        if (EmailUtils.sendCode(verifyCode, user_register.getEmail())) {
             session.setAttribute("verifyCode", verifyCode);
             session.setAttribute("email", user_register.getEmail());
             return new Res<>("success", "发送成功");

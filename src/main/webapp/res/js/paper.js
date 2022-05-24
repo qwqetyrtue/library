@@ -21,7 +21,6 @@ window.onload = function (){
         async mounted() {
             initWangEditor();
             await this.reqPaperDetail();
-            console.log(this.paper.content)
             editor.dangerouslyInsertHtml(this.paper.content)
             editor.disable()
             window.editor = editor;

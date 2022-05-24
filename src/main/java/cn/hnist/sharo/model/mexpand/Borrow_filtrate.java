@@ -4,7 +4,7 @@ import cn.hnist.sharo.model.menum.BorrowState;
 
 import java.sql.Timestamp;
 
-public class Borrow_filtrate {
+public class Borrow_filtrate extends Filtrate{
     private String borrowid;
     private String uid;
     private java.sql.Timestamp createtime;
@@ -23,10 +23,6 @@ public class Borrow_filtrate {
     private int time_lower;
     private String mid;
     private boolean remark;
-
-    private int limit;
-    private int offset;
-    private String order;
 
     public String getBorrowid() {
         return borrowid;
@@ -130,30 +126,6 @@ public class Borrow_filtrate {
 
     public void setLimittime_lower(Timestamp limittime_lower) {
         this.limittime_lower = limittime_lower;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
     }
 
     public String getMid() {

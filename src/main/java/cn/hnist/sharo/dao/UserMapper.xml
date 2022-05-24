@@ -110,10 +110,10 @@
             AND email LIKE CONCAT('%',#{email},'%')
         </if>
         <if test="call !=null and call !=''">
-            AND call LIKE CONCAT('%',#{call},'%')
+            AND `call` LIKE CONCAT('%',#{call},'%')
         </if>
         <if test="name !=null and name !=''">
-            AND name LIKE CONCAT('%',#{name},'%')
+            AND `name` LIKE CONCAT('%',#{name},'%')
         </if>
         <if test="postcode !=null and postcode !=''">
             AND postcode LIKE CONCAT('%',#{postcode},'%')
@@ -132,14 +132,19 @@
         <choose>
             <when test="limit !=null and limit &gt; 0 ">
                 LIMIT #{limit}
+                <if test="offset !=null and offset &gt;= 0">
+                OFFSET #{offset}
+            </if>
+            </when>
+            <when test="limit == -1 ">
             </when>
             <otherwise>
                 LIMIT 10
+                <if test="offset !=null and offset &gt;= 0">
+                    OFFSET #{offset}
+                </if>
             </otherwise>
-        </choose>
-        <if test="offset !=null and offset &gt;= 0">
-            OFFSET #{offset}
-        </if>;
+        </choose>;
         SELECT FOUND_ROWS() as total;
     </select>
 
@@ -176,4 +181,14 @@
                           postcode, bloodtype)
         VALUES (#{uid},#{gender},#{birth},#{homeadd},#{presentadd},#{email},#{call},#{name},#{createdate},#{password},#{postcode},#{bloodtype})
     </insert>
+
+    <!-- 用户批量导入 -->
+    <insert id="usersimport" parameterType="list">
+        INSERT INTO user (uid,name,password,email,createdate)
+        VALUES
+        <foreach collection="list" separator="," item="item">
+            (#{item.uid},#{item.name},#{item.password},#{item.email},#{item.createdate})
+        </foreach>
+    </insert>
+
 </mapper>

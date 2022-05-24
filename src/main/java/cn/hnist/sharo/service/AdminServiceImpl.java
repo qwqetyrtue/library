@@ -87,6 +87,14 @@ public class AdminServiceImpl implements AdminService{
         return affect == 1?user:null;
     }
 
+    @Transactional
+    @Override
+    public boolean userImport(List<User> users) {
+        if(userMapper.usersimport(users) != users.size())
+            throw new RuntimeException("插入失败");
+        return true;
+    }
+
     @Override
     public List<?> booksFilter(Book_filtrate book_filtrate) {
         try {

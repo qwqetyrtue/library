@@ -18,7 +18,7 @@
     <select id="selectbyclassify" resultType="Paper" parameterType="Paper">
         SELECT pid, title, mid, state, createtime, updatetime, classify, digest
         FROM paper
-        WHERE classify=#{classify}
+        WHERE classify=#{classify} AND state='PUBLISH'
         ORDER BY createtime DESC
         LIMIT 5;
     </select>
@@ -54,7 +54,7 @@
                 ORDER BY #{order}
             </when>
             <otherwise>
-                ORDER BY pid
+                ORDER BY createtime
             </otherwise>
         </choose>
         <choose>

@@ -88,7 +88,7 @@
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" :loading="submitUserSearchBTLoading"
-                                           @click="submitUserSearchHandle">查询
+                                           @click="submitUserSearchHandle" size="medium">查询
                                 </el-button>
                             </el-form-item>
                         </el-form>
@@ -261,7 +261,8 @@
                                     <el-row type="flex" align="middle">
                                         <el-col :span="12">操作</el-col>
                                         <el-col :span="12">
-                                            <el-button type="text" icon="el-icon-circle-plus-outline" @click="userMsgAddHandle"></el-button>
+                                            <el-button type="text" icon="el-icon-circle-plus-outline"
+                                                       @click="userMsgAddHandle"></el-button>
                                         </el-col>
                                     </el-row>
                                 </template>
@@ -289,12 +290,20 @@
                                     :total="userListTotalSize">
                             </el-pagination>
                         </el-col>
-                        <el-col :span="2">
-                            <el-button :loading="refreshUserBTLoading" size="medium"
-                                       icon="el-icon-refresh" type="text"
-                                       @click="refreshUserListHandle"></el-button>
-                            <el-button size="small" circle icon="el-icon-caret-top"
-                                       @click="backupHandle('userListScrollbar')"></el-button>
+                        <el-col :span="3">
+                            <el-tooltip class="m-table-button-tip" effect="dark" content="导出" placement="top-start">
+                                <el-button size="small" circle icon="el-icon-document-copy"
+                                           @click="openExportDialogHandle('user')"></el-button>
+                            </el-tooltip>
+                            <el-tooltip class="m-table-button-tip" effect="dark" content="刷新" placement="top-start">
+                                <el-button :loading="refreshUserBTLoading" size="small"
+                                           icon="el-icon-refresh" circle
+                                           @click="refreshUserListHandle"></el-button>
+                            </el-tooltip>
+                            <el-tooltip class="m-table-button-tip" effect="dark" content="回到顶部" placement="top-start">
+                                <el-button size="small" circle icon="el-icon-caret-top"
+                                           @click="backupHandle('userListScrollbar')"></el-button>
+                            </el-tooltip>
                         </el-col>
                     </el-row>
                 </div>
@@ -349,7 +358,7 @@
                                     <el-input type="textarea" resize="none" :rows="2" placeholder="请输入联系地址"
                                               v-model="userUpdateForm.homeadd"></el-input>
                                 </el-form-item>
-                                <el-form-item label="电话号码" prop="call" >
+                                <el-form-item label="电话号码" prop="call">
                                     <el-input placeholder="请输入电话号码" v-model="userUpdateForm.call"></el-input>
                                 </el-form-item>
                                 <el-form-item label="邮政编码" prop="postcode">
@@ -480,7 +489,7 @@
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" :loading="submitBookSearchBTLoading"
-                                           @click="submitBookSearchHandle">查询
+                                           @click="submitBookSearchHandle" size="medium">查询
                                 </el-button>
                             </el-form-item>
                         </el-form>
@@ -681,7 +690,8 @@
                                     <el-row type="flex" align="middle">
                                         <el-col :span="12">操作</el-col>
                                         <el-col :span="12">
-                                            <el-button type="text" icon="el-icon-circle-plus-outline" @click="bookMsgAddHandle"></el-button>
+                                            <el-button type="text" icon="el-icon-circle-plus-outline"
+                                                       @click="bookMsgAddHandle"></el-button>
                                         </el-col>
                                     </el-row>
                                 </template>
@@ -709,12 +719,20 @@
                                     :total="bookListTotalSize">
                             </el-pagination>
                         </el-col>
-                        <el-col :span="2">
-                            <el-button :loading="refreshBookBTLoading" size="medium"
-                                       icon="el-icon-refresh" type="text"
-                                       @click="refreshBookListHandle"></el-button>
-                            <el-button size="small" circle icon="el-icon-caret-top"
-                                       @click="backupHandle('bookListScrollbar')"></el-button>
+                        <el-col :span="3">
+                            <el-tooltip class="m-table-button-tip" effect="dark" content="导出" placement="top-start">
+                                <el-button size="small" circle icon="el-icon-document-copy"
+                                           @click="exportHandle('book')"></el-button>
+                            </el-tooltip>
+                            <el-tooltip class="m-table-button-tip" effect="dark" content="刷新" placement="top-start">
+                                <el-button :loading="refreshBookBTLoading" size="small"
+                                           icon="el-icon-refresh" circle
+                                           @click="refreshBookListHandle"></el-button>
+                            </el-tooltip>
+                            <el-tooltip class="m-table-button-tip" effect="dark" content="回到顶部" placement="top-start">
+                                <el-button size="small" circle icon="el-icon-caret-top"
+                                           @click="backupHandle('bookListScrollbar')"></el-button>
+                            </el-tooltip>
                         </el-col>
                     </el-row>
                 </div>
@@ -1005,7 +1023,7 @@
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" :loading="submitBorrowSearchBTLoading"
-                                           @click="submitBorrowSearchHandle">查询
+                                           @click="submitBorrowSearchHandle" size="medium">查询
                                 </el-button>
                             </el-form-item>
                         </el-form>
@@ -1134,7 +1152,8 @@
                                     <el-row type="flex" align="middle">
                                         <el-col :span="12">操作</el-col>
                                         <el-col :span="12">
-                                            <el-button type="text" icon="el-icon-circle-plus-outline" @click="borrowMsgAddHandle"></el-button>
+                                            <el-button type="text" icon="el-icon-circle-plus-outline"
+                                                       @click="borrowMsgAddHandle"></el-button>
                                         </el-col>
                                     </el-row>
                                 </template>
@@ -1163,12 +1182,20 @@
                                     :total="borrowListTotalSize">
                             </el-pagination>
                         </el-col>
-                        <el-col :span="2">
-                            <el-button :loading="refreshBorrowBTLoading" size="medium"
-                                       icon="el-icon-refresh" type="text"
-                                       @click="refreshBorrowListHandle"></el-button>
-                            <el-button size="small" circle icon="el-icon-caret-top"
-                                       @click="backupHandle('borrowListScrollbar')"></el-button>
+                        <el-col :span="3">
+                            <el-tooltip class="m-table-button-tip" effect="dark" content="导出" placement="top-start">
+                                <el-button size="small" circle icon="el-icon-document-copy"
+                                           @click="exportHandle('borrow')"></el-button>
+                            </el-tooltip>
+                            <el-tooltip class="m-table-button-tip" effect="dark" content="刷新" placement="top-start">
+                                <el-button :loading="refreshBorrowBTLoading" size="small"
+                                           icon="el-icon-refresh" circle
+                                           @click="refreshBorrowListHandle"></el-button>
+                            </el-tooltip>
+                            <el-tooltip class="m-table-button-tip" effect="dark" content="回到顶部" placement="top-start">
+                                <el-button size="small" circle icon="el-icon-caret-top"
+                                           @click="backupHandle('borrowListScrollbar')"></el-button>
+                            </el-tooltip>
                         </el-col>
                     </el-row>
                 </div>
@@ -1249,7 +1276,8 @@
                                     </el-date-picker>
                                 </el-form-item>
                                 <el-form-item label="归还期限">
-                                    <el-input-number v-model="borrowUpdateForm.time" :min="borrowTimeMin" :max="borrowTimeMax"></el-input-number>
+                                    <el-input-number v-model="borrowUpdateForm.time" :min="borrowTimeMin"
+                                                     :max="borrowTimeMax"></el-input-number>
                                 </el-form-item>
                             </el-form>
                             <el-form :model="borrowUpdateForm" :rules="rules_borrowUpdateForm"
@@ -1333,7 +1361,8 @@
                                     </el-date-picker>
                                 </el-form-item>
                                 <el-form-item label="归还期限">
-                                    <el-input-number v-model="borrowAddForm.time" :min="borrowTimeMin" :max="borrowTimeMax"></el-input-number>
+                                    <el-input-number v-model="borrowAddForm.time" :min="borrowTimeMin"
+                                                     :max="borrowTimeMax"></el-input-number>
                                 </el-form-item>
                                 <el-form-item label="状态">
                                     <el-select v-model="borrowAddForm.state" placeholder="请选择状态">
@@ -1397,7 +1426,7 @@
             <div class="m-manage-resource">
                 <el-tabs v-model="resourceValue" type="border-card" class="m-tab">
                     <el-tab-pane class="m-tabs m-manage-resource-paper" name="paperM" label="文章管理">
-                        <div :class="{'slide-left':paperSlide}">
+                        <div class="{'slide-left':paperSlide}">
                             <div class="m-scrollbar-paper">
                                 <el-row type="flex" justify="space-between" align="middle">
                                     <el-col class="m-search" :span="20">
@@ -1408,6 +1437,21 @@
                                                 inactive-color="#ff4949">
                                         </el-switch>
                                         <el-form :inline="true">
+                                            <el-form-item>
+                                                <el-checkbox v-model="paperSearchConfigChecked.base"></el-checkbox>
+                                            </el-form-item>
+                                            <el-form-item label="状态:">
+                                                <el-select v-model="paperSearchConfigForm.state" placeholder="请选择">
+                                                    <el-option label="草稿" value="EDIT"></el-option>
+                                                    <el-option label="发布" value="PUBLISH"></el-option>
+                                                    <el-option label="事故" value="ACCIDENT"></el-option>
+                                                </el-select>
+                                            </el-form-item>
+                                            <el-form-item>
+                                                <el-button type="primary" :loading="submitPaperSearchBTLoading"
+                                                           @click="submitPaperSearchHandle" size="medium">查询
+                                                </el-button>
+                                            </el-form-item>
                                         </el-form>
                                     </el-col>
                                     <el-popover
@@ -1437,7 +1481,7 @@
                                                     width="55"
                                                     v-if="!editorShow">
                                             </el-table-column>
-                                            <el-table-column  v-if="editorShow" type="expand">
+                                            <el-table-column v-if="editorShow" type="expand">
                                                 <template slot-scope="props">
                                                     <el-form label-position="left"
                                                              inline
@@ -1525,12 +1569,14 @@
                                                     <el-row type="flex" align="middle">
                                                         <el-col :span="12">操作</el-col>
                                                         <el-col :span="12">
-                                                            <el-button type="text" icon="el-icon-circle-plus-outline" @click="paperMsgAddHandle"></el-button>
+                                                            <el-button type="text" icon="el-icon-circle-plus-outline"
+                                                                       @click="paperMsgAddHandle"></el-button>
                                                         </el-col>
                                                     </el-row>
                                                 </template>
                                                 <template slot-scope="scope">
-                                                    <el-button type="text" @click="paperMsgUpdateHandle(scope.row)" size="small">
+                                                    <el-button type="text" @click="paperMsgUpdateHandle(scope.row)"
+                                                               size="small">
                                                         修改
                                                     </el-button>
                                                     <el-button type="text" size="small"
@@ -1617,6 +1663,13 @@
                                 <el-form-item label="更新时间" prop="updatetime">
                                     <span>{{paperUpdateForm.updatetime}}</span>
                                 </el-form-item>
+                                <el-form-item label="状态" prop="state">
+                                    <el-select v-model="paperUpdateForm.state" placeholder="请选择">
+                                        <el-option label="草稿" value="EDIT"></el-option>
+                                        <el-option label="发布" value="PUBLISH"></el-option>
+                                        <el-option label="事故" value="ACCIDENT"></el-option>
+                                    </el-select>
+                                </el-form-item>
                                 <el-form-item label="标题" prop="title">
                                     <el-input type="textarea" resize="vertical"
                                               :autosize="true"
@@ -1628,7 +1681,7 @@
                                     <el-input type="textarea" resize="vertical"
                                               :autosize="true"
                                               placeholder="请输入文章摘要"
-                                              v-model:value="paperUpdateForm.digest" >
+                                              v-model:value="paperUpdateForm.digest">
                                     </el-input>
                                 </el-form-item>
                             </el-form>
@@ -1665,7 +1718,7 @@
                                     <el-input type="textarea" resize="vertical"
                                               :autosize="{ minRows: 4}"
                                               placeholder="请输入文章摘要"
-                                              v-model:value="paperAddForm.digest" >
+                                              v-model:value="paperAddForm.digest">
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item label="分类" prop="classify">
@@ -1698,6 +1751,56 @@
             </div>
         </el-tab-pane>
     </el-tabs>
+    <el-dialog top="5vh" width="52%" custom-class="m-dialog-radius" title="数据导出" center
+               :visible.sync="exportDialogVisible" :close-on-click-modal="false" :show-close="true">
+        <div class="m-export">
+            <div class="m-export-dictionary">
+                <div class="m-dictionary-transfer">
+                    <div class="m-export-title">配置导出项</div>
+                    <el-transfer
+                            v-model="exportItem"
+                            :titles="['数据项', '导出项']"
+                            :format="{noChecked: '${total}',hasChecked: '${checked}/${total}'}"
+                            :data="exportDataItem">
+                    </el-transfer>
+                </div>
+                <div class="m-dictionary-input">
+                    <div class="m-export-title">配置项名称</div>
+                    <el-scrollbar class="m-scrollbar">
+                        <el-form :model="exportDictionary" label-width="90px">
+                            <el-form-item v-for="(each,index) in exportItem" :key="each" :label="each">
+                                <el-input v-model="exportDictionary[each]" placeholder="请输入内容"></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-scrollbar>
+                </div>
+            </div>
+            <div class="m-export-filter">
+                <div>
+                    <div class="m-export-title">筛选条件</div>
+                    <el-descriptions border>
+                        <el-descriptions-item v-for="(each,key,index) in exportFilter" :key="key" :label="key">
+                            {{each}}
+                        </el-descriptions-item>
+                    </el-descriptions>
+                </div>
+                <div>
+                    <div class="m-export-title">导出数量</div>
+                    <el-radio-group v-model="exportRange">
+                        <el-radio-button label="全部"></el-radio-button>
+                        <el-radio-button label="当前页"></el-radio-button>
+                    </el-radio-group>
+                </div>
+            </div>
+            <div>
+                <el-switch
+                        v-model="exportNoHeader"
+                        active-text="不导出表头">
+                </el-switch>
+                <el-button type="primary" @click="exportHandle">确认导出</el-button>
+            </div>
+        </div>
+    </el-dialog>
 </div>
 </body>
 </html>

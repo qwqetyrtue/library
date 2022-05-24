@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.sql.Timestamp;
 
-public class Paper_filtrate {
+public class Paper_filtrate extends Filtrate{
     private String pid;
     private String title;
     private String mid;
@@ -19,10 +19,6 @@ public class Paper_filtrate {
     private java.sql.Timestamp updatetime_upper;
     private java.sql.Timestamp updatetime_lower;
     private String classify;
-
-    private int limit;
-    private int offset;
-    private String order;
 
     public String getPid() {
         return pid;
@@ -110,29 +106,5 @@ public class Paper_filtrate {
 
     public void setUpdatetime_lower(Timestamp updatetime_lower) {
         this.updatetime_lower = updatetime_lower;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
     }
 }

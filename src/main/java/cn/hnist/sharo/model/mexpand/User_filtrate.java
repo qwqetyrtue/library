@@ -5,7 +5,7 @@ import cn.hnist.sharo.model.menum.Gender;
 
 import java.sql.Date;
 
-public class User_filtrate {
+public class User_filtrate extends Filtrate{
     private String uid;
     private Gender gender;
     private java.sql.Date birth;
@@ -21,9 +21,6 @@ public class User_filtrate {
     private java.sql.Date createdate_lower;
     private String postcode;
     private BloodType bloodtype;
-    private int limit;
-    private int offset;
-    private String order;
 
     public String getUid() {
         return uid;
@@ -96,30 +93,6 @@ public class User_filtrate {
 
     public void setBloodtype(BloodType bloodtype) {
         this.bloodtype = bloodtype;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
     }
 
     public Date getBirth() {

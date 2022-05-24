@@ -25,6 +25,8 @@ public interface AdminService {
     boolean usersUpdate(User user);
     // 添加用户信息
     User usersAdd(User user);
+    // 导入用户
+    boolean userImport(List<User> users);
 
 
     // 查询书籍

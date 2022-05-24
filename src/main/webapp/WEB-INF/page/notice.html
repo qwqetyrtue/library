@@ -45,6 +45,36 @@
         </div>
     </div>
     <div class="m-body">
+        <el-tabs tab-position="left">
+            <el-tab-pane label="用户管理">
+                <div class="m-scrollbar-form-paging">
+                    <el-scrollbar class="m-scrollbar">
+                        <div v-if="!notice[0]">
+                            <el-empty description="暂无更多..."></el-empty>
+                        </div>
+                       <template v-else>
+                           <div class="m-body-part-one" v-for="(each,i) in notice" :key="'notice'+i">
+                               <i class="el-icon-notebook-1"></i>
+                               <span>{{each.title}}</span>
+                           </div>
+                       </template>
+                    </el-scrollbar>
+                    <el-row class="m-paging" type="flex" align="middle" justify="space-between">
+                        <el-col :span="24">
+                            <el-pagination
+                                    :current-page="listCurrentPage"
+                                    :page-size="listPageSize"
+                                    layout="total, prev, pager, next, jumper"
+                                    :total="listTotalSize">
+                            </el-pagination>
+                        </el-col>
+                    </el-row>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="配置管理">配置管理</el-tab-pane>
+            <el-tab-pane label="角色管理">角色管理</el-tab-pane>
+            <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
+        </el-tabs>
     </div>
     <div class="m-foot">
         <div class="m-foot_main">

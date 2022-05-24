@@ -77,7 +77,7 @@
     <bean id="multipartResolver" class=
             "org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <!--上传文件的最大大小，单位为字节 -->
-        <property name="maxUploadSize" value="17367648787"></property>
+        <property name="maxUploadSize" value="17367648787"/>
         <!-- 设置请求编码格式-->
         <property name="defaultEncoding" value="UTF-8" />
     </bean>
@@ -95,7 +95,7 @@
 <!--    <mvc:interceptors>-->
 <!--        <mvc:interceptor>-->
 <!--            <mvc:mapping path="/user"/>-->
-<!--            &lt;!&ndash;bean配置的就是拦截器&ndash;&gt;-->
+<!--            &lt;!&ndash; 拦截未登录用户 &ndash;&gt;-->
 <!--            <bean class="cn.hnist.sharo.interceptor.UserNotLoginInterceptor"/>-->
 <!--        </mvc:interceptor>-->
 <!--    </mvc:interceptors>-->

@@ -12,7 +12,7 @@ import javax.mail.internet.MimeMessage;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
 
-public class EmailVerifyCode {
+public class EmailUtils {
     /* 基础参数 */
     final private static String smtpID = "re_wo_ru@qq.com";
     final private static String smtpPasswd = "rfhznjwohlswddff";

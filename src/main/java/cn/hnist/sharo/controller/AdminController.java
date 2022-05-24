@@ -4,21 +4,21 @@ import cn.hnist.sharo.model.*;
 import cn.hnist.sharo.model.mexpand.*;
 import cn.hnist.sharo.service.AdminService;
 import cn.hnist.sharo.service.UserService;
+import cn.hnist.sharo.unit.ExcelUtils;
 import cn.hnist.sharo.unit.ListRes;
 import cn.hnist.sharo.unit.Res;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin")
@@ -97,7 +97,9 @@ public class AdminController {
         return new Res<>("success","退出登录");
     }
 
-    /* --------------用户管理-------------- */
+    /**
+     * --------------用户管理--------------
+     */
 
     /**
      * 筛选查询用户
@@ -113,14 +115,28 @@ public class AdminController {
      */
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public @ResponseBody
-    ListRes<User> adminUsersListHandle(@RequestBody User_filtrate user_filtrate) {
+    ListRes<JSONObject> adminUsersListHandle(@RequestBody User_filtrate user_filtrate) {
         List<?> res = adminService.usersFilter(user_filtrate);
         if(res != null){
-            List<User> users = (List<User>)res.get(0);
+            List<JSONObject> users = (List<JSONObject>)res.get(0);
             int total = ((List<Integer>)res.get(1)).get(0);
             return new ListRes<>("success","查询成功",users,total);
         }
         else return new ListRes<>("fail","查询失败",null,-1);
+    }
+
+
+    @RequestMapping(value = "/users/xls", method = RequestMethod.POST)
+    public String adminUsersExportHandle(@RequestBody ExportGuide<User_filtrate> guide, HttpServletRequest req){
+        List<?> res = adminService.usersFilter(guide.getFiltrate());
+        if(res != null){
+            List<JSONObject> users = (List<JSONObject>)res.get(0);
+            JSONArray usersJson = new JSONArray();
+            usersJson.addAll(users);
+            req.setAttribute("data",usersJson);
+            req.setAttribute("guide",guide);
+        }
+        return "forward:/file/xls/export";
     }
 
     // 更新用户信息
@@ -144,6 +160,28 @@ public class AdminController {
         }else{
             return new Res<>("fail",null);
         }
+    }
+
+    // 导入用户
+    @RequestMapping(value = "/users/add/xls",method = RequestMethod.POST)
+    public @ResponseBody
+    Res<String> adminUserImportHandle(@RequestParam("xls") MultipartFile file,@RequestParam("dictionary") String s,@RequestParam("hasHeader") boolean hasHeader){
+        try{
+            Workbook workbook = ExcelUtils.uploadFileToWorkbook(file);
+            JSONArray dic = JSONArray.parseArray(s);
+            LinkedHashMap<String,String> dictionary = ExcelUtils.getDictionary(dic);
+            System.out.println(dic.toJSONString());
+            JSONArray users = ExcelUtils.sheetToList(workbook.getSheetAt(0), dictionary, hasHeader, 0, 100);
+            System.out.println(users.toJSONString());
+            boolean res = adminService.userImport(users.toJavaList(User.class));
+            if (res){
+                return new Res<>("success","导入成功");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Res<>("fail","导入失败");
+        }
+        return new Res<>("fail","导入失败");
     }
 
     // 更新用户信息
@@ -170,6 +208,20 @@ public class AdminController {
             return new ListRes<>("success","查询成功",books,total);
         }
         else return new ListRes<>("fail","查询失败",null,-1);
+    }
+
+    @RequestMapping(value = "/books/xls",method = RequestMethod.POST)
+    public String adminBooksExportHandle(@RequestBody ExportGuide<Book_filtrate> guide, HttpServletRequest req){
+        List<?>  res = adminService.booksFilter(guide.getFiltrate());
+        if(res != null){
+            List<JSONObject> books = (List<JSONObject>) res.get(0);
+            JSONArray booksJson = new JSONArray();
+            booksJson.addAll(books);
+
+            req.setAttribute("data",booksJson);
+            req.setAttribute("guide",guide);
+        }
+        return "forward:/file/xls/export";
     }
 
     // 更新书籍信息
@@ -229,6 +281,19 @@ public class AdminController {
         else return new ListRes<>("fail","查询失败",null,-1);
     }
 
+
+    @RequestMapping(value = "/borrows/xls",method = RequestMethod.POST)
+    public String adminBorrowsExportHandle(@RequestBody ExportGuide<Borrow_filtrate> guide, HttpServletRequest req) {
+        List<?> res = adminService.borrowsFilter(guide.getFiltrate());
+        if(res != null){
+            List<JSONObject> borrows = (List<JSONObject>)res.get(0);
+            JSONArray borrowsJson = new JSONArray();
+            borrowsJson.addAll(borrows);
+            req.setAttribute("data",borrowsJson);
+            req.setAttribute("guide",guide);
+        }
+        return "forward:/file/xls/export";
+    }
     // 修改借阅记录
     @RequestMapping(value = "/borrows/update", method = RequestMethod.POST)
     public @ResponseBody

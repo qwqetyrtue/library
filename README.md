@@ -100,7 +100,9 @@
 
 ## 功能点
 
-- [ ] 用户
+`Update:`**[2022-05-11 15:43:25.0]**
+
+- [ ] 用户页面
   - [x] 书籍查询
   - [x] 借阅单查询
   - [x] 创建借阅单
@@ -108,29 +110,48 @@
   - [x] 修改个人资料
   - [x] 退出登录
   - [x] 修改密码
+  - [x] 修改头像
   - [ ] 座位查询
   - [ ] 占座
   - [ ] 预约会议室
-- [ ] 管理员
+- [ ] 管理员页面
   - [x] 个人资料显示
   - [ ] 修改个人资料
   - [x] 退出登录
   - [x] 借阅单列表和查询
   - [x] 借阅单修改
-  - [ ] 借阅单添加
+  - [x] 借阅单添加
   - [x] 书籍列表和查询
   - [x] 书籍修改
-  - [ ] 书籍添加
+  - [x] 书籍添加
   - [x] 用户列表和查询
   - [x] 用户信息修改
-  - [ ] 添加用户
+  - [x] 添加用户
   - [ ] 图片列表和查询
   - [ ] 图片修改
   - [ ] 上传图片
-  - [ ] 文章列表和查询
-  - [ ] 文章修改
-
+  - [x] 文章列表和查询
+  - [x] 文章内容修改(富文本)
+  - [x] 文章信息修改
 - [ ] 首页
+  - [x] 最新资讯,新闻,公告列表渲染
+  - [x] 文章详情跳转
+  - [x] logo
+- [ ] 公告页面
+  - [ ] 资讯tab
+    - [ ] 列表
+    - [ ] 文章跳转
+
+  - [ ] 公告tab
+    - [ ] 列表
+    - [ ] 文章跳转
+
+  - [ ] 新闻tab
+    - [ ] 列表
+    - [ ] 文章跳转
+
+- [ ] 图书馆历史页面
+- [ ] 资源页面
 
 ## 路径映射
 
@@ -874,5 +895,110 @@ function submitSearch(){
   new Timestamp(creatTimestamp)
   ```
 
-  
+
+
+
+### 29. [什么是接口文档，如何写接口，有什么规范？](https://www.zhihu.com/question/52409287)
+
+#### 1> 	4种主流API架构
+
+[4种主流API架构风格对比](https://baijiahao.baidu.com/s?id=1687958272579675554&wfr=spider&for=pc) 、[浅谈三种API设计风格RPC、REST、GraphQL](https://blog.csdn.net/baidu_22254181/article/details/88055795)
+
+#### 2> 	[REST无状态的理解](https://blog.csdn.net/weixin_40908734/article/details/102632726)
+
++ 使用session是unRestful的,因为session是有状态的,只保存一台server机里,而restful的接口是可以做负载均衡的分布式结构,使用session会出现session数据访问不到的情况
+
+  + 也有相应的的解决方法[session保持与负载均衡](https://wenku.baidu.com/view/53cd9d1b0a12a21614791711cc7931b765ce7b9e.html)
+
+  + 但是使用token能完美的解决问题
+
++ 使用token是Resful的 [user Credentials(用户凭证)](https://blog.csdn.net/W_H_M_2018/article/details/108721394)
+
+#### 3> 	RESTful风格的API接口
+
+[RESTful风格的API接口](https://www.cnblogs.com/wfy680/p/15006816.html)
+
++ REST
+
+  是一种架构风格，有四个级别的成熟度：
+
+  - 级别0：定义一个 URI，所有操作是对此 URI 发出的 POST 请求。
+  - 级别1：为各个资源单独创建 URI。
+  - 级别2：使用 HTTP 方法来定义对资源执行的操作。
+  - 级别3：使用超媒体（HATEOAS）。
+
++ [HATEOAS简介](https://blog.csdn.net/htxhtx123/article/details/106084364)
++ 文档管理软件
+  - [ ] [apipost](https://www.apipost.cn/?dt=2020)
+
+
+
+### 30. POI excel操作 导入导出
+
+#### 1> 	如何将纯数字设置为文本格式
+
+[数据] -> [分栏] -> [默认格式] -> [tab] -> [文本]
+
+[POI读取文本格式字段仍为数字问题](https://blog.csdn.net/duck_arrow/article/details/8919482)  
+
+#### 2> 	xls和xlsx的excel相同格式POI获取的cellStyle不同
+
+`xlsx`中格式为 `yyyy/M/d`
+
+但是`xls`中格式为 `yyyy/M/d;@`
+
+#### 3> 	content-type 类型
+
+[文件上传时contentType类型详细版](https://blog.csdn.net/qq_35673617/article/details/121372106)
+
+#### 4> 	导出乱码问题
+
+> responseType应该放在xhrFields里,这样接收的response保存后才不会乱码
+>
+> 服务器端设置相同的文件类型即可
+>
+> 关键的关键还是要将responseType的设置生效
+
+```js
+$.ajax({
+    type: 'post',
+    url: window.BASE_URL + "file/export/test",
+    contentType: "application/json;charset=UTF-8",
+    // responseType: 'blob',
+    xhrFields: {
+        responseType: "blob",
+    },
+})
+.then(res = >{
+    const blob = new Blob([res], {
+        type: 'application/vnd.ms-excel'
+    });
+    console.log(blob.size)
+    // 创建一个超链接，将文件流赋进去，然后实现这个超链接的单击事件
+    const elink = document.createElement('a');
+    elink.download = "test.xls";
+    elink.style.display = 'none';
+    elink.href = URL.createObjectURL(blob);
+    document.body.appendChild(elink);
+    elink.click();
+    URL.revokeObjectURL(elink.href); // 释放URL 对象
+    document.body.removeChild(elink);
+})
+```
+
+```java
+ @RequestMapping(value = "/export/test",method = RequestMethod.POST)
+    public String testExportHandle(HttpServletRequest req,HttpServletResponse res) throws IOException {
+        File file = new File("c:/users/86180/desktop/user.xls");
+        HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(file));
+        res.reset();
+        // 这里的contentType为文件的类型
+        res.setContentType("application/vnd.ms-excel;charset=UTF-8");
+        ServletOutputStream os = res.getOutputStream();
+        workbook.write(os);
+        os.close();
+        workbook.close();
+        return null;
+    }
+```
 

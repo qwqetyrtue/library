@@ -4,7 +4,7 @@ import cn.hnist.sharo.model.menum.BookState;
 
 import java.sql.Date;
 
-public class Book_filtrate {
+public class Book_filtrate extends Filtrate{
     private String bkid;
     private String bkname;
     private String atname;
@@ -29,10 +29,6 @@ public class Book_filtrate {
     private String language;
     private String chinaclass;
     private String binding;
-
-    private int limit;
-    private int offset;
-    private String order;
 
 
     public String getBkid() {
@@ -225,30 +221,6 @@ public class Book_filtrate {
 
     public void setBinding(String binding) {
         this.binding = binding;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
     }
 }
 

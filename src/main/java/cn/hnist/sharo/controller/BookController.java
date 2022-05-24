@@ -2,6 +2,7 @@ package cn.hnist.sharo.controller;
 
 import cn.hnist.sharo.model.Book;
 import cn.hnist.sharo.model.mexpand.Book_filtrate;
+import cn.hnist.sharo.model.mexpand.ExportGuide;
 import cn.hnist.sharo.model.mexpand.Filtrate;
 import cn.hnist.sharo.service.BookService;
 import cn.hnist.sharo.unit.BackEndHttpRequest;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller

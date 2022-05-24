@@ -31,4 +31,6 @@ public interface UserMapper {
     int usersdelete(User user);
     // 添加用户
     int usersadd(User user);
+    // 导入用户
+    int usersimport(List<User> users);
 }
